@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'MintSans';
+    src: url('/src/assets/fonts/MintSansBold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  

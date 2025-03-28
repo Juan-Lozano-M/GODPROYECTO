@@ -1,0 +1,26 @@
+[
+  {
+    "title": "El futuro es sostenible: Especialista en Sostenibilidad Corporativa",
+    "description": "Las empresas están apostando por la sostenibilidad como un pilar estratégico. Como Especialista en Sostenibilidad Corporativa, liderarás la transformación ecológica dentro de las organizaciones, implementando prácticas responsables y fomentando el uso eficiente de los recursos. Si te apasiona el medio ambiente y el impacto social, esta carrera puede ser el camino ideal para ti.",
+    "category": "Medio Ambiente",
+    "image": "../../public/assets/1.svg"
+  },
+  {
+    "title": "La revolución digital: Desarrollador de Inteligencia Artificial",
+    "description": "La inteligencia artificial está cambiando la forma en que vivimos y trabajamos. Como Desarrollador de IA, tendrás la oportunidad de crear sistemas inteligentes que optimizan procesos, mejoran la toma de decisiones y resuelven problemas complejos en múltiples industrias. ¿Te interesa la tecnología y el futuro de la automatización? Esta profesión podría ser tu mejor opción.",
+    "category": "Tecnología",
+    "image": "../../public/assets/2.svg"
+  },
+  {
+    "title": "Bienestar laboral: La clave del éxito en las empresas",
+    "description": "El bienestar de los empleados es esencial para la productividad y la satisfacción en el trabajo. Como Consultor de Bienestar Laboral, ayudarás a las organizaciones a diseñar estrategias que promuevan un ambiente saludable, motivador y equilibrado. Si te interesa la psicología organizacional y el desarrollo humano, esta carrera puede ser el camino ideal para marcar la diferencia.",
+    "category": "Salud",
+    "image": "../../public/assets/3.svg"
+  },
+  {
+    "title": "Bienestar laboral: La clave del éxito en las empresas",
+    "description": "El bienestar de los empleados es esencial para la productividad y la satisfacción en el trabajo. Como Consultor de Bienestar Laboral, ayudarás a las organizaciones a diseñar estrategias que promuevan un ambiente saludable, motivador y equilibrado. Si te interesa la psicología organizacional y el desarrollo humano, esta carrera puede ser el camino ideal para marcar la diferencia.",
+    "category": "Salud",
+    "image": "../../public/assets/3.svg"
+  }
+]

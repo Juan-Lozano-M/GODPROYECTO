@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import './App.css';
-
+import Cursor from './components/Cursor'; // Importa el componente Cursor
 
 function App() {
   return (
     <div className="min-h-screen bg-[#9CE840] flex flex-col items-center justify-center gap-6 cursor-none">
       {/* Cursor animado */}
-   
+      <Cursor />
 
       <h1 className="text-4xl font-bold text-white mb-8">Bienvenido a GOD</h1>
       

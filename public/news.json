@@ -1,0 +1,21 @@
+[
+    {
+      "category": "Tecnología",
+      "image": "./assets/1.svg",
+      "author": "Juan Pérez",
+      "date": "2025-03-16",
+      "title": "Nueva IA revoluciona la industria",
+      "description": "Un avance importante en la inteligencia artificial promete cambiar el futuro del trabajo.",
+      "slug": "nueva-ia-industria"
+    },
+    {
+      "category": "Ciencia",
+      "image": "./assets/2.svg",
+      "author": "María López",
+      "date": "2025-03-15",
+      "title": "Descubren planeta similar a la Tierra",
+      "description": "Astrónomos han encontrado un exoplaneta con características similares a nuestro hogar.",
+      "slug": "planeta-tierra"
+    }
+  ]
+  
