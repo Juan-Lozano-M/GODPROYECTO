@@ -25,9 +25,9 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
 
             {/* Contenedor de la imagen principal */}
             <div className="flex-1 relative">
-              <div className="relative h-[710px] w-full ">
+              <div className="relative h-[710px] w-full bg-[#9CE840] ">
                 <img src={imagennews} alt="Games Collage"
-                  className="absolute inset-0 w-full h-full object-cover" />
+                  className="absolute inset-0 w-[1000px] h-full object-cover" />
                 
                 {/* Capa de degradado sobre la imagen */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30"></div>
