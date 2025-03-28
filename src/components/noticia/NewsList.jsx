@@ -5,7 +5,7 @@ const NewsList = () => {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
-    fetch("../../../public/news.json") // Ruta correcta según donde esté el JSON
+    fetch("/news.json") // Ruta correcta según donde esté el JSON
       .then((response) => response.json())
       .then((data) => setNews(data))
       .catch((error) => console.error("Error cargando noticias:", error));
