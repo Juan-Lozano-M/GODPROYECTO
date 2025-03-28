@@ -2,7 +2,7 @@
 import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
   import { ArrowRight } from "lucide-react";
   import { useState } from "react";
-  import imagennews from "../../assets/news.svg"
+  import imagennews from "../../assets/news.png"
 
   // Componente funcional Noticiasv2 que renderiza la sección de noticias
   function Noticiasv2() {
@@ -34,37 +34,38 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
 
                 {/* Contenido sobre la imagen */}
                 <div 
-                  className="absolute bottom-[-40px] left-100 right-0 p-10 bg-gray-800 transform transition-all duration-300 hover:translate-x-2"
+                  className="absolute bottom-[-40px] md:bottom-[-40px] left-4 md:left-100 right-4 md:right-0 p-4 md:p-10 bg-gray-800 transform transition-all duration-300 hover:translate-x-2 z-20"
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
-                  <div className="bg-white inline-block px-4 py-1 mb-2">
-                    <span className="text-black text-sm font-medium">NEWS</span>
+                  <div className="bg-white inline-block px-2 md:px-4 py-1 mb-2">
+                    <span className="text-black text-xs md:text-sm font-medium">NEWS</span>
                   </div>
-                  <h2 className="text-3xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-gray-300">
+                  <h2 className="text-xl md:text-3xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-gray-300">
                     NOTICIAS DESTACADAS
                   </h2>
-                  <p className="text-white text-sm transition-all duration-300">
+                  <p className="text-xs md:text-sm text-white transition-all duration-300">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit et porro repellendus possimus ut rem ullam maior.
                   </p>
 
                   {/* Nuevo botón de flecha con animación */}
-                  <div className={`absolute right-8 bottom-8 p-4 rounded-full bg-white transition-all duration-300 ${
+                  <div className={`absolute right-4 md:right-8 bottom-4 md:bottom-8 p-2 md:p-4 rounded-full bg-white transition-all duration-300 ${
                     isHovered ? 'translate-x-2' : ''
                   }`}>
-                    <ArrowRight className="w-6 h-6 text-gray-800" />
+                    <ArrowRight className="w-4 h-4 md:w-6 md:h-6 text-gray-800" />
                   </div>
                 </div>
 
-
+                {/* Fondo blanco debajo de noticias destacadas */}
+                <div className="absolute bottom-[-80px] left-0 right-0 h-[40px] bg-white z-10"></div>
               </div>
 
-              {/* Botones de filtro de noticias en la esquina superior derecha */}
-              <div className="absolute top-0 right-0 bottom-36 flex flex-col justify-center space-y-2 bg-gray-100 p-6">
-                <button className="bg-[#87C232] text-white px-12 py-4 font-medium hover:bg-[#87C232]">
+              {/* Botones de filtro de noticias */}
+              <div className="absolute md:top-0 md:right-0 md:bottom-36 bottom-[-120px] left-4 right-4 md:left-auto flex flex-row md:flex-col justify-between md:justify-center space-x-2 md:space-x-0 md:space-y-2 md:bg-gray-100 md:p-6 z-10">
+                <button className="bg-[#87C232] text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-[#87C232] flex-1 md:flex-none">
                   ALL NEWS
                 </button>
-                <button className="bg-gray-400 text-white px-12 py-4 font-medium hover:bg-gray-500">
+                <button className="bg-gray-400 text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-gray-500 flex-1 md:flex-none">
                   RESEARCH
                 </button>
               </div>
