@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     errorElement: <Navigate to="/" />,
   },
   {
-    path: "/newdetails/:slug",
+    path: "/noticiasv/:slug",
     element: <NewDetails />,
     errorElement: <Navigate to="/" />,
   }

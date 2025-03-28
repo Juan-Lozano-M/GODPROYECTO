@@ -8,8 +8,8 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
 
   const handleNavigation = () => {
     if (slug) {
-      navigate(`/newdetails/${slug}`); // Make sure this matches exactly with your route path
-      console.log("Navigating to:", `/newdetails/${slug}`); // Add this for debugging
+      navigate(`/noticiasv/${slug}`); // Navega a la ruta correspondiente
+      console.log("Navigating to:", `/noticiasv/${slug}`); // Mensaje de depuración
     } else {
       console.error("El slug no es válido.");
     }
@@ -60,7 +60,7 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
         <div className="md:w-3/5 p-4 md:p-8 md:pt-10 transition-all duration-300 group-hover:translate-x-4">
           {/* Autor y fecha de publicación */}
           <div className="flex items-center text-sm mb-4">
-            <span className="font-bold text-red-600">{author}</span> {/* Nombre del autor */}
+            <span className="font-bold text-[#9CE840]">{author}</span> {/* Nombre del autor */}
             <span className="mx-2 text-gray-500">/</span> {/* Separador */}
             <span className="text-gray-500">{date}</span> {/* Fecha de la noticia */}
           </div>
@@ -81,7 +81,7 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
 
         {/* Flecha de navegación que aparece al hacer hover */}
         <div className="absolute bottom-4 right-4 opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-          <div className="bg-red-600 rounded-full p-4"></div>
+          <div className="bg-[#9CE840] rounded-full p-4"></div>
         </div>
       </div>
     </div>

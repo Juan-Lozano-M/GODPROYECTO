@@ -1,21 +1,39 @@
 [
     {
-      "category": "Tecnología",
+      "id": "1",
+      "category": "Educación",
       "image": "./assets/1.svg",
-      "author": "Juan Pérez",
+      "author": "Ana Martínez",
       "date": "2025-03-16",
-      "title": "Nueva IA revoluciona la industria",
-      "description": "Un avance importante en la inteligencia artificial promete cambiar el futuro del trabajo.",
-      "slug": "nueva-ia-industria"
+      "title": "Nuevas tendencias en orientación vocacional",
+      "description": "Descubre cómo la tecnología y las nuevas metodologías están transformando la búsqueda de tu vocación profesional.",
+      "slug": "tendencias-orientacion-vocacional",
+      "content": "La orientación vocacional está experimentando una transformación significativa gracias a nuevas metodologías que combinan tecnología y psicología moderna. Los expertos están implementando enfoques personalizados que ayudan a los estudiantes a descubrir su verdadera vocación con mayor precisión.\n\nLas nuevas herramientas de evaluación incluyen análisis de intereses, habilidades y valores personales, junto con simulaciones de diferentes carreras y entornos laborales. Esto permite a los jóvenes experimentar virtualmente diferentes profesiones antes de tomar una decisión.\n\nLos resultados muestran que los estudiantes que participan en estos programas modernos de orientación tienen un 60% más de probabilidades de sentirse satisfechos con su elección profesional.",
+      "subtitle": "Descubriendo tu camino profesional",
+      "highlights": [
+        "Evaluaciones personalizadas de aptitudes",
+        "Simulaciones de carreras profesionales",
+        "Asesoramiento integral personalizado"
+      ],
+      "conclusion": "La elección vocacional es un paso crucial en la vida, y con las nuevas herramientas y metodologías disponibles, los estudiantes tienen mejores oportunidades que nunca para encontrar su verdadera vocación."
     },
     {
-      "category": "Ciencia",
+      "id": "2",
+      "category": "Desarrollo Personal",
       "image": "./assets/2.svg",
-      "author": "María López",
+      "author": "Carlos Ruiz",
       "date": "2025-03-15",
-      "title": "Descubren planeta similar a la Tierra",
-      "description": "Astrónomos han encontrado un exoplaneta con características similares a nuestro hogar.",
-      "slug": "planeta-tierra"
+      "title": "Historias de éxito en cambios de carrera",
+      "description": "Testimonios inspiradores de personas que encontraron su verdadera vocación y transformaron sus vidas profesionales.",
+      "slug": "historias-cambio-carrera",
+      "content": "Cada vez más profesionales están descubriendo que nunca es tarde para seguir su verdadera vocación. Un estudio reciente revela que el 40% de los trabajadores consideran un cambio de carrera significativo en algún momento de su vida profesional.\n\nLas historias recopiladas muestran patrones interesantes: muchos encontraron su verdadera pasión a través de hobbies o actividades voluntarias, mientras que otros descubrieron nuevas oportunidades al exponerse a diferentes campos profesionales.\n\nLos expertos en desarrollo profesional enfatizan la importancia de la autorreflexión y la disposición para aprender nuevas habilidades como claves para un cambio exitoso de carrera.",
+      "subtitle": "Transformando vidas a través de la vocación",
+      "highlights": [
+        "Casos de éxito en cambios profesionales",
+        "Estrategias para la transición de carrera",
+        "Importancia del aprendizaje continuo"
+      ],
+      "conclusion": "Estas historias demuestran que encontrar y seguir tu verdadera vocación puede llevar a una vida profesional más satisfactoria y significativa, independientemente de la etapa de la vida en que te encuentres."
     }
-  ]
+]
   
