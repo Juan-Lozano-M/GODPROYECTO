@@ -1,36 +1,106 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function NewDetail() {
-  const { slug } = useParams(); // Change from id to slug
+  const { slug } = useParams();
+  const navigate = useNavigate();
   const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetch('/news.json')
       .then(response => response.json())
       .then(data => {
-        const newsItem = data.find(item => item.slug === slug); // Compare with slug instead of id
+        const newsItem = data.find(item => item.slug === slug);
         if (newsItem) {
           newsItem.image = newsItem.image.startsWith('/') 
             ? newsItem.image 
             : `/${newsItem.image}`;
+          setNews(newsItem);
+        } else {
+          setShowModal(true);
+          setTimeout(() => {
+            navigate('/noticiasv');
+          }, 2000); // Redirect after 2 seconds
         }
-        setNews(newsItem);
         setLoading(false);
       })
       .catch(error => {
         console.error('Error loading news:', error);
         setLoading(false);
+        setShowModal(true);
+        setTimeout(() => {
+          navigate('/noticiasv');
+        }, 2000);
       });
-  }, [slug]); // Change dependency to slug
+  }, [slug, navigate]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-white p-8">
+        <div className="container mx-auto">
+          {/* Hero Section Skeleton */}
+          <div className="h-[600px] bg-gray-200 rounded-lg mb-10 relative">
+            <div className="absolute bottom-20 left-4 md:left-6 space-y-4 w-full max-w-4xl">
+              <div className="h-8 bg-gray-300 rounded w-32"></div>
+              <div className="h-12 bg-gray-300 rounded w-3/4"></div>
+              <div className="h-6 bg-gray-300 rounded w-48"></div>
+            </div>
+          </div>
+
+          {/* Content Skeleton */}
+          <div className="space-y-2.5 animate-pulse max-w-lg">
+            <div className="flex items-center w-full">
+              <div className="h-2.5 bg-gray-200 rounded-full w-32"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+            </div>
+            <div className="flex items-center w-full max-w-[480px]">
+              <div className="h-2.5 bg-gray-200 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
+            </div>
+            <div className="flex items-center w-full max-w-[400px]">
+              <div className="h-2.5 bg-gray-300 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-200 rounded-full w-80"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+            </div>
+            <div className="flex items-center w-full max-w-[480px]">
+              <div className="h-2.5 ms-2 bg-gray-200 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
+            </div>
+            <div className="flex items-center w-full max-w-[440px]">
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-32"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
+              <div className="h-2.5 ms-2 bg-gray-200 rounded-full w-full"></div>
+            </div>
+            <div className="flex items-center w-full max-w-[360px]">
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+              <div className="h-2.5 ms-2 bg-gray-200 rounded-full w-80"></div>
+              <div className="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
+            </div>
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!news) {
-    return <div>News not found</div>;
+    return (
+      <>
+        {showModal && (
+          <div className="fixed inset-0 bg-[#9CE840] bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl">
+              <h2 className="text-xl font-bold text-red-600 mb-2">¡Noticia no encontrada!</h2>
+              <p className="text-gray-600">Redirigiendo a la página principal de noticias...</p>
+            </div>
+          </div>
+        )}
+      </>
+    );
   }
 
   return (

@@ -34,6 +34,114 @@
         "Importancia del aprendizaje continuo"
       ],
       "conclusion": "Estas historias demuestran que encontrar y seguir tu verdadera vocación puede llevar a una vida profesional más satisfactoria y significativa, independientemente de la etapa de la vida en que te encuentres."
+    },
+    {
+      "id": "3",
+      "category": "Tecnología",
+      "image": "./assets/3.svg",
+      "author": "Miguel Torres",
+      "date": "2025-03-14",
+      "title": "Inteligencia Artificial en la Orientación Profesional",
+      "description": "Cómo la IA está revolucionando el proceso de orientación vocacional y ayudando a tomar mejores decisiones de carrera.",
+      "slug": "ia-orientacion-profesional",
+      "content": "La inteligencia artificial está transformando la manera en que los estudiantes reciben orientación vocacional. Los nuevos sistemas de IA pueden analizar patrones de intereses, habilidades y personalidad para sugerir caminos profesionales más precisos.\n\nEstos sistemas aprenden constantemente de las experiencias de miles de profesionales y pueden predecir tendencias laborales futuras, ayudando a los estudiantes a prepararse para carreras emergentes.\n\nLa combinación de IA con asesoramiento humano está mostrando resultados prometedores, con un aumento del 45% en la satisfacción con las elecciones de carrera.",
+      "subtitle": "El futuro de la orientación vocacional",
+      "highlights": [
+        "Análisis predictivo de carreras",
+        "Recomendaciones personalizadas",
+        "Integración con asesoramiento tradicional"
+      ],
+      "conclusion": "La IA está revolucionando la orientación vocacional, proporcionando insights más precisos y ayudando a tomar decisiones más informadas sobre el futuro profesional."
+    },
+    {
+      "id": "4",
+      "category": "Educación",
+      "image": "./assets/4.svg",
+      "author": "Laura Sánchez",
+      "date": "2025-03-13",
+      "title": "Programas de Mentoría Profesional",
+      "description": "La importancia de contar con un mentor en el desarrollo de tu carrera profesional.",
+      "slug": "mentoria-profesional",
+      "content": "Los programas de mentoría están emergiendo como una herramienta fundamental en el desarrollo profesional. Estudios recientes demuestran que los estudiantes con mentores tienen un 70% más de probabilidades de alcanzar sus metas profesionales.\n\nLa mentoría moderna combina reuniones presenciales con seguimiento digital, permitiendo una conexión más constante y efectiva entre mentor y mentoreado.\n\nLas empresas están implementando programas de mentoría reverse, donde los profesionales jóvenes asesoran a ejecutivos en tecnologías y tendencias actuales.",
+      "subtitle": "El poder de la guía personalizada",
+      "highlights": [
+        "Beneficios de la mentoría profesional",
+        "Nuevos modelos de mentoría",
+        "Impacto en el desarrollo profesional"
+      ],
+      "conclusion": "La mentoría profesional se ha convertido en un elemento clave para el éxito profesional, facilitando el desarrollo de habilidades y la navegación en el mundo laboral."
+    },
+    {
+      "id": "5",
+      "category": "Desarrollo Personal",
+      "image": "./assets/5.svg",
+      "author": "Pedro Ramírez",
+      "date": "2025-03-12",
+      "title": "Habilidades Blandas del Futuro",
+      "description": "Las competencias sociales y emocionales más valoradas en el mercado laboral actual.",
+      "slug": "habilidades-blandas-futuro",
+      "content": "Las habilidades blandas se han convertido en el diferenciador clave en el mercado laboral moderno. La inteligencia emocional, la adaptabilidad y la comunicación efectiva son ahora tan importantes como las habilidades técnicas.\n\nLas empresas están priorizando la contratación de profesionales que demuestren fuerte capacidad de trabajo en equipo y resolución creativa de problemas.\n\nLos programas de desarrollo profesional están incorporando módulos específicos para fortalecer estas habilidades esenciales.",
+      "subtitle": "Preparándose para el futuro laboral",
+      "highlights": [
+        "Inteligencia emocional en el trabajo",
+        "Adaptabilidad y resiliencia",
+        "Comunicación efectiva"
+      ],
+      "conclusion": "El desarrollo de habilidades blandas es fundamental para el éxito profesional en el mercado laboral actual y futuro."
+    },
+    {
+      "id": "6",
+      "category": "Innovación",
+      "image": "./assets/6.svg",
+      "author": "Elena Gómez",
+      "date": "2025-03-11",
+      "title": "Carreras Emergentes en Sostenibilidad",
+      "description": "Nuevas oportunidades profesionales en el campo de la sostenibilidad y el medio ambiente.",
+      "slug": "carreras-sostenibilidad",
+      "content": "El sector de la sostenibilidad está creando nuevas oportunidades profesionales cada día. Desde gestores de economía circular hasta consultores de carbono neutro, las opciones son diversas y prometedoras.\n\nLas empresas están buscando profesionales que puedan liderar iniciativas de sostenibilidad y transformar sus operaciones para ser más amigables con el medio ambiente.\n\nLa demanda de expertos en sostenibilidad se ha triplicado en los últimos dos años, con salarios competitivos y excelentes perspectivas de crecimiento.",
+      "subtitle": "El futuro verde del trabajo",
+      "highlights": [
+        "Nuevos roles en sostenibilidad",
+        "Demanda creciente del mercado",
+        "Oportunidades de desarrollo"
+      ],
+      "conclusion": "Las carreras en sostenibilidad ofrecen una oportunidad única de combinar el éxito profesional con el impacto positivo en el planeta."
+    },
+    {
+      "id": "7",
+      "category": "Educación",
+      "image": "./assets/7.svg",
+      "author": "Roberto Silva",
+      "date": "2025-03-10",
+      "title": "Educación Continua y Reconversión Profesional",
+      "description": "La importancia del aprendizaje permanente en la era digital.",
+      "slug": "educacion-continua",
+      "content": "La educación continua se ha convertido en una necesidad en el mundo profesional actual. Los expertos recomiendan dedicar al menos 5 horas semanales al aprendizaje de nuevas habilidades.\n\nLas plataformas de aprendizaje en línea están ofreciendo micro-credenciales que permiten una actualización rápida y efectiva de conocimientos.\n\nLas empresas están valorando cada vez más la capacidad de aprendizaje continuo en sus empleados, considerándola una habilidad fundamental.",
+      "subtitle": "Aprendizaje para toda la vida",
+      "highlights": [
+        "Importancia del aprendizaje continuo",
+        "Plataformas de educación en línea",
+        "Micro-credenciales y certificaciones"
+      ],
+      "conclusion": "El aprendizaje continuo es la clave para mantener la relevancia profesional en un mundo en constante cambio."
+    },
+    {
+      "id": "8",
+      "category": "Desarrollo Personal",
+      "image": "./assets/8.svg",
+      "author": "Carmen Ortiz",
+      "date": "2025-03-09",
+      "title": "Balance Vida-Trabajo en la Era Digital",
+      "description": "Estrategias para mantener un equilibrio saludable entre la vida profesional y personal.",
+      "slug": "balance-vida-trabajo",
+      "content": "El concepto de balance vida-trabajo está evolucionando con la digitalización del trabajo. Las nuevas generaciones están priorizando empleos que ofrezcan flexibilidad y respeten su vida personal.\n\nLas empresas están implementando políticas de desconexión digital y horarios flexibles para mejorar el bienestar de sus empleados.\n\nEstudios demuestran que un buen balance vida-trabajo aumenta la productividad en un 35% y reduce el burnout profesional.",
+      "subtitle": "Encontrando el equilibrio perfecto",
+      "highlights": [
+        "Políticas de trabajo flexible",
+        "Gestión del tiempo digital",
+        "Bienestar laboral"
+      ],
+      "conclusion": "El balance vida-trabajo no es solo una tendencia, sino una necesidad para el éxito profesional sostenible."
     }
 ]
   
