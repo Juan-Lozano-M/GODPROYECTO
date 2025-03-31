@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import ShareButton from "../../components/buttons/ShareButton"; //Boton con el api del portapapeles 
 
 export default function NewDetail() {
   const { slug } = useParams();
@@ -7,6 +8,7 @@ export default function NewDetail() {
   const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [relatedNews, setRelatedNews] = useState([]);
 
   useEffect(() => {
     fetch('/news.json')
@@ -18,6 +20,12 @@ export default function NewDetail() {
             ? newsItem.image 
             : `/${newsItem.image}`;
           setNews(newsItem);
+          
+          // Obtener artículos relacionados
+          const related = data
+            .filter(item => item.category === newsItem.category && item.slug !== newsItem.slug)
+            .slice(0, 3); // Obtener 3 artículos relacionados
+          setRelatedNews(related);
         } else {
           setShowModal(true);
           setTimeout(() => {
@@ -40,7 +48,7 @@ export default function NewDetail() {
     return (
       <div className="min-h-screen bg-white p-8">
         <div className="container mx-auto">
-          {/* Hero Section Skeleton */}
+          {/* Esqueleto de hero section */}
           <div className="h-[600px] bg-gray-200 rounded-lg mb-10 relative">
             <div className="absolute bottom-20 left-4 md:left-6 space-y-4 w-full max-w-4xl">
               <div className="h-8 bg-gray-300 rounded w-32"></div>
@@ -49,7 +57,7 @@ export default function NewDetail() {
             </div>
           </div>
 
-          {/* Content Skeleton */}
+          {/* Esqueleto del contenido */}
           <div className="space-y-2.5 animate-pulse max-w-lg">
             <div className="flex items-center w-full">
               <div className="h-2.5 bg-gray-200 rounded-full w-32"></div>
@@ -135,10 +143,10 @@ export default function NewDetail() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Contenido principal */}
       <div className="container px-4 md:px-6 mx-auto -mt-10 relative z-30">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Main Article */}
+          {/* Articulo */}
           <div className="lg:col-span-8">
             <div className="bg-white rounded-xl shadow-xl p-8">
               <div className="prose max-w-none">
@@ -180,26 +188,44 @@ export default function NewDetail() {
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">Compartir</h3>
                 <div className="flex space-x-4">
-                  <button className="w-10 h-10 rounded-full bg-blue-500 text-white hover:bg-blue-600 flex items-center justify-center font-semibold">
-                    F
-                  </button>
-                  <button className="w-10 h-10 rounded-full bg-blue-400 text-white hover:bg-blue-500 flex items-center justify-center font-semibold">
-                    T
-                  </button>
+  
+                  <ShareButton/>
                 </div>
               </div>
 
-              {/* Related Articles */}
+              {/* Related Articles section update */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">Artículos Relacionados</h3>
                 <div className="space-y-4">
-                  {/* Add your related articles here */}
+                  {relatedNews.length > 0 ? (
+                    relatedNews.map((article) => (
+                      <div key={article.slug} className="group cursor-pointer" onClick={() => navigate(`/noticiasv/${article.slug}`)}>
+                        <div className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className="w-20 h-20 flex-shrink-0">
+                            <img
+                              src={article.image.startsWith('/') ? article.image : `/${article.image}`}
+                              alt={article.title}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 group-hover:text-[#87C232] transition-colors">
+                              {article.title}
+                            </h4>
+                            <p className="text-sm text-gray-500 mt-1">{article.date}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-2">No hay artículos relacionados</p>
+                  )}
                 </div>
               </div>
 
               {/* Newsletter */}
               <div className="bg-gradient-to-br from-[#87C232] to-green-600 rounded-xl shadow-lg p-6 text-white">
-                <h3 className="text-xl font-bold mb-3">Suscríbete al Newsletter</h3>
+                <h3 className="text-xl font-bold mb-3">Suscríbete a GOD</h3>
                 <p className="mb-4 text-white/90">Recibe las últimas noticias directamente en tu correo.</p>
                 <input
                   type="email"
