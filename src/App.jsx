@@ -17,16 +17,11 @@ function App() {
       </Link>
 
 
-      <Link to="/noticias">
-        <button className="w-64 py-3 bg-[#87C232] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-          Noticias
-        </button>
-      </Link>
 
 
       <Link to="/noticiasv">
         <button className="w-64 py-3 bg-[#87C232] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-          Noticiasv
+          Noticias
         </button>
       </Link>
     </div>

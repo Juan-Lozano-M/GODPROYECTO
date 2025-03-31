@@ -3,14 +3,16 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
   import { ArrowRight } from "lucide-react";
   import { useState } from "react";
   import imagennews from "../../assets/news.png"
+  import Cursor from "../../components/Cursor"; // Importa el componente de cursor personalizado
 
   // Componente funcional Noticiasv2 que renderiza la sección de noticias
   function Noticiasv2() {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
+      
       <main className="min-h-screen bg-white"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
-
+        <Cursor/>
 
         {/* Sección principal con imagen destacada */}
         <div className="relative ">

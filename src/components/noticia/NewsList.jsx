@@ -13,7 +13,7 @@ const NewsList = () => {
       .catch((error) => console.error("Error cargando noticias:", error));
   }, []);
 
-  // Get current news
+  // Noticias a mostrar en la página actual
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   const currentNews = news.slice(indexOfFirstNews, indexOfLastNews);

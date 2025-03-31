@@ -22,7 +22,7 @@ export default function NewDetail() {
           setShowModal(true);
           setTimeout(() => {
             navigate('/noticiasv');
-          }, 2000); // Redirect after 2 seconds
+          }, 2000); // Redirije en 2 segundos 
         }
         setLoading(false);
       })

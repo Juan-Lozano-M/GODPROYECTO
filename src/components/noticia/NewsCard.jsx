@@ -16,7 +16,7 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
   };
 
   return (
-    <div className="relative mb-16 group transition-all duration-300 group-hover:text-black">
+    <div className="relative mb-16 group transition-all duration-300 group-hover:text-black ">
       {/* Etiqueta de la categoría de la noticia */}
       <div className="absolute -top-6 left-0 z-20">
         <div className="bg-gray-500 px-6 py-2">
