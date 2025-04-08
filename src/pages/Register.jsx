@@ -109,7 +109,7 @@ const Register = () => {
       <div className="flex items-end justify-between w-full h-45 absolute">
             <div className="flex justify-between items-center ml-5 sm:ml-20 xl:scale-80  2xl:scale-100">
               <Link to={"/"}> <img src={GODlogo} className='h-15 mb-15'/></Link>
-              <h1 className="hidden sm:flex font-['ADLaM_Display'] font-semibold text-white text-[17px] ml-3 mb-15 "> GAME OF DREAMS </h1>
+              <h1 className="hidden sm:flex font-mint font-semibold text-white text-[22px] ml-3 mb-15 "> game of dreams </h1>
             </div>
           
             { /* 📌 Botones de inicio de sesión y registro */ }

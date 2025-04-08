@@ -18,39 +18,35 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
   return (
     <div className="relative mb-16 group transition-all duration-300 group-hover:text-black ">
       {/* Etiqueta de la categoría de la noticia */}
-      <div className="absolute -top-6 left-0 z-20">
+      <div className="absolute -top-0  z-20 transition-all duration-300 group-hover:translate-x-8">
         <div className="bg-gray-500 px-6 py-2">
           <span className="text-white font-medium">{category}</span>
         </div>
       </div>
 
       {/* Contenedor principal de la tarjeta con efecto hover */}
-      <div className="flex flex-col md:flex-row relative transition-all duration-300 group-hover:bg-gray-200 p-4">
+      <div className="flex flex-col md:flex-row relative transition-all duration-300 group-hover:bg-gray-200   p-4">
         
         {/* Sección izquierda: Fondo punteado con efecto hover */}
-        <div
-          className="relative md:w-2/5 overflow-hidden transition-all duration-300 transform group-hover:translate-x-4"
-          style={{
-            background: "#f0f0f0", // Color de fondo base
-            backgroundImage: "radial-gradient(#ccc 1px, transparent 0)", // Patrón punteado
-            backgroundSize: "10px 10px", // Tamaño del patrón
-          }}
-        >
-          {/* Capa de color que aparece al hacer hover */}
+        {/* Sección izquierda */}
+        <div className="relative md:w-2/5 overflow-visible">
+          {/* Fondo punteado que se mueve */}
           <div
-            className="absolute inset-0 transition-all duration-300 bg-transparent group-hover:bg-[#87C232] text-2xl "
-          ></div>
-
-          {/* Imagen de la noticia con enlace */}
-          <div
-            onClick={handleNavigation} // Usa la función handleNavigation
-            className="cursor-pointer"
+            className="absolute -left-2 inset-y-0 top-5 transition-all duration-300 transform group-hover:translate-x-8 w-[95%] h-[76%] bg-[#f0f0f0] bg-dotted"
           >
-            <div className="p-4 pt-10 relative">
+            <div
+              className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 bg-[#87C232]"
+            ></div>
+          </div>
+
+          {/* Contenedor de la imagen */}
+          <div className="relative z-10">
+            <div className="p-4 pt-10">
               <img
-                src={image || uno} // Si no hay imagen, se usa la animación por defecto
-                alt={title} // Texto alternativo de la imagen
-                className="w-full h-auto transition-transform duration-300"
+                src={image || uno}
+                alt={title}
+                className="w-full h-[200px]"
+                onClick={handleNavigation}
               />
             </div>
           </div>
@@ -81,7 +77,11 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
 
         {/* Flecha de navegación que aparece al hacer hover */}
         <div className="absolute bottom-4 right-4 opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-          <div className="bg-[#9CE840] rounded-full p-4"></div>
+          <div className="bg-[#9CE840] rounded-full p-2 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>

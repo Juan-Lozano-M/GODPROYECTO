@@ -11,6 +11,12 @@ export default function NewDetail() {
   const [relatedNews, setRelatedNews] = useState([]);
 
   useEffect(() => {
+    // Scroll al inicio cuando se carga una nueva noticia
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
     fetch('/news.json')
       .then(response => response.json())
       .then(data => {
@@ -24,13 +30,13 @@ export default function NewDetail() {
           // Obtener artículos relacionados
           const related = data
             .filter(item => item.category === newsItem.category && item.slug !== newsItem.slug)
-            .slice(0, 3); // Obtener 3 artículos relacionados
+            .slice(0, 3);
           setRelatedNews(related);
         } else {
           setShowModal(true);
           setTimeout(() => {
             navigate('/noticiasv');
-          }, 2000); // Redirije en 2 segundos 
+          }, 2000);
         }
         setLoading(false);
       })

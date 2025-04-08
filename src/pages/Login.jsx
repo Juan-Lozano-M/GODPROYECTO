@@ -83,7 +83,7 @@ const Login = () => {
       <div className="flex justify-between items-center ml-5 sm:ml-20 mb-15 ">
         <div className="flex items-center gap-0.4  xl:scale-80 2xl:scale-100">
         <Link to={"/"} ><img src={GODlogo} className="h-15 " /></Link>
-        <h1 className="hidden sm:flex font-['ADLaM_Display'] font-semibold text-white text-[17px] ml-3 "> GAME OF DREAMS </h1>
+        <h1 className="hidden sm:flex font-bravecho font-bold text-white text-[22px] ml-3 "> game of dreams </h1>
         </div>
         
         <motion.img 
@@ -115,7 +115,7 @@ const Login = () => {
             </motion.button>
           </Link>
 
-          <Link to="../register">
+          <Link to="/register">
             <motion.button
               className="px-6 py-2 bg-white text-[#87C232] rounded-full shadow-lg"
               whileHover={{ scale: 1.05 }}
