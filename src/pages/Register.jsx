@@ -1,15 +1,13 @@
 
-import googleLogo from '/assets/logoGoogle.png'
-import instagramLogo from '/assets/logoInstagram.png'
-import xIcon from '/assets/xIcon.png'
-import offEye from '/assets/offEye.png'
-import GODlogo from '/assets/logoGOD.png'
-import imagenRegister from '/assets/imagenRegister.png' 
+import googleLogo from '../assets/logos/logoGoogle.png'
+import instagramLogo from '../assets/logos/logoInstagram.png'
+import xIcon from '../assets/icons/xIcon.png'
+import offEye from '../assets/icons/offEye.png'
+import GODlogo from '../assets/logos/logoGOD.png'
+import imagenRegister from '../assets/images/imagenRegister.png' 
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
 import InputField from "../components/InputField";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
 import { Link } from "react-router-dom";
@@ -78,14 +76,17 @@ const Register = () => {
               return;
           }
       
+          // In the manejarEnvio function, update the success block
           if (result.status === "success") {
               console.log("Registrado con éxito:", result);
-              localStorage.setItem("userName", result.name);
+              localStorage.setItem("userName", nombre);
+              localStorage.setItem("userEmail", email);  // Add this line
               setTimeout(() => {
                   setIsLoading(false);
                   navigate("/dashboard");
               }, 2000);
-          } else {
+          }
+          else {
               setMensaje(result.message);
               setIsLoading(false);
           }

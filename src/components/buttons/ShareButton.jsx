@@ -1,4 +1,4 @@
-import linkIcon from "/assets/link.png";
+import linkIcon from "../../assets/icons/link.png";
 
 function ShareButton() {
   const handleShare = async () => {

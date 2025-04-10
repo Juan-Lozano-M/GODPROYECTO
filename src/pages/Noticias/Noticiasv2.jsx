@@ -2,7 +2,7 @@
 import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
   import { ArrowRight } from "lucide-react";
   import { useState } from "react";
-  import imagennews from "../../assets/news.png"
+  import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
   import Cursor from "../../components/Cursor"; // Importa el componente de cursor personalizado
 
   // Componente funcional Noticiasv2 que renderiza la sección de noticias
@@ -65,10 +65,10 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
               {/* Botones de filtro de noticias */}
               <div className="absolute md:top-0 md:right-0 md:bottom-36 bottom-[-120px] left-4 right-4 md:left-auto flex flex-row md:flex-col justify-between md:justify-center space-x-2 md:space-x-0 md:space-y-2 md:bg-gray-100 md:p-6 z-10">
                 <button className="bg-[#87C232] text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-[#87C232] flex-1 md:flex-none">
-                  ALL NEWS
+                  DESCUBRE
                 </button>
                 <button className="bg-gray-400 text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-gray-500 flex-1 md:flex-none">
-                  RESEARCH
+                  BUSCA
                 </button>
               </div>
             </div>

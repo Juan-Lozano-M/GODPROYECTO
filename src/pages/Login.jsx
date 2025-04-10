@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import googleLogo from "/assets/logoGoogle.png";
-import instagramLogo from "/assets/logoInstagram.png";
-import loginImagen from "/assets/imagenLogin.png";
-
-import GODlogo from "/assets/logoGOD.png";
+import googleLogo from "../assets/logos/logoGoogle.png";
+import instagramLogo from "../assets/logos/logoInstagram.png";
+import loginImagen from "../assets/images/imagenLogin.png";
+import GODlogo from "../assets/logos/logoGOD.png";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
 import InputField from "../components/InputField";
 import { Link } from "react-router-dom";
@@ -54,6 +53,7 @@ const Login = () => {
       if (result.status === "success") {
         console.log("Usuario encontrado:", result);
         localStorage.setItem("userName", result.name);
+        localStorage.setItem("userEmail", result.email);
         navigate("/dashboard");
       } else {
         setMensaje(result.message);

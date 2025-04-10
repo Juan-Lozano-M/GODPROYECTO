@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import xIcon from "/assets/xIcon.png";
-import offEye from "/assets/offEye.png";
-import onEye from "/assets/onEye.png";
+import xIcon from "../assets/icons/xIcon.png";
+import offEye from "../assets/icons/offEye.png";
+import onEye from "../assets/icons/onEye.png";
 
 const InputField = ({ type, placeholder, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
