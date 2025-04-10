@@ -9,6 +9,10 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard"; 
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
 import NewDetails from "./pages/Noticias/NewDetail";
+import Home from "./pages/Admin/Home";
+import Testimonial from "./pages/Admin/Testimonial";
+import Notices from "./pages/Admin/Notices";
+import Statics from "./pages/Admin/Statics";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +20,26 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <Navigate to="/" />,
   },
-
+  {
+    path: "/home",
+    element: <Home />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/testimonials",
+    element: <Testimonial />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/notices",
+    element: <Notices />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/statics",
+    element: <Statics />,
+    errorElement: <Navigate to="/" />,
+  },
   {
     path: "/login",
     element: <LoginMain />,
@@ -28,13 +51,11 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
-
   {
     path: "/dashboard",
     element: <Dashboard />,
     errorElement: <Navigate to="/" />,
   },
-
   {
     path: "/noticiasv",
     element: <Noticiasv2 />,
