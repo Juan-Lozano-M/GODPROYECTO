@@ -24,6 +24,12 @@ function App() {
           Noticias
         </button>
       </Link>
+
+      <Link to="/home">
+        <button className="w-64 py-3 bg-[#000000] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+          Administrador
+        </button>
+      </Link>
     </div>
   );
 }
