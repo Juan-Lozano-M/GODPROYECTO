@@ -67,13 +67,13 @@ const Home = () => {
     <div className="w-1/2">
 
       {/* Columna izquierda: Saludo */}
-      <div className="flex items-center justify-center rounded-lg w-full h-51 gap-10 bg-black/7 ">
+      <div className="flex items-center justify-center rounded-lg w-full h-51 2xl:gap-10 bg-black/7 ">
         <div>
           <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-3xl">Hola Gloria!</h1>
           <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[18px]">Es bueno verte de nuevo.</p>
         </div>
         <div>
-          <img src={imagenBienvenida} className="w-65 mb-8" alt="Imagen bienvenida" />
+          <img src={imagenBienvenida} className="hidden 2xl:flex w-65 mb-8" alt="Imagen bienvenida" />
         </div>
       </div>
 
@@ -157,7 +157,7 @@ const Home = () => {
       </div>
 
       
-          <div className="mt-17">
+          <div className="mt-17 hidden xl:flex flex-col">
             <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadisticas </h1>
             <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobacion de testimonios </h1>
             <Estadisticas/>
