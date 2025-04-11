@@ -1,22 +1,82 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagenDashboard from "../assets/images/imagenDashboard.png";
+import Checkboxmore from "../components/checkbox/Checkboxmore";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [interestError, setInterestError] = useState("");
   const navigate = useNavigate();
+  const [isEditingProfileInterests, setIsEditingProfileInterests] = useState(false);
 
+  const [showAllInterests, setShowAllInterests] = useState(false);
+
+  const interests = [
+    "Investigación",
+    "Deporte",
+    "Música",
+    "Arte",
+    "Tecnología",
+    "Medio Ambiente",
+    "Lectura",
+    "Fotografía",
+    "Viajes",
+    "Cocina"
+  ];
+
+  const sortInterests = (interestsList) => {
+    return [...interestsList].sort((a, b) => {
+      const aSelected = selectedInterests.includes(a);
+      const bSelected = selectedInterests.includes(b);
+      if (aSelected && !bSelected) return -1;
+      if (!aSelected && bSelected) return 1;
+      return interests.indexOf(a) - interests.indexOf(b);
+    });
+  };
+
+  const visibleInterests = showAllInterests 
+    ? interests 
+    : sortInterests(interests).slice(0, 7);
+  const sortedInterests = visibleInterests;
+  const handleEditProfileInterests = () => {
+    if (isEditingProfileInterests) {
+      localStorage.setItem("userInterests", JSON.stringify(selectedInterests));
+    }
+    setIsEditingProfileInterests(!isEditingProfileInterests);
+  };
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
     const storedEmail = localStorage.getItem("userEmail");
-    if (storedName) {
-      setUserName(storedName);
-    }
-    if (storedEmail) {
-      setUserEmail(storedEmail);
-    }
+    const storedInterests = JSON.parse(localStorage.getItem("userInterests") || "[]");
+    
+    if (storedName) setUserName(storedName);
+    if (storedEmail) setUserEmail(storedEmail); // Make sure this is working
+    if (storedInterests.length > 0) setSelectedInterests(storedInterests);
   }, []);
+
+  const handleInterestToggle = (interest) => {
+    setSelectedInterests(prev => {
+      if (prev.includes(interest)) {
+        return prev.filter(i => i !== interest);
+      } else {
+        return [...prev, interest];
+      }
+    });
+    setInterestError("");
+  };
+
+  const handleSaveInterests = () => {
+    if (selectedInterests.length < 2) {
+      setInterestError("Por favor selecciona al menos 2 intereses");
+      return;
+    }
+    localStorage.setItem("userInterests", JSON.stringify(selectedInterests));
+    setInterestError("¡Intereses guardados exitosamente!");
+    sortInterests(interests);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("userName");
@@ -65,9 +125,11 @@ const Dashboard = () => {
                 <button className="text-white px-4 py-2 rounded-md">
                   Editar Perfil
                 </button>
+                <Link to="/" >
                 <button className="bg-[#9CE840] text-black px-4 py-2 rounded-md">
                   ¡Descubre tu camino!
                 </button>
+                </Link>
               </div>
             </div>
             <div className="absolute right-10 top-[-55px] h-full w-1/3 hidden max-[810px]:hidden min-[810px]:block">
@@ -90,6 +152,16 @@ const Dashboard = () => {
 
               <p className="text-gray-500 text-sm mb-4">{userEmail}</p>
               
+              <div className="flex gap-2 mb-4">
+                {selectedInterests.slice(0, 2).map((interest) => (
+                  <span 
+                    key={interest}
+                    className="bg-[#9CE840] text-black px-3 py-1 rounded-full text-sm font-medium"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
 
               <div className="flex justify-start w-full gap-2 text-sm text-gray-500 mb-2">
                 <div className="flex items-center gap-2">
@@ -208,12 +280,76 @@ const Dashboard = () => {
               <h2 className="text-xl font-semibold bg-[#9CE840] text-black p-3 rounded-t-lg -m-6 mb-6">
                 Lo que te apasiona
               </h2>
-              <div className="flex flex-wrap gap-3 mt-4">
-                <span className="bg-gray-100 px-4 py-2 rounded-full">Investigación</span>
-                <span className="bg-gray-100 px-4 py-2 rounded-full">Investigación</span>
-                <span className="bg-gray-100 px-4 py-2 rounded-full">Investigación</span>
-                <span className="bg-gray-100 px-4 py-2 rounded-full">Investigación</span>
+              <div className="mb-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex-1">
+                    <div className={`flex flex-wrap gap-3 transition-all duration-300 ease-in-out p-1 ${
+                      showAllInterests 
+                        ? 'max-h-[800px] opacity-100 scale-100' 
+                        : 'max-h-[45px] opacity-90 scale-95'
+                    } transform origin-top overflow-hidden`}>
+                      {sortedInterests.map((interest) => (
+                        <button
+                          key={interest}
+                          onClick={() => isEditingProfileInterests && handleInterestToggle(interest)}
+                          className={`px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-md ${
+                            selectedInterests.includes(interest)
+                              ? "bg-[#9CE840] text-black font-medium"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          } ${!isEditingProfileInterests && "cursor-default"}`}
+                        >
+                          {interest}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0 pt-2">
+                    <Checkboxmore 
+                      checked={showAllInterests}
+                      onChange={() => setShowAllInterests(!showAllInterests)}
+                      className={`scale-75 transform transition-all duration-300 ${
+                        showAllInterests ? 'rotate-180' : 'rotate-0'
+                      }`}
+                    />
+                  </div>
+                </div>
+                {interestError && (
+                  <p className={`text-sm mt-2 ${
+                    interestError.includes("exitosamente") 
+                      ? "text-green-500" 
+                      : "text-red-500"
+                  }`}>
+                    {interestError}
+                  </p>
+                )}
+                <div className={`transition-all duration-300 ease-in-out ${
+                  showAllInterests 
+                    ? 'h-[60px] opacity-100 mt-4' 
+                    : 'h-0 opacity-0 mt-0'
+                } overflow-hidden`}>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setIsEditingProfileInterests(!isEditingProfileInterests)}
+                      className={`${
+                        isEditingProfileInterests 
+                          ? "bg-gray-500" 
+                          : "bg-[#87C232]"
+                      } text-white px-6 py-2 rounded-md hover:opacity-90`}
+                    >
+                      {isEditingProfileInterests ? "Cancelar" : "Editar"}
+                    </button>
+                    {isEditingProfileInterests && (
+                      <button
+                        onClick={handleSaveInterests}
+                        className="bg-[#87C232] text-white px-6 py-2 rounded-md hover:bg-[#9CE840]"
+                      >
+                        Guardar intereses
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
         </div>

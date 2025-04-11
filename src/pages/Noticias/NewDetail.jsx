@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import ShareButton from "../../components/buttons/ShareButton"; //Boton con el api del portapapeles 
+import ShareButton from "../../components/buttons/ShareButton";
+import SuscribeCard from "../../components/cards/SuscribeCard"; // Add this import
 
 export default function NewDetail() {
   const { slug } = useParams();
@@ -189,12 +190,11 @@ export default function NewDetail() {
 
           {/* Sidebar */}
           <div className="lg:col-span-4">
-            <div className="sticky top-8 space-y-8">
+            <div className="sticky top-8 space-y-6 mb-5">  {/* Changed from space-y-8 to space-y-6 */}
               {/* Share Section */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">Compartir</h3>
                 <div className="flex space-x-4">
-  
                   <ShareButton/>
                 </div>
               </div>
@@ -230,17 +230,15 @@ export default function NewDetail() {
               </div>
 
               {/* Newsletter */}
-              <div className="bg-gradient-to-br from-[#87C232] to-green-600 rounded-xl shadow-lg p-6 text-white">
-                <h3 className="text-xl font-bold mb-3">Suscríbete a GOD</h3>
-                <p className="mb-4 text-white/90">Recibe las últimas noticias directamente en tu correo.</p>
-                <input
-                  type="email"
-                  placeholder="Tu correo electrónico"
-                  className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 mb-3"
+              <div>
+                <SuscribeCard 
+                  title="GOD News"
+                  subtitle="Recibe las últimas noticias directamente en tu correo."
+                  buttonText="Suscribirse"
+                  inputPlaceholder="Tu correo electrónico"
+                  bannerText1="SUSCRÍBETE"
+                  bannerText2="ÚNETE"
                 />
-                <button className="w-full bg-white text-green-600 font-medium py-2 px-4 rounded-lg hover:bg-white/90 transition-colors">
-                  Suscribirse
-                </button>
               </div>
             </div>
           </div>

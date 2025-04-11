@@ -53,7 +53,7 @@ const Login = () => {
       if (result.status === "success") {
         console.log("Usuario encontrado:", result);
         localStorage.setItem("userName", result.name);
-        localStorage.setItem("userEmail", result.email);
+        localStorage.setItem("userEmail", result.email); // Make sure this line is using the email from response
         navigate("/dashboard");
       } else {
         setMensaje(result.message);
