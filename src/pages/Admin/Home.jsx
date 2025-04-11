@@ -87,10 +87,10 @@ const Home = () => {
         <div className="flex items-center justify-center rounded-lg w-full mt-10 sm:mt-15 h-40 sm:h-51 bg-black/7">
           <div className="ml-12 sm:ml-0 ">
             <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-[17px] sm:text-3xl">Hola Gloria!</h1>
-            <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium sm:text-lg">Es bueno verte de nuevo.</p>
+            <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[13px] sm:text-lg">Es bueno verte de nuevo.</p>
           </div>
           <div>
-            <img src={imagenBienvenida} className="w-100 sm:w-65 mb-8" alt="Imagen bienvenida" />
+            <img src={imagenBienvenida} className="w-85 sm:w-65 mb-8" alt="Imagen bienvenida" />
           </div>
         </div>
   
@@ -119,15 +119,15 @@ const Home = () => {
           </div>
   
           {/* Sección de agregar noticia */}
-          <div className="flex justify-center items-center mt-15 xl:mt-17 w-full h-18 border-2 rounded-lg gap-2">
-            <img src={iconMas} className="h-9" alt="Icono de agregar noticia" />
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif", paddingTop: "4px"}} className="text-2xl font-bold">Crear noticia</h1>
+          <div className="flex justify-center items-center mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 border-2 rounded-lg gap-2">
+            <img src={iconMas} className="h-7 sm:h-9" alt="Icono de agregar noticia" />
+            <h1 className="text-xl sm:text-2xl font-bold">Crear noticia</h1>
           </div>
   
           {/* Sección de testimonios */}
-          <div className="w-full h-auto mt-15 xl:mt-17">  
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl">Testimonios</h1>
-            <div className="relative flex gap-7 mt-8 font-bold">
+          <div className="w-full h-auto mt-10 sm:mt-15 xl:mt-17">  
+            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-xl sm:text-2xl">Testimonios</h1>
+            <div className="relative flex gap-7 mt-4 sm:mt-8 font-bold">
               <button 
                 ref={(el) => setTabRef("nuevos", el)}
                 onClick={() => setActiveTab("nuevos")} 
