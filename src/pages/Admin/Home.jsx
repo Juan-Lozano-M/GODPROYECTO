@@ -7,14 +7,14 @@ import Sidebar from "../../components/Sidebar";
 import TestimonialCard from "../../components/TestimonialCard";
 import StatCard from "../../components/StatCard";
 import Estadisticas from "../../components/Estadisticas";
+import CartoonButton from "../../components/buttons/CartoonButton";
 
 // Importando los assets necesarios
-import iconFilter from "../../assets/icons/iconFilter.png";
 import iconSearch from "../../assets/icons/iconSearch.png";
 import iconNotification from "../../assets/icons/iconNotification.png";
 import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
-import iconMas from "../../assets/icons/iconMas.png";
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";
+import { Button } from "@mui/material";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("nuevos");
@@ -85,12 +85,12 @@ const Home = () => {
   
         {/* Saludo */}
         <div className="flex items-center justify-center rounded-lg w-full mt-10 sm:mt-15 h-40 sm:h-51 bg-black/7">
-          <div className="ml-12 sm:ml-0 ">
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-[17px] sm:text-3xl">Hola Gloria!</h1>
-            <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[13px] sm:text-lg">Es bueno verte de nuevo.</p>
+          <div className="ml-8 sm:ml-0 ">
+            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold basis-[10px] sm:text-3xl shrink-0">Hola Gloria!</h1>
+            <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[15px]">Es bueno verte de nuevo.</p>
           </div>
           <div>
-            <img src={imagenBienvenida} className="w-85 sm:w-65 mb-8" alt="Imagen bienvenida" />
+            <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain mb-8 sm:flex sm:w-65 " alt="Imagen bienvenida" />
           </div>
         </div>
   
@@ -119,9 +119,8 @@ const Home = () => {
           </div>
   
           {/* Sección de agregar noticia */}
-          <div className="flex justify-center items-center mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 border-2 rounded-lg gap-2">
-            <img src={iconMas} className="h-7 sm:h-9" alt="Icono de agregar noticia" />
-            <h1 className="text-xl sm:text-2xl font-bold">Crear noticia</h1>
+          <div className="mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 gap-2">
+            <CartoonButton />
           </div>
   
           {/* Sección de testimonios */}
@@ -132,7 +131,7 @@ const Home = () => {
                 ref={(el) => setTabRef("nuevos", el)}
                 onClick={() => setActiveTab("nuevos")} 
                 style={{ fontFamily: "'Mint Sans', sans-serif" }}
-                className={` text-lg ${activeTab === "pendientes" ? "text-[#0000004D]" : "text-black"}`}
+                className={` sm:text-lg ${activeTab === "pendientes" ? "text-[#0000004D]" : "text-black"}`}
               >
                 Recientes
               </button>
@@ -140,7 +139,7 @@ const Home = () => {
                 ref={(el) => setTabRef("pendientes", el)}
                 onClick={() => setActiveTab("pendientes")} 
                 style={{ fontFamily: "'Mint Sans', sans-serif" }}
-                className={`text-lg ${activeTab === "nuevos" ? "text-[#0000004D]" : "text-black"}`}
+                className={` sm:text-lg ${activeTab === "nuevos" ? "text-[#0000004D]" : "text-black"}`}
               >
                 Pendientes de revisión
               </button>
@@ -192,7 +191,7 @@ const Home = () => {
           </div>
   
           {/* Estadísticas - Solo visible en xl */}
-          <div className="hidden xl:flex xl:flex-col mt-25">
+          <div className="hidden xl:flex xl:flex-col mt-17">
             <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadisticas </h1>
             <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobacion de testimonios </h1>
             <Estadisticas/>
