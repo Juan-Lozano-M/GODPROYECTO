@@ -141,87 +141,86 @@ const Sidebar = () => {
         {/* Overlay que agrega un efecto desvanecido cuando el menú está abierto */}
         {showMenu && (
           <div 
-            className="fixed inset-0 bg-black/60 z-40 sm:hidden"
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
             onClick={closeMenu}
           />
         )}
         
-        <div className={`fixed ${showMenu ? "left-0" : "-left-full"} sm:left-7 top-0 sm:w-30 h-screen flex transition-all duration-300 ease-in-out z-50`}>
-            <nav className='sm:my-10 rounded-r-3xl sm:rounded-3xl w-60 sm:w-40 flex flex-col justify-between bg-black items-center py-6'>
-               
-                {/* Logo arriba */}
-                <div className='p-4 flex items-center gap-2'>
-                    <img src={logoGod} className="h-13" alt="Logo de GOD" />
-                    <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className='text-white font-extrabold text-2xl sm:hidden'> GOD </h1>
-                </div>
-
-                {/* Íconos en el centro */}
-                <div className='flex flex-col items-center gap-12 flex-grow justify-center sm:gap-15 w-full'>
-                    <Link to="/home" className="group relative flex items-center w-full pl-6 sm:pl-0 sm:justify-center">
-                        <HomeIcon isActive={isActive('/home')} />
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg sm:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
-                            Inicio
-                        </span>
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden sm:block">
-                            Inicio
-                        </span>
-                    </Link>
-
-                    <Link to="/testimonials" className="group relative flex items-center w-full pl-6 sm:pl-0 sm:justify-center">
-                        <TestimonialsIcon isActive={isActive('/testimonials')} />
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg sm:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
-                            Testimonios
-                        </span>
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden sm:block">
-                            Testimonios
-                        </span>
-                    </Link>
-
-                    <Link to="/notices" className="group relative flex items-center w-full pl-6 sm:pl-0 sm:justify-center">
-                        <NoticesIcon isActive={isActive('/notices')} />
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg sm:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
-                            Noticias
-                        </span>
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden sm:block">
-                            Noticias
-                        </span>
-                    </Link>
-
-                    <Link to="/statics" className="group relative flex items-center w-full pl-6 sm:pl-0 sm:justify-center">
-                        <StaticsIcon isActive={isActive('/statics')} />
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg sm:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
-                            Estadísticas
-                        </span>
-                        <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden sm:block">
-                            Estadísticas
-                        </span>
-                    </Link>
-                </div>
-
-                {/* Botón de salida abajo */}
-                <div className="group relative flex items-center w-full pl-6 sm:pl-0 sm:justify-center p-4">
-                    <ExitIcon />
-                    <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg sm:hidden`}>
-                        Salir
-                    </span>
-                    <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden sm:block">
-                        Salir
-                    </span>
-                </div>
-            </nav>
-
-            {/* Botón de menú hamburguesa */}
-            <div> 
-              <button
-                  onClick={toggleMenu}
-                  className='fixed right-4 bottom-4 bg-[#87C232] rounded-full p-1 sm:hidden z-50'
-              >
-                  <Checkbox checked={showMenu} onChange={toggleMenu} />
-              </button>
+        <div className={`fixed ${showMenu ? "left-0" : "-left-full"} md:left-7 top-0 md:w-30 h-screen flex transition-all duration-300 ease-in-out z-50`}>
+          <nav className='md:my-10 rounded-r-3xl md:rounded-3xl w-60 md:w-40 flex flex-col justify-between bg-black items-center py-6'>
+            
+            {/* Logo arriba */}
+            <div className='p-4 flex items-center gap-2'>
+              <img src={logoGod} className="h-13" alt="Logo de GOD" />
+              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className='text-white font-extrabold text-2xl md:hidden'> GOD </h1>
             </div>
+    
+            {/* Íconos en el centro */}
+            <div className='flex flex-col items-center gap-12 flex-grow justify-center md:gap-15 w-full'>
+              <Link to="/home" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
+                <HomeIcon isActive={isActive('/home')} />
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg md:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
+                  Inicio
+                </span>
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                  Inicio
+                </span>
+              </Link>
+    
+              <Link to="/testimonials" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
+                <TestimonialsIcon isActive={isActive('/testimonials')} />
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg md:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
+                  Testimonios
+                </span>
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                  Testimonios
+                </span>
+              </Link>
+    
+              <Link to="/notices" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
+                <NoticesIcon isActive={isActive('/notices')} />
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg md:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
+                  Noticias
+                </span>
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                  Noticias
+                </span>
+              </Link>
+    
+              <Link to="/statics" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
+                <StaticsIcon isActive={isActive('/statics')} />
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg md:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
+                  Estadísticas
+                </span>
+                <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                  Estadísticas
+                </span>
+              </Link>
+            </div>
+    
+            {/* Botón de salida abajo */}
+            <div className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center mb-5 ">
+              <ExitIcon />
+              <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className={`ml-3 text-white text-lg md:hidden`}>
+                Salir
+              </span>
+              <span style={{ fontFamily: "'Mint Sans', sans-serif" }} className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                Salir
+              </span>
+            </div>
+          </nav>
+    
+          {/* Botón de menú hamburguesa */}
+          <div> 
+            <button
+              onClick={toggleMenu}
+              className='fixed right-4 bottom-4 bg-[#87C232] rounded-full p-1 md:hidden z-50'
+            >
+              <Checkbox checked={showMenu} onChange={toggleMenu} />
+            </button>
+          </div>
         </div>
       </>
     );
-};
-
+  }
 export default Sidebar;
