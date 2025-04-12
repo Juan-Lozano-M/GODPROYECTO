@@ -4,6 +4,7 @@ import ImagenDashboard from "../assets/images/imagenDashboard.png";
 import Checkboxmore from "../components/checkbox/Checkboxmore";
 import { Link } from "react-router-dom";
 import LogoutButton from "../components/buttons/LogoutButton";
+import CareerPathPuzzle from '../components/dashboard/CareerPathPuzzle';
 
 const Dashboard = () => {
   const [userName, setUserName] = useState("");
@@ -175,7 +176,9 @@ const Dashboard = () => {
 
                   <span>Instituto de bolivar</span>
                 </div>
+                
               </div>
+
             </div>
           </div>
 
@@ -290,7 +293,7 @@ const Dashboard = () => {
                           onClick={() => isEditingProfileInterests && handleInterestToggle(interest)}
                           className={`px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-md ${
                             selectedInterests.includes(interest)
-                              ? "bg-[#9CE840] text-black font-medium"
+                              ? "bg-[#87C232] text-white font-medium shadow-[0_2px_8px_rgba(135,194,50,0.3)]"
                               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                           } ${!isEditingProfileInterests && "cursor-default"}`}
                         >
