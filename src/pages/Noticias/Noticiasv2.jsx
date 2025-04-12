@@ -41,13 +41,13 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
                   onMouseLeave={() => setIsHovered(false)}
                 >
                   <div className="bg-white inline-block px-2 md:px-4 py-1 mb-2">
-                    <span className="text-black text-xs md:text-sm font-medium">NEWS</span>
+                    <span className="text-black text-xs md:text-sm font-medium">NOTICIAS</span>
                   </div>
                   <h2 className="text-xl md:text-3xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-gray-300">
                     NOTICIAS DESTACADAS
                   </h2>
                   <p className="text-xs md:text-sm text-white transition-all duration-300">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit et porro repellendus possimus ut rem ullam maior.
+                  Descubre tu camino con inspiración. En esta seccion de noticias destacadas encontrarás historias motivadoras, consejos prácticos y oportunidades que te ayudarán a explorar y definir tu vocación. ¡Cada edición está pensada para acercarte un paso más a tu propósito!
                   </p>
 
                   {/* Nuevo botón de flecha con animación */}
