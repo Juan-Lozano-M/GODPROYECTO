@@ -14,7 +14,7 @@ import iconSearch from "../../assets/icons/iconSearch.png";
 import iconNotification from "../../assets/icons/iconNotification.png";
 import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";
-import { Button } from "@mui/material";
+import imagePerfil from "../../assets/images/imagePerfil.png";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("nuevos");
@@ -76,7 +76,9 @@ const Home = () => {
           </div>
           <div className="flex items-center">
             <img src={iconNotification} className="h-4 sm:h-5 mr-3" alt="Notificaciones" />
-            <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg bg-black/7"></div>
+            <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg bg-black/7">
+              <img src={imagePerfil} alt="Imagen de perfil"/>
+            </div>
             <button>
               <img src={iconAnguloAbajo} className="h-2 sm:h-3 ml-1" alt="Icono de menú" />
             </button>
@@ -176,7 +178,9 @@ const Home = () => {
             </div>
             <div className="flex items-center">
               <img src={iconNotification} className="h-5 mr-3" alt="Notificaciones" />
-              <div className="h-15 rounded-lg w-15 bg-black/7"></div>
+              <div className="h-15 rounded-lg w-15 bg-black/7">
+                <img src={imagePerfil} alt="Imagen de perfil"/>
+              </div>
               <button>
                 <img src={iconAnguloAbajo} className="h-3 ml-1" alt="Icono de menú" />
               </button>
