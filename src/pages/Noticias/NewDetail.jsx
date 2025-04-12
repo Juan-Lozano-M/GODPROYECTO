@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
 import SuscribeCard from "../../components/cards/SuscribeCard"; // Add this import
-
+import CartoonCard from "../../components/cards/CartoonCard";
 export default function NewDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -155,12 +155,11 @@ export default function NewDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Articulo */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-xl shadow-xl p-8">
+            <CartoonCard title={news.subtitle}>
               <div className="prose max-w-none">
-                <h2 className="text-3xl font-bold mb-6">{news.subtitle}</h2>
-                <div className="text-lg leading-relaxed text-gray-700 space-y-6">
+                <div className="text-lg leading-relaxed text-gray-700 space-y-6 border-l-4 border-black pl-4">
                   {news.content && news.content.split('\n').map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
+                    <p key={index} className="hover:text-black transition-colors">{paragraph}</p>
                   ))}
                   {!news.content && (
                     <p>No content available.</p>
@@ -168,66 +167,72 @@ export default function NewDetail() {
                 </div>
                 
                 {news.highlights && (
-                  <div className="my-8 p-6 bg-gray-50 rounded-lg border-l-4 border-[#87C232]">
-                    <h3 className="text-xl font-semibold mb-4">Puntos Destacados</h3>
+                  <div className="my-8 p-6 border-3 border-black">
+                    <h3 className="text-xl font-black text-black uppercase mb-4">Puntos Destacados</h3>
                     <ul className="list-disc list-inside space-y-2">
                       {news.highlights.map((highlight, index) => (
-                        <li key={index} className="text-gray-700">{highlight}</li>
+                        <li key={index} className="text-gray-700 hover:text-black transition-colors">{highlight}</li>
                       ))}
                     </ul>
                   </div>
                 )}
 
                 {news.conclusion && (
-                  <div className="mt-8">
-                    <h3 className="text-2xl font-bold mb-4">Conclusión</h3>
-                    <p className="text-lg text-gray-700">{news.conclusion}</p>
+                  <div className="mt-8 border-t-3 border-black pt-6">
+                    <h3 className="text-2xl font-black text-black uppercase mb-4">Conclusión</h3>
+                    <p className="text-lg text-gray-700 hover:text-black transition-colors">{news.conclusion}</p>
                   </div>
                 )}
               </div>
-            </div>
+            </CartoonCard>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-4">
             <div className="sticky top-8 space-y-6 mb-5">  {/* Changed from space-y-8 to space-y-6 */}
               {/* Share Section */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4">Compartir</h3>
+              <CartoonCard title="Compartir">
                 <div className="flex space-x-4">
                   <ShareButton/>
                 </div>
-              </div>
+              </CartoonCard>
 
-              {/* Related Articles section update */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4">Artículos Relacionados</h3>
+              {/* Related Articles section */}
+              <CartoonCard title="Artículos Relacionados">
                 <div className="space-y-4">
                   {relatedNews.length > 0 ? (
                     relatedNews.map((article) => (
-                      <div key={article.slug} className="group cursor-pointer" onClick={() => navigate(`/noticiasv/${article.slug}`)}>
-                        <div className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                          <div className="w-20 h-20 flex-shrink-0">
+                      <div 
+                        key={article.slug} 
+                        className="group cursor-pointer border-3 border-black rounded-xl p-3 transition-transform duration-300 hover:scale-105 hover:bg-black hover:text-white"
+                        onClick={() => navigate(`/noticiasv/${article.slug}`)}
+                      >
+                        <div className="flex items-start space-x-4">
+                          <div className="w-20 h-20 flex-shrink-0 border-2 border-black overflow-hidden rounded-lg">
                             <img
                               src={article.image.startsWith('/') ? article.image : `/${article.image}`}
                               alt={article.title}
-                              className="w-full h-full object-cover rounded-lg"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-900 group-hover:text-[#87C232] transition-colors">
+                            <h4 className="font-bold group-hover:text-white transition-colors">
                               {article.title}
                             </h4>
-                            <p className="text-sm text-gray-500 mt-1">{article.date}</p>
+                            <p className="text-sm mt-1 group-hover:text-gray-300">
+                              {article.date}
+                            </p>
                           </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-center py-2">No hay artículos relacionados</p>
+                    <p className="text-center py-2 border-2 border-black rounded-xl p-3">
+                      No hay artículos relacionados
+                    </p>
                   )}
                 </div>
-              </div>
+              </CartoonCard>
 
               {/* Newsletter */}
               <div>
