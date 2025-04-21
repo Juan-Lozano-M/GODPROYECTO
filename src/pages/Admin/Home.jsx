@@ -8,6 +8,7 @@ import TestimonialCard from "../../components/TestimonialCard";
 import StatCard from "../../components/StatCard";
 import Estadisticas from "../../components/Estadisticas";
 import CartoonButton from "../../components/buttons/CartoonButton";
+import Search from "../../components/admin/Search"
 
 // Importando los assets necesarios
 import iconSearch from "../../assets/icons/iconSearch.png";
@@ -65,27 +66,8 @@ const Home = () => {
       <div className="xl:hidden">
         
         {/* Buscador */}
-        <div className="flex items-center justify-between sm:h-15 mb-4">
-          <div className="sm:h-full flex flex-1 items-center">
-            <img src={iconSearch} className="h-4 sm:h-5 absolute ml-5" alt="Icono de búsqueda" />
-            <input
-              type="text"
-              className="w-[83%] sm:w-[77%] h-full py-2 pl-13 sm:pl-15 pr-10 rounded-lg bg-black/7"
-              style={{ fontFamily: "'Mint Sans', sans-serif" }}
-              placeholder="Buscar..."
-            />
-          </div>
-          <div className="flex items-center">
-            <img src={iconNotification} className="h-4 sm:h-5 mr-3" alt="Notificaciones" />
-            <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg bg-black/7">
-              <img src={imagePerfil} alt="Imagen de perfil"/>
-            </div>
-            <button>
-              <img src={iconAnguloAbajo} className="h-2 sm:h-3 ml-1" alt="Icono de menú" />
-            </button>
-          </div>
-        </div>
-  
+          <Search/>
+
         {/* Saludo */}
         <div className="flex items-center justify-center rounded-lg w-full mt-10 sm:mt-15 h-40 sm:h-51 bg-black/7">
           <div className="ml-8 sm:ml-0 ">
