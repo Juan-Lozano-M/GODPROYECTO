@@ -63,6 +63,7 @@ const Home = () => {
       
       {/* En pantallas pequeñas, primero mostrar buscador, saludo y stats */}
       <div className="xl:hidden">
+        
         {/* Buscador */}
         <div className="flex items-center justify-between sm:h-15 mb-4">
           <div className="sm:h-full flex flex-1 items-center">
