@@ -1,1 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Doto:wght@100..900&family=Quicksand:wght@300..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 @import "tailwindcss";
+
+
+@font-face {
+  font-family: Mint;
+  src: url("../src/assets/fonts/MintSansRegular.otf") format("truetype"),
+}
+
+
+@theme{
+  --font-mint: Mint, "sans-serif";
+  --font-quick: Quicksand, "sans-serif";
+}

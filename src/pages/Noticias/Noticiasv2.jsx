@@ -4,7 +4,7 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
   import { useState } from "react";
   import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
   import Cursor from "../../components/Cursor"; // Importa el componente de cursor personalizado
-
+  import Chatbot from "../../components/chatbot/ChatBot" // Importa el componente de chatbot
   // Componente funcional Noticiasv2 que renderiza la sección de noticias
   function Noticiasv2() {
     const [isHovered, setIsHovered] = useState(false);
@@ -13,7 +13,7 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
       
       <main className="min-h-screen bg-white"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
         <Cursor/>
-
+        <Chatbot />
         {/* Sección principal con imagen destacada */}
         <div className="relative ">
           <div className="flex">
@@ -43,10 +43,10 @@ import NewsList from "../../components/noticia/NewsList"; // Importa el componen
                   <div className="bg-white inline-block px-2 md:px-4 py-1 mb-2">
                     <span className="text-black text-xs md:text-sm font-medium">NOTICIAS</span>
                   </div>
-                  <h2 className="text-xl md:text-3xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-gray-300">
+                  <h2 className="text-xl md:text-3xl font-semibold font-mint text-white mb-2 transition-all duration-300 group-hover:text-gray-300">
                     NOTICIAS DESTACADAS
                   </h2>
-                  <p className="text-xs md:text-sm text-white transition-all duration-300">
+                  <p className="text-xs md:text-sm text-white transition-all duration-300 font-quick">
                   Descubre tu camino con inspiración. En esta seccion de noticias destacadas encontrarás historias motivadoras, consejos prácticos y oportunidades que te ayudarán a explorar y definir tu vocación. ¡Cada edición está pensada para acercarte un paso más a tu propósito!
                   </p>
 

@@ -133,7 +133,7 @@ const Login = () => {
     {/* 📌 Primera mitad de pantalla */}
     <div className="hidden lg:flex w-1/2 h-full ">
       <div className="mt-50 ml-40">
-        <h1 className="lg:text-[40px] xl:text-[42px] 2xl:text-[57px] font-mint font-bold mt-16 xl:mt-[-28px] 2xl:mt-8 ">
+        <h1 className="lg:text-[40px] xl:text-[42px] 2xl:text-[57px]  font-bold mt-16 xl:mt-[-28px] 2xl:mt-8 ">
         <Textwriter 
           words={["Descubre tu camino, construye tu futuro."]} 
           loop={false} 
@@ -143,9 +143,9 @@ const Login = () => {
 
         />
         </h1>
-        <p className="mt-13 text-[20px] font-mint font-bold  ">Si no tienes una cuenta</p>
+        <p className="mt-13 text-[20px]  font-bold  ">Si no tienes una cuenta</p>
 
-        <Link to="../register" className="text-white text-[20px]  font-mint font-bold">
+        <Link to="../register" className="text-white text-[20px]   font-bold">
           ¡Regístrate aquí!
         </Link>
       </div>
@@ -193,7 +193,7 @@ const Login = () => {
           </div>
         </div>
 
-          <a href="#" className="text-white text-sm float-end font-mint font-semibold">
+          <a href="#" className="text-white text-sm float-end font-semibold">
             ¿Recuperar contraseña?
           </a>
 
@@ -206,7 +206,7 @@ const Login = () => {
 
         <div className="flex items-center gap-8 ">
           <div className="flex-1 border-t border-white opacity-50"></div>
-          <span className="text-white font-mint font-semibold">o inicia con</span>
+          <span className="text-white font-semibold">o inicia con</span>
           <div className="flex-1 border-t border-white opacity-50"></div>
         </div>
 
