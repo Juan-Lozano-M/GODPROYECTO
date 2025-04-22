@@ -56,7 +56,7 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
         <div className="md:w-3/5 p-4 md:p-8 md:pt-10 transition-all duration-300 group-hover:translate-x-4">
           {/* Autor y fecha de publicación */}
           <div className="flex items-center text-sm mb-4">
-            <span className="font-bold text-[#9CE840]">{author}</span> {/* Nombre del autor */}
+            <span className="font-bold text-[#9CE840] font-quick">{author}</span> {/* Nombre del autor */}
             <span className="mx-2 text-gray-500">/</span> {/* Separador */}
             <span className="text-gray-500">{date}</span> {/* Fecha de la noticia */}
           </div>
@@ -66,13 +66,13 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
             onClick={handleNavigation} // Usa la función handleNavigation
             className="cursor-pointer"
           >
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-500 mb-4 leading-tight group-hover:text-black uppercase">
+            <h3 className="text-3xl md:text-4xl  font-bold text-gray-500 mb-4 leading-tight group-hover:text-black uppercase">
               {title}
             </h3>
           </div>
 
           {/* Descripción breve de la noticia */}
-          <p className="text-gray-400">{description}</p>
+          <p className="text-gray-400 font-quick">{description}</p>
         </div>
 
         {/* Flecha de navegación que aparece al hacer hover */}

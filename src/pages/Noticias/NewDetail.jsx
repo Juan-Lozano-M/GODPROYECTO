@@ -125,7 +125,7 @@ export default function NewDetail() {
         <img 
           src={news.image} 
           alt={news.title}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover blur-[3px] filter brightness-75 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
     

@@ -1,12 +1,4 @@
-@font-face {
-  font-family: mint;
-  src: url("../src/assets/fonts/MintSansBold.otf");
-}
 
-
-@theme{
-  --font-mint: mint, "sans-serif";
-}
 body {
   overflow-x: hidden;
   margin: 0;
