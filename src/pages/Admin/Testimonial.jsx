@@ -1,7 +1,9 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
 
-import flechaTestimonial from "../../assets/icons/flechaTestimonial.png"
+import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png"
+import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png"
+
 import Search from "../../components/admin/Search"
 
 function Testimonials() {
@@ -10,24 +12,54 @@ function Testimonials() {
     <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
 
       {/* Buscador */}
+      <div className="2xl:ml-170">
         <Search/>
-
-        <div className="mb-5">
-          <h1 className="text-3xl font-bold"> TESTIMONIOS </h1>
+      </div>
+      
+        <div className="">
+          <h1 className="2xl:text-5xl font-bold"> TESTIMONIOS </h1>
         </div>
 
-      <div className="flex gap-3 h-20 w-full bg-gray-200">
-        <div className="bg-amber-600 h-full w-20">
-
-          <div className="flex gap-3">
-              <p className="text-4xl"> 10 </p>
-              <div className="bg-[#9CE840] w-8 h-5 rounded-full"></div>
+      <div className="flex mt-10 gap-15 h-auto w-[59%]">
+        <div className="flex h-auto w-45">
+          <div className="w-auto">
+            <h1 className="font-adlam text-6xl"> 10 </h1>
           </div>
-          <div>
-
+          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
+            <div className="flex justify-center items-center gap-1 bg-[#9CE840] rounded-full w-10">
+              <img src={flechaTestimonialArriba} className="h-3" alt="" />
+              <p className="text-[15px] font-adlam"> 2 </p>
+            </div>
+            <p className="font-adlam text-[20px]"> Aprobados </p>
           </div>
-
         </div>
+
+        <div className="flex h-auto w-45">
+          <div className="w-auto">
+            <h1 className="font-adlam text-6xl"> 5 </h1>
+          </div>
+          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
+            <div className="flex justify-center items-center gap-1 bg-[#EA4335] rounded-full w-10">
+              <img src={flechaTestimonialAbajo} className="h-3" alt="" />
+              <p className="text-[15px] font-adlam"> 2 </p>
+            </div>
+            <p className="font-adlam text-[20px]"> Aprobados </p>
+          </div>
+        </div>
+
+        <div className="flex h-auto w-45">
+          <div className="w-auto">
+            <h1 className="font-adlam text-6xl"> 4 </h1>
+          </div>
+          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
+            <div className="flex justify-center items-center gap-1 bg-[#FFBE00] rounded-full w-10">
+              <img src={flechaTestimonialArriba} className="h-3" alt="" />
+              <p className="text-[15px] font-adlam"> 2 </p>
+            </div>
+            <p className="font-adlam text-[20px]"> Aprobados </p>
+          </div>
+        </div>
+ 
       </div>
 
       {/* Sección de la barra lateral */}

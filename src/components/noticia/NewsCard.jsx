@@ -66,7 +66,7 @@ function NewsCard({ category, image, author, date, title, description, slug }) {
             onClick={handleNavigation} // Usa la función handleNavigation
             className="cursor-pointer"
           >
-            <h3 className="text-3xl md:text-4xl  font-bold text-gray-500 mb-4 leading-tight group-hover:text-black uppercase">
+            <h3 className="text-3xl md:text-4xl font-adlam font-bold text-gray-500 mb-4 leading-tight group-hover:text-black uppercase">
               {title}
             </h3>
           </div>
