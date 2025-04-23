@@ -1,10 +1,11 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
+import TestimonialStat from "../../components/admin/TestimonialStat";
+import Search from "../../components/admin/Search";
 
+import filtroTestimonial from "../../assets/icons/filtroTestimonial.png"
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png"
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png"
-
-import Search from "../../components/admin/Search"
 
 function Testimonials() {
   return (
@@ -12,55 +13,58 @@ function Testimonials() {
     <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
 
       {/* Buscador */}
-      <div className="2xl:ml-170">
-        <Search/>
+      <div className="2xl:ml-210">
+        <Search />
       </div>
       
+      {/* Titulo */}
         <div className="">
           <h1 className="2xl:text-5xl font-bold"> TESTIMONIOS </h1>
         </div>
 
-      <div className="flex mt-10 gap-15 h-auto w-[59%]">
-        <div className="flex h-auto w-45">
-          <div className="w-auto">
-            <h1 className="font-adlam text-6xl"> 10 </h1>
-          </div>
-          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
-            <div className="flex justify-center items-center gap-1 bg-[#9CE840] rounded-full w-10">
-              <img src={flechaTestimonialArriba} className="h-3" alt="" />
-              <p className="text-[15px] font-adlam"> 2 </p>
-            </div>
-            <p className="font-adlam text-[20px]"> Aprobados </p>
-          </div>
-        </div>
+      {/* Estados de los testimonios */}
+      <div className="flex mt-10 gap-20 h-auto w-[59%]">
+        <TestimonialStat 
+          value={10} 
+          indicator={2}
+          label="Aprobados" 
+          iconSrc={flechaTestimonialArriba} 
+          bgColor="#9CE840" 
+        />
 
-        <div className="flex h-auto w-45">
-          <div className="w-auto">
-            <h1 className="font-adlam text-6xl"> 5 </h1>
-          </div>
-          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
-            <div className="flex justify-center items-center gap-1 bg-[#EA4335] rounded-full w-10">
-              <img src={flechaTestimonialAbajo} className="h-3" alt="" />
-              <p className="text-[15px] font-adlam"> 2 </p>
-            </div>
-            <p className="font-adlam text-[20px]"> Aprobados </p>
-          </div>
-        </div>
+        <TestimonialStat 
+          value={5} 
+          indicator={1}
+          label="Rechazados" 
+          iconSrc={flechaTestimonialAbajo} 
+          bgColor="#EA4335" 
+        />
 
-        <div className="flex h-auto w-45">
-          <div className="w-auto">
-            <h1 className="font-adlam text-6xl"> 4 </h1>
-          </div>
-          <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
-            <div className="flex justify-center items-center gap-1 bg-[#FFBE00] rounded-full w-10">
-              <img src={flechaTestimonialArriba} className="h-3" alt="" />
-              <p className="text-[15px] font-adlam"> 2 </p>
-            </div>
-            <p className="font-adlam text-[20px]"> Aprobados </p>
-          </div>
-        </div>
- 
+        <TestimonialStat 
+          value={4} 
+          indicator={2}
+          label="En espera" 
+          iconSrc={flechaTestimonialArriba} 
+          bgColor="#FFBE00" 
+        />
       </div>
+
+      {/* Seccion testimonios */}
+      <div className="flex items-center justify-between mt-15 py-2 w-[31%] h-auto">
+        <button>
+          <p className="text-4xl font-adlam"> Nuevos testimonios </p>
+        </button>
+        <div className="flex gap-3">
+          <div className="rounded-full p-4 bg-black/7">
+            <img src={filtroTestimonial} className="h-7" alt="Icono filtro" />
+          </div>
+          <button className="flex items-center rounded-full px-2 bg-black/7">
+            <p className="font-adlam"> Todos </p>
+          </button>
+        </div>
+      </div>
+
+      
 
       {/* Sección de la barra lateral */}
       <div>
