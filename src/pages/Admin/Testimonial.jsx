@@ -4,6 +4,7 @@ import TestimonialStat from "../../components/admin/TestimonialStat";
 import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
+import TestimonialModal from "../../components/admin/TestimonialModal";
 
 import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
 import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
@@ -18,6 +19,7 @@ import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.pn
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
+  const [selectedTestimonio, setSelectedTestimonio] = useState(null);
 
   const [testimonios, setTestimonios] = useState([
     {
@@ -145,6 +147,14 @@ function Testimonials() {
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
 
+  const handleOpenModal = (testimonio) => {
+    setSelectedTestimonio(testimonio);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTestimonio(null);
+  };
+
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
       <div className="2xl:ml-210">
@@ -202,18 +212,27 @@ function Testimonials() {
           </p>
         ) : (
           testimoniosFiltrados.map((t) => (
-            <FeedbackCard
-              key={t.id}
-              name={t.name}
-              position={t.position}
-              status={t.status}
-              statusColor={t.statusColor}
-              imageUrl={t.imageUrl}
-              comment={t.comment}
-            />
+          <FeedbackCard
+            key={t.id}
+            name={t.name}
+            position={t.position}
+            status={t.status}
+            statusColor={t.statusColor}
+            imageUrl={t.imageUrl}
+            comment={t.comment}
+            onView={() => handleOpenModal(t)} // <--- usamos onView como prop
+          />
           ))
         )}
       </div>
+
+      {selectedTestimonio && (
+        <TestimonialModal
+          isOpen={!!selectedTestimonio}
+          onClose={handleCloseModal}
+          testimonio={selectedTestimonio}
+        />
+      )}
 
       <Sidebar />
     </div>
