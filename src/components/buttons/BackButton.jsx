@@ -11,7 +11,7 @@ const BackButton = ({ className }) => {
   return (
     <button 
       onClick={handleBack}
-      className={`bg-gray-100 text-center w-32 rounded-2xl h-10 relative text-black text-base font-semibold group ${className || ''}`} 
+      className={`bg-gray-100 text-center w-32 rounded-xl h-10 relative text-black text-base font-semibold group  shadow-[-3px_3px_0_#000,3px_3px_0_#000,0_-1px_0_#000] hover:shadow-[0_0_0_#000,0_0_0_#000] transition-all ${className || ''}`} 
       type="button"
     >
       <div className="bg-[#8FDA32] rounded-xl h-8 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-[120px] z-10 duration-500">

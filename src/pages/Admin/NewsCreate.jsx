@@ -39,7 +39,7 @@ const NewsCreate = () => {
           </div>
 
           <div className="flex-1">
-            <h2 className="text-2xl font-bold">Contenido</h2>
+            <h2 className="text-2xl font-bold ">Contenido</h2>
 
           </div>
         </form>

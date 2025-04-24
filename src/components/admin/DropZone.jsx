@@ -38,14 +38,23 @@ const DropZone = ({ className = "w-85" }) => {
         {/* Renderizado condicional basado en si hay una imagen seleccionada */}
         {preview ? (
           // Si hay imagen, mostramos la vista previa
-          <div className="flex items-center justify-center h-full">
-            <DeleteButton className="absolute top-2 right-2" />
-            <img 
-              src={preview} 
-              alt="Preview" 
-              className="max-h-full max-w-full object-contain rounded-lg"
-            />
-          </div>
+<div className="relative flex items-center justify-center h-full">
+  {preview && (
+    <div className="absolute top-[-0.5rem] left-0 z-20 w-[-100px] h-[-100px] text-sm">
+      <DeleteButton onClick={() => setPreview(null)} />
+    </div>
+  )}
+
+  <img 
+    src={preview} 
+    alt="Preview" 
+    className="max-h-full max-w-full object-contain rounded-lg"
+  />
+</div>
+
+        
+
+
         ) : (
           // Si no hay imagen, mostramos la interfaz de drop
           <div className="flex flex-col items-center justify-center gap-2 h-full">
