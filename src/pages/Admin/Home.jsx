@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";  // Add this import
 import { useMemo } from "react";
 
 // Importando los componentes necesarios
@@ -105,7 +106,10 @@ const Home = () => {
   
           {/* Sección de agregar noticia */}
           <div className="mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 gap-2">
-            <CartoonButton />
+            <Link to={"/home/newscreate"}>
+              <CartoonButton />
+            </Link>
+           
           </div>
   
           {/* Sección de testimonios */}
