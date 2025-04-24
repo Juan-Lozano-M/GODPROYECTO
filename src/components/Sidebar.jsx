@@ -138,7 +138,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
                   Inicio
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Inicio
                 </span>
               </Link>
@@ -148,7 +148,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
                   Testimonios
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Testimonios
                 </span>
               </Link>
@@ -158,7 +158,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
                   Noticias
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Noticias
                 </span>
               </Link>
@@ -168,7 +168,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
                   Estadísticas
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Estadísticas
                 </span>
               </Link>
@@ -181,7 +181,7 @@ const Sidebar = () => {
               <span className={`ml-3 text-white text-lg md:hidden`}>
                 Salir
               </span>
-              <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+              <span className="absolute font-adlam left-full ml-12 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                 Salir
               </span>
             </div>
