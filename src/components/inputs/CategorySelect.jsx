@@ -1,29 +1,36 @@
 import React from 'react';
 
-const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]" }) => {
+const CategorySelect = ({ className = "w-[200px]" }) => {
   return (
     <div className="relative mt-4">
       <div className={`relative group overflow-hidden rounded-lg ${className}`}>
-        <input 
-          type="text" 
-          name="text" 
+        <select 
           className="text-base px-4 py-2.5 border-none rounded-lg bg-[#f8f8f8] 
             shadow-[0_2px_4px_rgba(0,0,0,0.1)] w-full text-gray-700
             transition-all duration-300 ease-in-out
             hover:bg-[#f2f2f2]
             focus:outline-none focus:bg-white focus:shadow-[0_4px_6px_rgba(0,0,0,0.1)]
-            focus:animate-inputFocus
-            placeholder:text-gray-400"
-          placeholder={placeholder} 
-        />
+            appearance-none cursor-pointer"
+        >
+          <option value="" disabled selected>Selecciona una categoría</option>
+          <option value="tecnologia">Tecnología</option>
+          <option value="ciencia">Ciencia</option>
+          <option value="deportes">Deportes</option>
+          <option value="cultura">Cultura</option>
+        </select>
         <div className="absolute bottom-0 left-0 h-0.5 bg-[#8FDA32] 
           w-full scale-x-0 origin-left
           transition-transform duration-300 ease-in-out
           group-hover:scale-x-100 group-focus-within:scale-x-100" 
         />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+            <path d="M7 10l5 5 5-5H7z"/>
+          </svg>
+        </div>
       </div>
     </div>
   );
 }
 
-export default NewsInput;
+export default CategorySelect;
