@@ -1,6 +1,7 @@
 // Importamos los hooks necesarios de React y la librería react-dropzone
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import DeleteButton from "../buttons/DeleteButton"
 
 // Componente DropZone que acepta una prop className con valor por defecto "w-85"
 const DropZone = ({ className = "w-85" }) => {
@@ -38,6 +39,7 @@ const DropZone = ({ className = "w-85" }) => {
         {preview ? (
           // Si hay imagen, mostramos la vista previa
           <div className="flex items-center justify-center h-full">
+            <DeleteButton className="absolute top-2 right-2" />
             <img 
               src={preview} 
               alt="Preview" 
