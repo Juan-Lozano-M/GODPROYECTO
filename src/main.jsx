@@ -13,6 +13,7 @@ import Home from "./pages/Admin/Home";
 import Testimonial from "./pages/Admin/Testimonial";
 import Notices from "./pages/Admin/Notices";
 import Statics from "./pages/Admin/Statics";
+import NewsCreate from "./pages/Admin/NewsCreate.jsx"
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
   {
     path: "/noticiasv/:slug",
     element: <NewDetails />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/home/newscreate",
+    element: <NewsCreate />,
     errorElement: <Navigate to="/" />,
   }
 ]);

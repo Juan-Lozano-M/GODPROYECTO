@@ -6,77 +6,69 @@ import { Link, useLocation} from 'react-router-dom';
 
 // Componentes de iconos SVG en lugar de importar imágenes
 const HomeIcon = ({ isActive }) => (
-  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="50" height="50">
     <path 
-      d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
+        fill={isActive ? "#87C232" : "white"} 
+        strokeWidth="1" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+    d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" 
     />
-    <path 
-      d="M9 22V12h6v10" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
+    <path
+        fill={isActive ? "#87C232" : "white"} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" 
     />
   </svg>
 );
 
 const TestimonialsIcon = ({ isActive }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="50" height="50">
-    <path
-      stroke={isActive ? "#87C232" : "white"}
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="50" height="50">
+    <path 
+      fill={isActive ? "#87C232" : "white"} // Color de relleno cuando está activo
+      stroke="black"                      // Borde blanco siempre para mantener el contraste
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" 
+    />
   </svg>
 );
 
 const NoticesIcon = ({ isActive }) => (
-  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path 
-      d="M22 12h-6l-2 3h-4l-2-3H2" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="50" height="50">
+    <path
+      fill={isActive ? "#87C232" : "white"} 
+      strokeWidth="1" 
       strokeLinecap="round" 
       strokeLinejoin="round"
+      fill-rule="evenodd"
+      d="M4.125 3C3.089 3 2.25 3.84 2.25 4.875V18a3 3 0 0 0 3 3h15a3 3 0 0 1-3-3V4.875C17.25 3.839 16.41 3 15.375 3H4.125ZM12 9.75a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H12Zm-.75-2.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H12a.75.75 0 0 1-.75-.75ZM6 12.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5H6Zm-.75 3.75a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75ZM6 6.75a.75.75 0 0 0-.75.75v3c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-3A.75.75 0 0 0 9 6.75H6Z" clip-rule="evenodd" 
     />
-    <path 
-      d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
+    <path
+      fill={isActive ? "#87C232" : "white"} 
+      strokeWidth="1" 
       strokeLinecap="round" 
       strokeLinejoin="round"
-    /> 
+      fill-rule="evenodd"
+      d="M18.75 6.75h1.875c.621 0 1.125.504 1.125 1.125V18a1.5 1.5 0 0 1-3 0V6.75Z" 
+      />
   </svg>
+
 );
 
 const StaticsIcon = ({ isActive }) => (
-  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path 
-      d="M18 20V10" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-    <path 
-      d="M12 20V4" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-    <path 
-      d="M6 20v-6" 
-      stroke={isActive ? "#87C232" : "white"} 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-  </svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="45" height="45">
+  <path 
+    fill={isActive ? "#87C232" : "white"} 
+    strokeWidth="1" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" 
+  />
+</svg>
 );
 
 const ExitIcon = () => (
@@ -162,7 +154,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
                   Inicio
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Inicio
                 </span>
               </Link>
@@ -172,7 +164,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
                   Testimonios
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Testimonios
                 </span>
               </Link>
@@ -182,7 +174,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
                   Noticias
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Noticias
                 </span>
               </Link>
@@ -192,7 +184,7 @@ const Sidebar = () => {
                 <span className={`ml-3 text-white text-lg md:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
                   Estadísticas
                 </span>
-                <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                   Estadísticas
                 </span>
               </Link>
@@ -205,7 +197,7 @@ const Sidebar = () => {
               <span className={`ml-3 text-white text-lg md:hidden`}>
                 Salir
               </span>
-              <span className="absolute left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+              <span className="absolute font-adlam left-full ml-12 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
                 Salir
               </span>
             </div>
