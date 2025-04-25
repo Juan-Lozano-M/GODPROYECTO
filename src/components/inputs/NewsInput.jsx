@@ -2,7 +2,7 @@ import React from 'react';
 
 const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]" }) => {
   return (
-    <div className="relative mt-4">
+    <div className="relative mt-4 w-[55%]">
       <div className={`relative group overflow-hidden rounded-lg ${className}`}>
         <input 
           type="text" 

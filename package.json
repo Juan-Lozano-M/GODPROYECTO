@@ -16,6 +16,7 @@
     "@lexical/react": "^0.30.0",
     "@lexical/rich-text": "^0.30.0",
     "@lexical/selection": "^0.30.0",
+    "@lexical/utils": "^0.30.0",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.2",
     "@tailwindcss/vite": "^4.0.17",

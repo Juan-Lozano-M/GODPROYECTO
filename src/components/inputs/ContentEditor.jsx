@@ -56,8 +56,8 @@ const exampleTheme = {
   quote: 'editor-quote',
   heading: {
     h1: 'text-3xl font-bold',
-    h2: 'editor-heading-h2',
-    h3: 'editor-heading-h3',
+    h2: 'text-2xl font-bold',
+    h3: 'text-xl font-bold',
     h4: 'editor-heading-h4',
     h5: 'editor-heading-h5',
     h6: 'editor-heading-h6',
