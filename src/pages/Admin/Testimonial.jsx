@@ -29,6 +29,7 @@ function Testimonials() {
       status: "Aprobado",
       statusColor: "Green",
       imageUrl: imageTestimonial1,
+      titulo: 'Buena experiencia tecnica.',
       comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
     },
     {
@@ -38,6 +39,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial2,
+      titulo: 'Potencial con margen de mejora.',
       comment: 'El soporte técnico ha sido útil, pero algunas características aún no están totalmente maduras. Con un par de mejoras clave, podría convertirse en una herramienta esencial para nuestro equipo de ingeniería.',
     },
     {
@@ -47,6 +49,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial3,
+      titulo: 'Necesita más flexibilidad.',
       comment: "Esta solución ha contribuido a mejorar nuestros procesos internos. Sin embargo, esperamos una mayor flexibilidad para integraciones con otras plataformas antes de una adopción completa.",
     },
     {
@@ -56,6 +59,7 @@ function Testimonials() {
       status: "Rechazado",
       statusColor: "Red",
       imageUrl: imageTestimonial4,
+      titulo: 'Diseño amigable, pero insuficiente.',
       comment: "Aunque el diseño es intuitivo, encontramos dificultades en funciones clave para nuestro flujo de trabajo. La experiencia fue limitada y no se alinea con los estándares que manejamos en InnovateSphere.",
     },
     {
@@ -65,6 +69,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial5,
+      titulo: 'Limitada en métricas avanzadas.',
       comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
     },
     {
@@ -74,6 +79,7 @@ function Testimonials() {
       status: "Aprobado",
       statusColor: "Green",
       imageUrl: imageTestimonial6,
+      titulo: 'Satisfacción total desde el inicio.',
       comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
     },
     {
@@ -83,6 +89,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial7,
+      titulo: 'Gran diseño, necesita interacción',
       comment: "El mejor diseño es el del portal de noticias, sin duda. Aun así, sentimos que hay espacio para ofrecer más funciones interactivas que mejoren la experiencia del usuario final.",
     },
     {
@@ -92,6 +99,7 @@ function Testimonials() {
       status: "Rechazado",
       statusColor: "Red",
       imageUrl: imageTestimonial1,
+      titulo: 'Gran diseño, necesita interacción',
       comment: "Mi mejor amigo es el coste… y este sistema no fue competitivo en ese aspecto. El diseño visual cumple, pero las funciones disponibles no justifican la inversión para un proyecto académico.",
     },
   ]);
