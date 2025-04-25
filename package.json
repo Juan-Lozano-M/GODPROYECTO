@@ -13,6 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.2",
+    "@heroicons/react": "^2.2.0",
     "@lexical/react": "^0.30.0",
     "@lexical/rich-text": "^0.30.0",
     "@lexical/selection": "^0.30.0",
