@@ -4,6 +4,7 @@ import TestimonialStat from "../../components/admin/TestimonialStat";
 import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
+import TestimonialModal from "../../components/admin/TestimonialModal";
 
 import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
 import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
@@ -18,6 +19,7 @@ import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.pn
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
+  const [selectedTestimonio, setSelectedTestimonio] = useState(null);
 
   const [testimonios, setTestimonios] = useState([
     {
@@ -27,7 +29,7 @@ function Testimonials() {
       status: "Aprobado",
       statusColor: "Green",
       imageUrl: imageTestimonial1,
-      comment: "La escalabilidad y el rendimiento...",
+      comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
     },
     {
       id: 2,
@@ -36,7 +38,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial2,
-      comment: "Buen soporte y características po...",
+      comment: 'El soporte técnico ha sido útil, pero algunas características aún no están totalmente maduras. Con un par de mejoras clave, podría convertirse en una herramienta esencial para nuestro equipo de ingeniería.',
     },
     {
       id: 3,
@@ -45,7 +47,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial3,
-      comment: "Esta solución ha mejorado signifi...",
+      comment: "Esta solución ha contribuido a mejorar nuestros procesos internos. Sin embargo, esperamos una mayor flexibilidad para integraciones con otras plataformas antes de una adopción completa.",
     },
     {
       id: 4,
@@ -54,7 +56,7 @@ function Testimonials() {
       status: "Rechazado",
       statusColor: "Red",
       imageUrl: imageTestimonial4,
-      comment: "La atención al detalle y las característi...",
+      comment: "Aunque el diseño es intuitivo, encontramos dificultades en funciones clave para nuestro flujo de trabajo. La experiencia fue limitada y no se alinea con los estándares que manejamos en InnovateSphere.",
     },
     {
       id: 5,
@@ -63,7 +65,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial5,
-      comment: "La implementación fue perfecta y los...",
+      comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
     },
     {
       id: 6,
@@ -72,7 +74,7 @@ function Testimonials() {
       status: "Aprobado",
       statusColor: "Green",
       imageUrl: imageTestimonial6,
-      comment: "El lider del proyecto es Camilo...",
+      comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
     },
     {
       id: 7,
@@ -81,7 +83,7 @@ function Testimonials() {
       status: "En espera",
       statusColor: "Yellow",
       imageUrl: imageTestimonial7,
-      comment: "El mejor diseño es el de noticias...",
+      comment: "El mejor diseño es el del portal de noticias, sin duda. Aun así, sentimos que hay espacio para ofrecer más funciones interactivas que mejoren la experiencia del usuario final.",
     },
     {
       id: 8,
@@ -90,7 +92,7 @@ function Testimonials() {
       status: "Rechazado",
       statusColor: "Red",
       imageUrl: imageTestimonial1,
-      comment: "Mi mejor amigo es el coste...",
+      comment: "Mi mejor amigo es el coste… y este sistema no fue competitivo en ese aspecto. El diseño visual cumple, pero las funciones disponibles no justifican la inversión para un proyecto académico.",
     },
   ]);
 
@@ -144,6 +146,14 @@ function Testimonials() {
 
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
+
+  const handleOpenModal = (testimonio) => {
+    setSelectedTestimonio(testimonio);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTestimonio(null);
+  };
 
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
@@ -202,18 +212,27 @@ function Testimonials() {
           </p>
         ) : (
           testimoniosFiltrados.map((t) => (
-            <FeedbackCard
-              key={t.id}
-              name={t.name}
-              position={t.position}
-              status={t.status}
-              statusColor={t.statusColor}
-              imageUrl={t.imageUrl}
-              comment={t.comment}
-            />
+          <FeedbackCard
+            key={t.id}
+            name={t.name}
+            position={t.position}
+            status={t.status}
+            statusColor={t.statusColor}
+            imageUrl={t.imageUrl}
+            comment={t.comment}
+            onView={() => handleOpenModal(t)} // <--- usamos onView como prop
+          />
           ))
         )}
       </div>
+
+      {selectedTestimonio && (
+        <TestimonialModal
+          isOpen={!!selectedTestimonio}
+          onClose={handleCloseModal}
+          testimonio={selectedTestimonio}
+        />
+      )}
 
       <Sidebar />
     </div>
