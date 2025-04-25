@@ -1,10 +1,11 @@
 import React from 'react';
 import Sidebar from "../../components/Sidebar";
-import BackButton from "../../components/buttons/BackButton"
-import NewsInput from "../../components/inputs/NewsInput"
-import CategorySelect from "../../components/inputs/CategorySelect"
-import TextArea from "../../components/inputs/TextArea"
-import DropZone from "../../components/admin/DropZone"
+import DropZone from "../../components/admin/DropZone";
+import BackButton from "../../components/buttons/BackButton";
+import CategorySelect from "../../components/inputs/CategorySelect";
+import ContentEditor from "../../components/inputs/ContentEditor";
+import NewsInput from "../../components/inputs/NewsInput";
+import TextArea from "../../components/inputs/TextArea";
 
 
 
@@ -23,24 +24,24 @@ const NewsCreate = () => {
         <h2 className="text-4xl font-bold mt-5">Creacion de noticias</h2>
         <BackButton className="mt-4" />
         
-        <form onSubmit={handleSubmit} className="mt-4 flex gap-8">
-          <div className="flex-1">
+        <form onSubmit={handleSubmit} className=" flex-col mt-4 flex flex-wrap    lg:flex-row 2xl:flex-row">
+          <div className="flex-1 w-full lg:w-1/2">
             <h2 className="text-2xl font-bold">Titulo</h2>
-            <NewsInput placeholder="Ingresa el titulo" className="w-85" />
+            <NewsInput placeholder="Ingresa el titulo" className="w-[100%] sm:w-[100%] lg:w-[60%]" />
 
             <h2 className="text-2xl font-bold mt-4">Categoria</h2>
-            <CategorySelect className="w-85" />
+            <CategorySelect className="w-[100%] sm:w-[100%] lg:w-[60%]" />
 
             <h2 className="text-2xl font-bold mt-4">Descripcion</h2>
-            <TextArea placeholder="Ingresa la descripción de la noticia" className="w-85" />
+            <TextArea placeholder="Ingresa la descripción de la noticia" className="w-[100%] sm:w-[100%] lg:w-[60%]" />
 
             <h2 className="text-2xl font-bold mt-4">Imagen</h2>
-            <DropZone className="w-85 mt-2" />
+            <DropZone className="w-[100%] sm:w-[100%] lg:w-[60%]  mt-2" />
           </div>
 
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold ">Contenido</h2>
-
+          <div className="flex-1 w-full lg:n,ml-[-150px] "> {/* Se agrega margen superior en pantallas pequeñas */}
+            <h2 className="text-2xl font-bold">Contenido</h2>
+            <ContentEditor className="w-2/3 mt-2" />
           </div>
         </form>
       </div>

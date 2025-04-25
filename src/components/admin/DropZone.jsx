@@ -29,7 +29,7 @@ const DropZone = ({ className = "w-85" }) => {
       {/* Área de drop que cambia de estilo cuando se arrastra un archivo */}
       <div 
         {...getRootProps()} 
-        className={`w-full h-[160px] p-6 border-2 border-dashed rounded-lg cursor-pointer transition-colors
+        className={`w-full h-[160px] p-6 border-2 border-dashed rounded-lg cursor-pointer transition-colors flex justify-between items-end
           ${isDragActive ? 'border-[#8FDA32] bg-[#8FDA32]/10' : 'border-gray-300 hover:border-[#8FDA32]'}`}
       >
         {/* Input oculto que maneja la selección de archivos */}
@@ -38,26 +38,24 @@ const DropZone = ({ className = "w-85" }) => {
         {/* Renderizado condicional basado en si hay una imagen seleccionada */}
         {preview ? (
           // Si hay imagen, mostramos la vista previa
-<div className="relative flex items-center justify-center h-full">
-  {preview && (
-    <div className="absolute top-[-0.5rem] left-0 z-20 w-[-100px] h-[-100px] text-sm">
-      <DeleteButton onClick={() => setPreview(null)} />
-    </div>
-  )}
-
-  <img 
-    src={preview} 
-    alt="Preview" 
-    className="max-h-full max-w-full object-contain rounded-lg"
-  />
-</div>
-
-        
-
-
+          <div className="flex items-center justify-center h-full w-full relative">
+            <img 
+              src={preview} 
+              alt="Preview" 
+              className="max-h-full max-w-full object-contain rounded-lg"
+            />
+            {/* Botón de eliminación reposicionado */}
+            <DeleteButton 
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent event propagation
+                setPreview(null); // Clear the image preview
+              }} 
+              className="absolute top-0 right-0 transform -translate-y-1/4 translate-x-1/4 scale-80" // Added scale-50 to make it smaller
+            />
+          </div>
         ) : (
           // Si no hay imagen, mostramos la interfaz de drop
-          <div className="flex flex-col items-center justify-center gap-2 h-full">
+          <div className="flex flex-col items-center justify-center gap-2 h-full flex-grow">
             {/* Ícono de subida */}
             <svg 
               className={`w-8 h-8 ${isDragActive ? 'text-[#8FDA32]' : 'text-gray-400'}`} 
@@ -88,7 +86,7 @@ const DropZone = ({ className = "w-85" }) => {
         )}
       </div>
     </div>
-  );
+  );  
 };
 
 export default DropZone;
