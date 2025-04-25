@@ -13,9 +13,18 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
 
         <div className="rounded-2xl bg-white px-10 pt-10 shadow-lg">
           <div className="text-end">
-            <button onClick={onClose}>
-              <img src={iconCerrarTestimonial} clasName="" alt="Imagen de cerrar modal testimonio" />
-            </button>
+          <button onClick={onClose}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 text-gray-600 hover:text-red-500 active:text-red-700 transition-colors"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           </div>
           <div className="flex flex-col items-center text-center">
             <img
@@ -29,7 +38,7 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
             <div className="h-auto max-w-120 ">
               <div className="flex gap-16 mt-10">
                 <h1 className="text-2xl text-[#505050] font-adlam"> Titulo </h1>
-                <p className="text-lg text-black font-adlam mt-auto"> Buena experiencia tecnica.</p>
+                <p className="text-lg text-black font-adlam mt-auto">{testimonio.titulo}</p>
               </div>
 
               <div className="flex gap-9 mt-3 text-start">
@@ -39,12 +48,12 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
             </div>
 
             <div className="flex gap-3 mt-7 w-full h-12">
-              <div className="flex items-center justify-center bg-black h-full w-[50%] rounded-full">
+              <button className="flex items-center justify-center bg-black h-full w-[50%] rounded-full transition-transform duration-200 ease-in-out hover:scale-105">
                 <p className="text-white font-adlam text-xl"> Aprobar </p>
-              </div>
-              <div className="flex items-center justify-center bg-white border-2 h-full w-[50%] rounded-full">
+              </button>
+              <button className="flex items-center justify-center bg-white border-2 h-full w-[50%] rounded-full transition-transform duration-200 ease-in-out hover:scale-105">
                 <p className="text-black font-adlam text-xl"> Rechazar </p>
-              </div>
+              </button>
             </div>
 
             <div className="mt-5 pb-5">
