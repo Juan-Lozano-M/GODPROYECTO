@@ -3,8 +3,8 @@ const TestimonialStat = ({ value, indicator, label, iconSrc, bgColor }) => {
     return (
       
         <div className="flex h-auto w-auto">
-          <div className="w-auto">
-            <h1 className="font-adlam text-6xl"> {value} </h1>
+          <div className="flex w-auto">
+            <h1 className="mt-auto font-adlam md:text-5xl lg:text-6xl"> {value} </h1>
           </div>
           <div className="flex flex-col items-end h-full w-auto ml-3 mt-2">
           <div
@@ -14,7 +14,7 @@ const TestimonialStat = ({ value, indicator, label, iconSrc, bgColor }) => {
               <img src={iconSrc} className="h-3" alt="Flecha" />
               <p className="text-[15px] font-adlam"> {indicator} </p>
             </div>
-            <p className="font-adlam text-[20px]"> {label} </p>
+            <p className="font-adlam lg:text-[20px]"> {label} </p>
           </div>
         </div>
       );

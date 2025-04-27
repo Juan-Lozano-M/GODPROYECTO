@@ -6,7 +6,7 @@ import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
 const Search = () => {
     return (
 
-        <div className="flex items-center justify-between sm:h-15 mb-4">
+        <div className="flex ml-auto w-200 sm:h-15">
             <div className="sm:h-full flex flex-1 items-center">
             <img src={iconSearch} className="h-4 sm:h-6 absolute ml-5" alt="Icono de búsqueda" />
             <input
