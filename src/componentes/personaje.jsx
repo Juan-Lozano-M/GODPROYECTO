@@ -41,7 +41,7 @@ const Personaje = () => {
       initial={{ opacity: 0, scale: 0.8, y: 50 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 120, damping: 10, duration: 1.5 }}
-      className="w-full max-w-[345px] aspect-square ml-20 mx-auto mt-0 -translate-y-4 "
+      className="w-full max-w-[270px] aspect-square ml-20 mx-auto mt-0 -translate-y-4 "
     >
       <motion.div
         animate={{ y: [0, -8, 0] }}
