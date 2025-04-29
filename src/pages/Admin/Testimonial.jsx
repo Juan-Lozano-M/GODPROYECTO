@@ -5,6 +5,7 @@ import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
+import FiltroModal from "../../components/admin/FiltroModal"; // <- Nuevo modal de filtros
 
 import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
 import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
@@ -14,12 +15,14 @@ import imageTestimonial5 from "../../assets/images/imageTestimonial5.png";
 import imageTestimonial6 from "../../assets/images/imageTestimonial6.png";
 import imageTestimonial7 from "../../assets/images/imageTestimonial7.png";
 
+import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // <- Estado modal de filtros
 
   const [testimonios, setTestimonios] = useState([
     {
@@ -111,7 +114,7 @@ function Testimonials() {
     Todos: "Todos",
   };
 
-  const filters = ["Todos", "Aprobados", "Rechazados", "En espera"];
+  const filters = ["Aprobados", "Rechazados", "En espera"];
 
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
@@ -164,16 +167,16 @@ function Testimonials() {
   };
 
   return (
-    <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
-      <div className="2xl:ml-210">
+    <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
+      <div className="flex w-full items-center">
         <Search />
       </div>
 
       <div>
-        <h1 className="2xl:text-5xl font-adlam"> TESTIMONIOS </h1>
+        <h1 className="mt-6 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
 
-      <div className="flex mt-10 gap-20 h-auto w-[59%]">
+      <div className="flex mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <TestimonialStat
           value={totalAprobados}
           indicator={cambios.Aprobado}
@@ -197,39 +200,64 @@ function Testimonials() {
         />
       </div>
 
-      <div className="flex items-center justify-between mt-10 py-2 w-[57%] h-auto">
-        <p className="text-4xl font-adlam"> Nuevos testimonios </p>
-        <div className="h-10 w-0.5 bg-gray-300"></div>
+      <div className="flex items-center justify-between mt-10 py-2 w-full h-auto">
+        <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
+          <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
+          <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
 
-        <div className="flex gap-6">
-          {filters.map((filter) => (
-            <FilterButton
-              key={filter}
-              label={filter}
-              isActive={activeFilter === filter}
-              onClick={() => setActiveFilter(filter)}
-            />
-          ))}
+          <div className="flex items-center gap-4">
+            {/* Desktop: mostrar todos los filtros */}
+            <div className="hidden lg:flex gap-4">
+              <FilterButton
+                label="Todos"
+                isActive={activeFilter === "Todos"}
+                onClick={() => setActiveFilter("Todos")}
+              />
+              {filters.map((filter) => (
+                <FilterButton
+                  key={filter}
+                  label={filter}
+                  isActive={activeFilter === filter}
+                  onClick={() => setActiveFilter(filter)}
+                />
+              ))}
+            </div>
+
+            {/* Mobile: solo botón Filtro y Todos */}
+            <div className="flex lg:hidden gap-4">
+              <FilterButton
+                label="Filtro"
+                isActive={false}
+                onClick={() => setIsFiltroModalOpen(true)}
+                iconSrc={filtroTestimonial} // Añade esta línea
+              />
+              <FilterButton
+                label="Todos"
+                isActive={activeFilter === "Todos"}
+                onClick={() => setActiveFilter("Todos")}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-10 justify-start mt-5">
+      <div className="flex flex-wrap gap-3 w-1/2 sm:w-full sm:gap-7 lg:gap-10 justify-start mt-5">
         {testimoniosFiltrados.length === 0 ? (
           <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
             No hay testimonios disponibles para este filtro.
           </p>
         ) : (
           testimoniosFiltrados.map((t) => (
-          <FeedbackCard
-            key={t.id}
-            name={t.name}
-            position={t.position}
-            status={t.status}
-            statusColor={t.statusColor}
-            imageUrl={t.imageUrl}
-            comment={t.comment}
-            onView={() => handleOpenModal(t)} // <--- usamos onView como prop
-          />
+            <FeedbackCard
+              key={t.id}
+              name={t.name}
+              position={t.position}
+              status={t.status}
+              statusColor={t.statusColor}
+              imageUrl={t.imageUrl}
+              comment={t.comment}
+              onView={() => handleOpenModal(t)}
+            />
           ))
         )}
       </div>
@@ -239,6 +267,16 @@ function Testimonials() {
           isOpen={!!selectedTestimonio}
           onClose={handleCloseModal}
           testimonio={selectedTestimonio}
+        />
+      )}
+
+      {/* Modal de filtros mobile */}
+      {isFiltroModalOpen && (
+        <FiltroModal
+          filters={filters}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          onClose={() => setIsFiltroModalOpen(false)}
         />
       )}
 
