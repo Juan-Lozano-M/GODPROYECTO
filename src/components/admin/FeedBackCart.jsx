@@ -16,7 +16,7 @@ const FeedbackCard = ({
   onView // <-- nuevo: callback para abrir modal
 }) => {
   return (
-    <div className="relative bg-black/7 rounded-3xl shadow-md p-4 w-full sm:p-6 sm:w-[278px] md:w-[254px] lg:w-[352px] xl:w-[400px] flex flex-col justify-between gap-2 sm:gap-4 transition-transform duration-200 ease-in-out hover:scale-105">
+    <div className="relative bg-black/7 rounded-3xl shadow-md p-4 w-full sm:p-6 sm:w-[278px] md:w-[254px] lg:w-[352px] xl:w-80 2xl:w-[392px] flex flex-col justify-between gap-2 sm:gap-4 transition-transform duration-200 ease-in-out hover:scale-105">
       <div className='bg-white absolute h-5 w-5 ml-29 sm:h-10 sm:w-10 sm:ml-54 md:ml-49 md:h-10 md:w-10 lg:ml-68 lg:w-15 lg:h-15 xl:ml-81 top-0 rounded-full'>
         {/* decorativo */}
       </div>
