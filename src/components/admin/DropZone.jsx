@@ -4,15 +4,19 @@ import { useDropzone } from 'react-dropzone';
 import DeleteButton from "../buttons/DeleteButton"
 
 // Componente DropZone que acepta una prop className con valor por defecto "w-85"
-const DropZone = ({ className = "w-85" }) => {
-  // Estado para almacenar la URL de vista previa de la imagen
+const DropZone = ({ className = "w-85", onFileChange }) => {
   const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
 
-  // Función que se ejecuta cuando se suelta o selecciona un archivo
   const onDrop = useCallback(acceptedFiles => {
-    const file = acceptedFiles[0]; // Tomamos solo el primer archivo
-    setPreview(URL.createObjectURL(file)); // Creamos una URL temporal para la vista previa
-  }, []);
+    const selectedFile = acceptedFiles[0];
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
+    
+    if (onFileChange) {
+      onFileChange(selectedFile);
+    }
+  }, [onFileChange]);
 
   // Hook useDropzone que configura la funcionalidad de arrastrar y soltar
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -49,6 +53,10 @@ const DropZone = ({ className = "w-85" }) => {
               onClick={(e) => {
                 e.stopPropagation(); // Prevent event propagation
                 setPreview(null); // Clear the image preview
+                setFile(null);
+                if (onFileChange) {
+                  onFileChange(null);
+                }
               }} 
               className="absolute top-0 right-0 transform -translate-y-1/4 translate-x-1/4 scale-80" // Added scale-50 to make it smaller
             />

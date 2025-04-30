@@ -5,7 +5,10 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode } from '@lexical/rich-text';
+import { ListNode, ListItemNode } from '@lexical/list';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import Toolbars from './Toolbars';
+import { $getRoot } from 'lexical';
 
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
@@ -23,31 +26,46 @@ function onError(error) {
   console.error(error);
 }
 
-function Editor() {
+function Editor({ onChange }) {
   const initialConfig = {
     namespace: 'MyEditor',
     theme: exampleTheme,
     onError,
-    nodes: [HeadingNode], // Add any custom nodes here
+    nodes: [HeadingNode, ListNode, ListItemNode], // Añadir los nuevos nodos
+    onUpdate: (editorState) => {
+      editorState.read(() => {
+        const root = $getRoot();
+        const content = root.getTextContent();
+        if (onChange) {
+          onChange(content);
+        }
+      });
+    },
   };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <Toolbars />
+      <Toolbars onChange={onChange} />
       <div className="relative bg-gray-100 p-4 rounded-md h-96 overflow-auto">
         <RichTextPlugin
-          contentEditable={
-            <ContentEditable className="focus:outline-none w-full h-full" />
-          }
+          contentEditable={<ContentEditable className="focus:outline-none w-full h-full" />}
           placeholder={<Placeholder />}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <ListPlugin />
+        <HistoryPlugin />
+        <AutoFocusPlugin />
       </div>
-      <HistoryPlugin />
-      <AutoFocusPlugin />
     </LexicalComposer>
   );
 }
+
+// Update the default export
+const ContentEditor = ({ onChange }) => {
+  return <Editor onChange={onChange} />;
+};
+
+export default ContentEditor;
 
 const exampleTheme = {
   ltr: 'ltr',
@@ -64,11 +82,11 @@ const exampleTheme = {
   },
   list: {
     nested: {
-      listitem: 'editor-nested-listitem',
+      listitem: 'ml-4',
     },
-    ol: 'editor-list-ol',
-    ul: 'editor-list-ul',
-    listitem: 'editor-listItem',
+    ol: 'list-decimal ml-4',
+    ul: 'list-disc ml-4',
+    listitem: 'ml-4',
     listitemChecked: 'editor-listItemChecked',
     listitemUnchecked: 'editor-listItemUnchecked',
   },
@@ -88,5 +106,3 @@ const exampleTheme = {
   code: 'editor-code',
   placeholder: 'editor-placeholder',
 };
-
-export default Editor;

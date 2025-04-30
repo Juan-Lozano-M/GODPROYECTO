@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from "../../components/Sidebar";
 import DropZone from "../../components/admin/DropZone";
 import BackButton from "../../components/buttons/BackButton";
@@ -13,9 +13,25 @@ import TextArea from "../../components/inputs/TextArea";
 
 
 const NewsCreate = () => {
+  const [formData, setFormData] = useState({
+    title: '',
+    category: '',
+    description: '',
+    image: null,
+    content: ''
+  });
+
+  const handleInputChange = (name, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí irá la lógica para enviar el formulario
+    console.log('Form Data:', formData);
+    // Here you can add your API call or data processing
   };
 
   return (
@@ -25,26 +41,47 @@ const NewsCreate = () => {
         <h2 className="text-4xl font-bold mt-5">Creacion de noticias</h2>
         <BackButton className="mt-4" />
         
-        <form onSubmit={handleSubmit} className=" flex-col mt-4 flex flex-wrap    lg:flex-row 2xl:flex-row">
+        <form onSubmit={handleSubmit} className="flex-col mt-4 flex flex-wrap lg:flex-row 2xl:flex-row">
           <div className="flex-1 w-full lg:w-1/2">
             <h2 className="text-2xl font-bold">Titulo</h2>
-            <NewsInput placeholder="Ingresa el titulo" className="w-[1%] sm:w-[182%] lg:w-[100%]" />
+            <NewsInput 
+              placeholder="Ingresa el titulo" 
+              className="w-[1%] sm:w-[182%] lg:w-[100%]"
+              onChange={(value) => handleInputChange('title', value)}
+            />
 
             <h2 className="text-2xl font-bold mt-4">Categoria</h2>
-            <CategorySelect className="w-[100%] sm:w-[100%] lg:w-[55%]" />
+            <CategorySelect 
+              className="w-[100%] sm:w-[100%] lg:w-[55%]"
+              onChange={(value) => handleInputChange('category', value)}
+            />
 
             <h2 className="text-2xl font-bold mt-4">Descripcion</h2>
-            <TextArea placeholder="Ingresa la descripción de la noticia" className="w-[100%] sm:w-[100%] lg:w-[55%]" />
+            <TextArea 
+              placeholder="Ingresa la descripción de la noticia" 
+              className="w-[100%] sm:w-[100%] lg:w-[55%]"
+              onChange={(value) => handleInputChange('description', value)}
+            />
 
             <h2 className="text-2xl font-bold mt-4">Imagen</h2>
-            <DropZone className="w-[100%] sm:w-[100%] lg:w-[55%]  mt-2" />
+            <DropZone 
+              className="w-[100%] sm:w-[100%] lg:w-[55%] mt-2"
+              onFileChange={(file) => handleInputChange('image', file)}
+            />
           </div>
 
-          <div className="flex-1 w-full lg:ml-[-200px] "> {/* Se agrega margen superior en pantallas pequeñas */}
-            <h2 className="text-2xl font-bold mb-4 ">Contenido</h2>
-            <ContentEditor className="w-2/3 mt-2" />
+          <div className="flex-1 w-full lg:ml-[-200px]">
+            <h2 className="text-2xl font-bold mb-4">Contenido</h2>
+            <ContentEditor 
+              className="w-2/3 mt-2"
+              onChange={(value) => handleInputChange('content', value)}
+            />
 
-            <GameButton buttonClassName='mt-30' />
+            <GameButton 
+              buttonClassName='mt-30'
+              text="Guardar"
+              onClick={handleSubmit}
+            />
           </div>
         </form>
       </div>
