@@ -59,7 +59,7 @@ function Testimonials() {
       id: 4,
       name: "Lisa Elena",
       position: "Técnico de InnovateSphere.",
-      status: "Rechazado",
+      status: "Anulado",
       statusColor: "Red",
       imageUrl: imageTestimonial4,
       titulo: 'Diseño amigable, pero insuficiente.',
@@ -99,7 +99,7 @@ function Testimonials() {
       id: 8,
       name: "Camilo Giraldo",
       position: "Diseñador grafico 4 semestre.",
-      status: "Rechazado",
+      status: "Anulado",
       statusColor: "Red",
       imageUrl: imageTestimonial1,
       titulo: 'Gran diseño, necesita interacción',
@@ -109,12 +109,12 @@ function Testimonials() {
 
   const filtroTraducido = {
     Aprobados: "Aprobado",
-    Rechazados: "Rechazado",
+    Anulados: "Anulado",
     "En espera": "En espera",
     Todos: "Todos",
   };
 
-  const filters = ["Aprobados", "Rechazados", "En espera"];
+  const filters = ["Aprobados", "Anulados", "En espera"];
 
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
@@ -126,31 +126,31 @@ function Testimonials() {
     testimonios.filter((t) => t.status === status).length;
 
   const totalAprobados = countByStatus("Aprobado");
-  const totalRechazados = countByStatus("Rechazado");
+  const totalAnulados = countByStatus("Anulado");
   const totalEnEspera = countByStatus("En espera");
 
   const prevCounts = useRef({
     Aprobado: totalAprobados,
-    Rechazado: totalRechazados,
+    Anulado: totalAnulados,
     "En espera": totalEnEspera,
   });
 
   const [cambios, setCambios] = useState({
     Aprobado: 0,
-    Rechazado: 0,
+    Anulado: 0,
     "En espera": 0,
   });
 
   useEffect(() => {
     setCambios({
       Aprobado: totalAprobados - prevCounts.current.Aprobado,
-      Rechazado: totalRechazados - prevCounts.current.Rechazado,
+      Anulado: totalAnulados - prevCounts.current.Anulado,
       "En espera": totalEnEspera - prevCounts.current["En espera"],
     });
 
     prevCounts.current = {
       Aprobado: totalAprobados,
-      Rechazado: totalRechazados,
+      Anulado: totalAnulados,
       "En espera": totalEnEspera,
     };
   }, [testimonios]);
@@ -185,10 +185,10 @@ function Testimonials() {
           bgColor="#9CE840"
         />
         <TestimonialStat
-          value={totalRechazados}
-          indicator={cambios.Rechazado}
-          label="Rechazados"
-          iconSrc={getIcon(cambios.Rechazado)}
+          value={totalAnulados}
+          indicator={cambios.Anulado}
+          label="Anulados"
+          iconSrc={getIcon(cambios.Anulado)}
           bgColor="#EA4335"
         />
         <TestimonialStat
@@ -241,7 +241,7 @@ function Testimonials() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-8 sm:w-full sm:gap-7 lg:gap-10 justify-start mt-5">
+      <div className="flex flex-wrap justify-center gap-6 sm:gap-7 lg:gap-10 w-full max-w-[1200px] mx-auto mt-5">
         {testimoniosFiltrados.length === 0 ? (
           <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
             No hay testimonios disponibles para este filtro.
