@@ -241,7 +241,7 @@ function Testimonials() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6 sm:gap-7 lg:gap-10 w-full max-w-[1200px] mx-auto mt-5">
+      <div className="flex flex-wrap justify-start  gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
         {testimoniosFiltrados.length === 0 ? (
           <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
             No hay testimonios disponibles para este filtro.
