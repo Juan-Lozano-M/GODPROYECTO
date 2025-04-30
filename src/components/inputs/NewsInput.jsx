@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]" }) => {
+const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]", onChange }) => {
+  const [value, setValue] = useState('');
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
+  };
+
   return (
-    <div className="relative mt-4">
+    <div className="relative mt-4 w-[55%]">
       <div className={`relative group overflow-hidden rounded-lg ${className}`}>
         <input 
           type="text" 
           name="text" 
+          value={value}
+          onChange={handleChange}
           className="text-base px-4 py-2.5 border-none rounded-lg bg-[#f8f8f8] 
             shadow-[0_2px_4px_rgba(0,0,0,0.1)] w-full text-gray-700
             transition-all duration-300 ease-in-out

@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// Componente para seleccionar una categoría
-const CategorySelect = ({ className = "w-[200px]" }) => {
+const CategorySelect = ({ className = "w-[200px]", onChange }) => {
+  const [value, setValue] = useState('');
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
+  };
+  
   return (
-    // Contenedor principal con margen superior
     <div className="relative mt-4">
-      {/* Contenedor relativo para el select y los adornos */}
       <div className={`relative group overflow-hidden rounded-lg ${className}`}>
-        {/* Selector de categorías con estilos personalizados */}
         <select 
+          value={value}
+          onChange={handleChange}
           className="text-base px-4 py-2.5 border-none rounded-lg bg-[#f8f8f8] 
             shadow-[0_2px_4px_rgba(0,0,0,0.1)] w-full text-gray-700
             transition-all duration-300 ease-in-out
@@ -16,9 +24,7 @@ const CategorySelect = ({ className = "w-[200px]" }) => {
             focus:outline-none focus:bg-white focus:shadow-[0_4px_6px_rgba(0,0,0,0.1)]
             appearance-none cursor-pointer"
         >
-          {/* Opción por defecto deshabilitada */}
-          <option value="" disabled selected>Selecciona una categoría</option>
-          {/* Opciones de categorías */}
+          <option value="" disabled>Selecciona una categoría</option>
           <option value="tecnologia">Tecnología</option>
           <option value="ciencia">Ciencia</option>
           <option value="deportes">Deportes</option>
@@ -32,7 +38,12 @@ const CategorySelect = ({ className = "w-[200px]" }) => {
         />
         {/* Ícono de flecha para indicar el desplegable */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+          <svg 
+            className="w-4 h-4 fill-current" 
+            viewBox="0 0 20 20"
+            fillRule="evenodd"
+            clipRule="evenodd"
+          >
             <path d="M7 10l5 5 5-5H7z"/>
           </svg>
         </div>
