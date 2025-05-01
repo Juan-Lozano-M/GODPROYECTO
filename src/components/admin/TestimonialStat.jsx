@@ -4,7 +4,7 @@ const TestimonialStat = ({ value, indicator, label, iconSrc, bgColor }) => {
       
         <div className="flex h-auto w-auto">
           <div className="flex justify-center items-center w-auto">
-            <h1 className="mt-auto font-adlam text-4xl sm:text-5xl lg:text-6xl"> {value} </h1>
+            <h1 className="mt-auto font-adlam text-5xl lg:text-6xl"> {value} </h1>
           </div>
           <div className="flex flex-col items-end h-full w-auto ml-2 sm:ml-3 mt-2">
           <div

@@ -36,7 +36,7 @@ const FeedbackCard = ({
         <p className="text-[14px] sm:text-[13px] w-[60%] sm:w-[65%] md:text-[13px] md:w-[65%] lg:text-[14px] xl:text-[15px] xl:w-[60%] text-[#3E3E3E] font-adlam ">
           {position}{company && ` en ${company}`}
         </p>
-        <span className={`px-2 py-1 text-[12px] md:text-[10px] lg:text-[13px] font-extrabold sm:px-2 sm:py-1.5 rounded-full ${statusColors[status]}`}>
+        <span className={`px-2 py-1 text-[12px] md:text-[10px] lg:text-[13px] 2xl:text-[15px] font-extrabold sm:px-2 sm:py-1.5 rounded-full ${statusColors[status]}`}>
           {status}
         </span> 
       </div>
@@ -47,7 +47,7 @@ const FeedbackCard = ({
         </p>
         <button
           onClick={onView} // <-- aquí está el cambio
-          className="bg-black text-white py-1 px-6 mt-10 text-[12px] sm:px-6 sm:mt-7 md:text-[11px] md:px-5 md:mt-7 lg:text-[17px] font-semibold rounded-full transition-transform duration-200 ease-in-out hover:scale-105"
+          className="bg-black text-white py-1 px-6 mt-10 text-[12px] sm:px-6 sm:mt-7 md:text-[11px] md:px-5 md:mt-7 lg:text-[17px] 2xl:text-[16px] 2xl:px-6.5 font-semibold rounded-full transition-transform duration-200 ease-in-out hover:scale-105"
         >
           Ver
         </button>

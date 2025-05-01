@@ -176,7 +176,7 @@ function Testimonials() {
         <h1 className="mt-6 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
 
-      <div className="flex mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+      <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <TestimonialStat
           value={totalAprobados}
           indicator={cambios.Aprobado}
@@ -200,7 +200,7 @@ function Testimonials() {
         />
       </div>
 
-      <div className="flex items-center justify-between mt-10 py-2 w-full h-auto">
+      <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
         <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
           <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
           <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
