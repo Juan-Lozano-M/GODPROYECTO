@@ -14,7 +14,7 @@ import imageTestimonial4 from "../../assets/images/imageTestimonial4.png";
 import imageTestimonial5 from "../../assets/images/imageTestimonial5.png";
 import imageTestimonial6 from "../../assets/images/imageTestimonial6.png";
 import imageTestimonial7 from "../../assets/images/imageTestimonial7.png";
-
+import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
@@ -25,7 +25,7 @@ function Testimonials() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // <- Estado modal de filtros
 
   const [testimonios, setTestimonios] = useState([
-    {
+/*     {
       id: 1,
       name: "Thompson Mark",
       position: "Vicepresidente de tecnología.",
@@ -34,7 +34,7 @@ function Testimonials() {
       imageUrl: imageTestimonial1,
       titulo: 'Buena experiencia tecnica.',
       comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
-    },
+    }, */
     {
       id: 2,
       name: "James Kim",
@@ -75,7 +75,7 @@ function Testimonials() {
       titulo: 'Limitada en métricas avanzadas.',
       comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
     },
-    {
+/*     {
       id: 6,
       name: "Michael Jaramillo",
       position: "Tecnologo ADSO.",
@@ -84,7 +84,7 @@ function Testimonials() {
       imageUrl: imageTestimonial6,
       titulo: 'Satisfacción total desde el inicio.',
       comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
-    },
+    }, */
     {
       id: 7,
       name: "Martin Motta",
@@ -241,11 +241,22 @@ function Testimonials() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-start  gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
+      <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
         {testimoniosFiltrados.length === 0 ? (
-          <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
-            No hay testimonios disponibles para este filtro.
-          </p>
+
+          // Mensaje de "No hay testimonios" si no hay resultados
+          <div className="flex justify-center sm:mt-15 ml-auto mr-auto items-center flex-col gap-4 text-xl text-gray-500 p-4">
+            <div>
+              <img src={iconNotResult} className="h-25 w-35 sm:h-60 sm:w-80" alt="Imagen de no resultados" />
+            </div>
+            <div className="text-center font-bold font-adlam text-2xl sm:text-4xl">
+              Oops,
+            </div>
+            <div className="w-70 sm:w-90 text-gray-400 text-center font-light text-lg sm:text-xl font-quicksand">
+              No hay resultados para su busqueda. Vamos, intentelo de nuevo!
+            </div>
+          </div>
+        
         ) : (
           testimoniosFiltrados.map((t) => (
             <FeedbackCard
