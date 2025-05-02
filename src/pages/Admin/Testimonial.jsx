@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../components/Sidebar";
-import TestimonialStat from "../../components/admin/TestimonialStat";
+import DataStat from "../../components/admin/DataStat";
 import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
@@ -177,21 +177,21 @@ function Testimonials() {
       </div>
 
       <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
-        <TestimonialStat
+        <DataStat
           value={totalAprobados}
           indicator={cambios.Aprobado}
           label="Aprobados"
           iconSrc={getIcon(cambios.Aprobado)}
           bgColor="#9CE840"
         />
-        <TestimonialStat
+        <DataStat
           value={totalAnulados}
           indicator={cambios.Anulado}
           label="Anulados"
           iconSrc={getIcon(cambios.Anulado)}
           bgColor="#EA4335"
         />
-        <TestimonialStat
+        <DataStat
           value={totalEnEspera}
           indicator={cambios["En espera"]}
           label="En espera"
