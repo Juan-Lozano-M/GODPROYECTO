@@ -1,19 +1,18 @@
 
+import { motion } from "framer-motion"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import offEye from '../assets/icons/offEye.png'
+import xIcon from '../assets/icons/xIcon.png'
+import imagenRegister from '../assets/images/imagenRegister.png'
+import GODlogo from '../assets/logos/logoGOD.png'
 import googleLogo from '../assets/logos/logoGoogle.png'
 import instagramLogo from '../assets/logos/logoInstagram.png'
-import xIcon from '../assets/icons/xIcon.png'
-import offEye from '../assets/icons/offEye.png'
-import GODlogo from '../assets/logos/logoGOD.png'
-import imagenRegister from '../assets/images/imagenRegister.png' 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import InputField from "../components/InputField";
-import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import { Link } from "react-router-dom";
-import Textwriter from "../components/alertas/ui/textwriter";
 import AlertMessage from '../components/alertas/AlertMesagge'
+import Textwriter from "../components/alertas/ui/textwriter"
+import SocialLoginButton from "../components/buttons/SocialMediaButton"
 import Cursor from '../components/Cursor'
+import InputField from "../components/InputField"
 import Loader from '../components/loader'
 
 
@@ -45,15 +44,15 @@ const Register = () => {
         }
     
         const datos = {
-            email: email,
-            nombre: nombre,
+            correo_usu: email,
+            nombre_usu: nombre,
             password: password
         };
     
         
     
         try {
-          const response = await fetch('http://localhost/backend/conexion.php', {
+          const response = await fetch('http://127.0.0.1:5000/auth/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(datos),

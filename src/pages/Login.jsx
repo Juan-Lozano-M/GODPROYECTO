@@ -1,16 +1,15 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import googleLogo from "../assets/logos/logoGoogle.png";
-import instagramLogo from "../assets/logos/logoInstagram.png";
+import { Link, useNavigate } from "react-router-dom";
 import loginImagen from "../assets/images/imagenLogin.png";
 import GODlogo from "../assets/logos/logoGOD.png";
-import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import InputField from "../components/InputField";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import Cursor from "../components/Cursor";
+import googleLogo from "../assets/logos/logoGoogle.png";
+import instagramLogo from "../assets/logos/logoInstagram.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
+import SocialLoginButton from "../components/buttons/SocialMediaButton";
+import Cursor from "../components/Cursor";
+import InputField from "../components/InputField";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -40,8 +39,8 @@ const Login = () => {
     }
   
     try {
-      const datos = { email, password };
-      const response = await fetch('http://localhost/backend/login.php', {
+      const datos = { correo_usu: email, password };
+      const response = await fetch('http://127.0.0.1:5000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
@@ -52,8 +51,8 @@ const Login = () => {
   
       if (result.status === "success") {
         console.log("Usuario encontrado:", result);
-        localStorage.setItem("userName", result.name);
-        localStorage.setItem("userEmail", result.email); // Make sure this line is using the email from response
+        localStorage.setItem("userName", result.user.nombre);
+        localStorage.setItem("userEmail", result.user.correo); // Make sure this line is using the email from response
         navigate("/dashboard");
       } else {
         setMensaje(result.message);

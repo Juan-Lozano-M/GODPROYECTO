@@ -9,10 +9,7 @@ import { ListNode, ListItemNode } from '@lexical/list';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import Toolbars from './Toolbars';
 import { $getRoot } from 'lexical';
-
-// Catch any errors that occur during Lexical updates and log them
-// or throw them as needed. If you don't throw them, Lexical will
-// try to recover gracefully without losing user data.
+import React, { useState } from 'react';
 
 function Placeholder() {
   return (
@@ -24,14 +21,27 @@ function Placeholder() {
 
 function onError(error) {
   console.error(error);
-}
+} 
 
-function Editor({ onChange }) {
+function Editor({ onChange, textColor, setTextColor }) {
   const initialConfig = {
     namespace: 'MyEditor',
-    theme: exampleTheme,
+    theme: {
+      ...exampleTheme,
+      text: {
+        ...exampleTheme.text,
+        base: `color: ${textColor}`,
+        color: textColor,
+      },
+    },
+    editorState: () => {
+      const root = $getRoot();
+      if (root) {
+        root.style = `color: ${textColor}`;
+      }
+    },
     onError,
-    nodes: [HeadingNode, ListNode, ListItemNode], // Añadir los nuevos nodos
+    nodes: [HeadingNode, ListNode, ListItemNode],
     onUpdate: (editorState) => {
       editorState.read(() => {
         const root = $getRoot();
@@ -45,7 +55,7 @@ function Editor({ onChange }) {
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <Toolbars onChange={onChange} />
+      <Toolbars onChange={onChange} setTextColor={setTextColor} />
       <div className="relative bg-gray-100 p-4 rounded-md h-96 overflow-auto">
         <RichTextPlugin
           contentEditable={<ContentEditable className="focus:outline-none w-full h-full" />}
@@ -60,9 +70,16 @@ function Editor({ onChange }) {
   );
 }
 
-// Update the default export
 const ContentEditor = ({ onChange }) => {
-  return <Editor onChange={onChange} />;
+  const [textColor, setTextColor] = useState('#000000');
+  
+  return (
+    <Editor 
+      onChange={onChange} 
+      textColor={textColor} 
+      setTextColor={setTextColor} // Pass setTextColor here
+    />
+  );
 };
 
 export default ContentEditor;

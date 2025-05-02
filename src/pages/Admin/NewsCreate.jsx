@@ -38,7 +38,13 @@ const NewsCreate = () => {
     <div className="flex">
       <Sidebar />
       <div className="flex-1 p-8 md:ml-40 md:mr-10">
-        <h2 className="text-4xl font-bold mt-5">Creacion de noticias</h2>
+        <div className="flex justify-between items-center mt-5">
+          <h2 className="text-4xl font-bold">Creacion de noticias</h2>
+          <GameButton 
+            text="Guardar"
+            onClick={handleSubmit}
+          />
+        </div>
         <BackButton className="mt-4" />
         
         <form onSubmit={handleSubmit} className="flex-col mt-4 flex flex-wrap lg:flex-row 2xl:flex-row">
@@ -76,12 +82,7 @@ const NewsCreate = () => {
               className="w-2/3 mt-2"
               onChange={(value) => handleInputChange('content', value)}
             />
-
-            <GameButton 
-              buttonClassName='mt-30'
-              text="Guardar"
-              onClick={handleSubmit}
-            />
+            {/* Removed GameButton from here */}
           </div>
         </form>
       </div>

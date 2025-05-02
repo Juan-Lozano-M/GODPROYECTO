@@ -20,8 +20,9 @@ import { useDebouncedCallback } from 'use-debounce';
 // Add this import at the top
 import { $isListNode } from '@lexical/list';
 
-export default function Toolbars({ onChange }) {
-  // Add these new states after the existing states
+import {ColorPicker} from './ColorPicker';
+
+export default function Toolbars({ onChange, setTextColor }) {
   const [editor] = useLexicalComposerContext();
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -31,7 +32,26 @@ export default function Toolbars({ onChange }) {
   const [isUnorderedList, setIsUnorderedList] = useState(false);
   const [isOrderedList, setIsOrderedList] = useState(false);
   
-  // Update the updateToolbar function
+  // Remove the standalone list buttons JSX that's outside the return statement
+  
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const node = selection.anchor.getNode();
+          if (node) {
+            const style = node.getStyle();
+            const color = style?.match(/color:\s*([^;]+)/)?.[1];
+            if (color) {
+              setTextColor(color);
+            }
+          }
+        }
+      });
+    });
+  }, [editor, setTextColor]);
+
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
@@ -345,6 +365,17 @@ export default function Toolbars({ onChange }) {
         <option value="h2">Subtitulo</option>
         <option value="h3">Sub-subtitulo</option>
       </select>
+
+      {/* Make sure ColorPicker is the last component in the toolbar */}
+      <ColorPicker onColorChange={(color) => {
+        setTextColor(color);
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            selection.formatText({ color });
+          }
+        });
+      }} />
     </div>
   );
 }

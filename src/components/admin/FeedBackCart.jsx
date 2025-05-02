@@ -16,17 +16,13 @@ const FeedbackCard = ({
   onView // <-- nuevo: callback para abrir modal
 }) => {
   return (
-<<<<<<< HEAD
-    <div className="relative bg-black/7 rounded-3xl shadow-md p-4 w-full sm:p-6 sm:w-[278px] md:w-[254px] lg:w-[352px] xl:w-80 2xl:w-[392px] flex flex-col justify-between gap-2 sm:gap-4 transition-transform duration-200 ease-in-out hover:scale-105">
-      <div className='bg-white absolute h-5 w-5 ml-29 sm:h-10 sm:w-10 sm:ml-54 md:ml-49 md:h-10 md:w-10 lg:ml-68 lg:w-15 lg:h-15 xl:ml-81 top-0 rounded-full'>
-=======
     <div className="relative bg-black/7 rounded-3xl shadow-md p-4 w-[100%] min-[450px]:w-[90%] sm:w-[45%] md:w-[45%] lg:w-[45%] xl:w-[30%] 2xl:w-[28%] flex flex-col justify-between gap-2 sm:gap-4 transition-transform duration-200 ease-in-out hover:scale-105">
       <div className='bg-white absolute h-5 w-5 sm:h-10 sm:w-10 md:h-10 md:w-10 lg:w-15 lg:h-15 top-3 right-2 -translate-y-1/2 translate-x-1/2 rounded-full'>
->>>>>>> 60872bafbc64c58e87582ade35249decac0eb42b
         {/* decorativo */}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3"
+      >
         <img 
           src={imageUrl} 
           alt={name} 
