@@ -241,37 +241,36 @@ function Testimonials() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
-        {testimoniosFiltrados.length === 0 ? (
-
-          // Mensaje de "No hay testimonios" si no hay resultados
-          <div className="flex justify-center sm:mt-15 ml-auto mr-auto items-center flex-col gap-4 text-xl text-gray-500 p-4">
-            <div>
-              <img src={iconNotResult} className="h-25 w-35 sm:h-60 sm:w-80" alt="Imagen de no resultados" />
-            </div>
-            <div className="text-center font-bold font-adlam text-2xl sm:text-4xl">
-              Oops,
-            </div>
-            <div className="w-70 sm:w-90 text-gray-400 text-center font-light text-lg sm:text-xl font-quicksand">
-              No hay resultados para su busqueda. Vamos, intentelo de nuevo!
-            </div>
+      {testimoniosFiltrados.length === 0 ? (
+      <div className="w-full flex justify-center items-center mt-10">
+        <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
+          <div>
+            <img src={iconNotResult} className="h-40 w-50 sm:h-60 sm:w-80 mx-auto" alt="Imagen de no resultados" />
           </div>
-        
-        ) : (
-          testimoniosFiltrados.map((t) => (
-            <FeedbackCard
-              key={t.id}
-              name={t.name}
-              position={t.position}
-              status={t.status}
-              statusColor={t.statusColor}
-              imageUrl={t.imageUrl}
-              comment={t.comment}
-              onView={() => handleOpenModal(t)}
-            />
-          ))
-        )}
+          <div className="font-bold font-adlam text-2xl sm:text-4xl">
+            Oops,
+          </div>
+          <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
+            No hay resultados para su búsqueda. ¡Vamos, inténtelo de nuevo!
+          </div>
+        </div>
       </div>
+    ) : (
+      <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
+        {testimoniosFiltrados.map((t) => (
+          <FeedbackCard
+            key={t.id}
+            name={t.name}
+            position={t.position}
+            status={t.status}
+            statusColor={t.statusColor}
+            imageUrl={t.imageUrl}
+            comment={t.comment}
+            onView={() => handleOpenModal(t)}
+          />
+        ))}
+      </div>
+    )}
 
       {selectedTestimonio && (
         <TestimonialModal
