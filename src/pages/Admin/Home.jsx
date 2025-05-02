@@ -67,7 +67,9 @@ const Home = () => {
       <div className="xl:hidden">
         
         {/* Buscador */}
-          <Search/>
+        <div className="flex w-full items-center">
+          <Search />
+        </div>
 
         {/* Saludo */}
         <div className="flex items-center justify-center rounded-lg w-full mt-10 sm:mt-15 h-40 sm:h-51 bg-black/7">
@@ -95,12 +97,12 @@ const Home = () => {
         <div className="xl:w-1/2">
           {/* Columna izquierda: Saludo - visible solo en xl+ */}
           <div className="hidden xl:flex items-center justify-center rounded-lg w-full h-51 bg-black/7">
-            <div>
-              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold xl:text-3xl">Hola Gloria!</h1>
-              <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium xl:text-[20px] 2xl:text-[23px]">Es bueno verte de nuevo.</p>
+            <div className="ml-15">
+              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold xl:text-[23px] 2xl:text-[25px]">Hola Gloria!</h1>
+              <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium xl:text-[17px] 2xl:text-[20px]">Es bueno verte de nuevo.</p>
             </div>
             <div>
-              <img src={imagenBienvenida} className="hidden 2xl:flex 2xl:gap-10 w-65 mb-8" alt="Imagen bienvenida" />
+              <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain flex 2xl:gap-10 w-65 mb-8" alt="Imagen bienvenida" />
             </div>
           </div>
   

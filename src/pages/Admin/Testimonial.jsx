@@ -14,7 +14,7 @@ import imageTestimonial4 from "../../assets/images/imageTestimonial4.png";
 import imageTestimonial5 from "../../assets/images/imageTestimonial5.png";
 import imageTestimonial6 from "../../assets/images/imageTestimonial6.png";
 import imageTestimonial7 from "../../assets/images/imageTestimonial7.png";
-
+import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
@@ -25,7 +25,7 @@ function Testimonials() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // <- Estado modal de filtros
 
   const [testimonios, setTestimonios] = useState([
-    {
+/*     {
       id: 1,
       name: "Thompson Mark",
       position: "Vicepresidente de tecnología.",
@@ -34,7 +34,7 @@ function Testimonials() {
       imageUrl: imageTestimonial1,
       titulo: 'Buena experiencia tecnica.',
       comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
-    },
+    }, */
     {
       id: 2,
       name: "James Kim",
@@ -59,7 +59,7 @@ function Testimonials() {
       id: 4,
       name: "Lisa Elena",
       position: "Técnico de InnovateSphere.",
-      status: "Rechazado",
+      status: "Anulado",
       statusColor: "Red",
       imageUrl: imageTestimonial4,
       titulo: 'Diseño amigable, pero insuficiente.',
@@ -75,7 +75,7 @@ function Testimonials() {
       titulo: 'Limitada en métricas avanzadas.',
       comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
     },
-    {
+/*     {
       id: 6,
       name: "Michael Jaramillo",
       position: "Tecnologo ADSO.",
@@ -84,7 +84,7 @@ function Testimonials() {
       imageUrl: imageTestimonial6,
       titulo: 'Satisfacción total desde el inicio.',
       comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
-    },
+    }, */
     {
       id: 7,
       name: "Martin Motta",
@@ -99,7 +99,7 @@ function Testimonials() {
       id: 8,
       name: "Camilo Giraldo",
       position: "Diseñador grafico 4 semestre.",
-      status: "Rechazado",
+      status: "Anulado",
       statusColor: "Red",
       imageUrl: imageTestimonial1,
       titulo: 'Gran diseño, necesita interacción',
@@ -109,12 +109,12 @@ function Testimonials() {
 
   const filtroTraducido = {
     Aprobados: "Aprobado",
-    Rechazados: "Rechazado",
+    Anulados: "Anulado",
     "En espera": "En espera",
     Todos: "Todos",
   };
 
-  const filters = ["Aprobados", "Rechazados", "En espera"];
+  const filters = ["Aprobados", "Anulados", "En espera"];
 
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
@@ -126,31 +126,31 @@ function Testimonials() {
     testimonios.filter((t) => t.status === status).length;
 
   const totalAprobados = countByStatus("Aprobado");
-  const totalRechazados = countByStatus("Rechazado");
+  const totalAnulados = countByStatus("Anulado");
   const totalEnEspera = countByStatus("En espera");
 
   const prevCounts = useRef({
     Aprobado: totalAprobados,
-    Rechazado: totalRechazados,
+    Anulado: totalAnulados,
     "En espera": totalEnEspera,
   });
 
   const [cambios, setCambios] = useState({
     Aprobado: 0,
-    Rechazado: 0,
+    Anulado: 0,
     "En espera": 0,
   });
 
   useEffect(() => {
     setCambios({
       Aprobado: totalAprobados - prevCounts.current.Aprobado,
-      Rechazado: totalRechazados - prevCounts.current.Rechazado,
+      Anulado: totalAnulados - prevCounts.current.Anulado,
       "En espera": totalEnEspera - prevCounts.current["En espera"],
     });
 
     prevCounts.current = {
       Aprobado: totalAprobados,
-      Rechazado: totalRechazados,
+      Anulado: totalAnulados,
       "En espera": totalEnEspera,
     };
   }, [testimonios]);
@@ -176,7 +176,7 @@ function Testimonials() {
         <h1 className="mt-6 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
 
-      <div className="flex mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+      <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <TestimonialStat
           value={totalAprobados}
           indicator={cambios.Aprobado}
@@ -185,10 +185,10 @@ function Testimonials() {
           bgColor="#9CE840"
         />
         <TestimonialStat
-          value={totalRechazados}
-          indicator={cambios.Rechazado}
-          label="Rechazados"
-          iconSrc={getIcon(cambios.Rechazado)}
+          value={totalAnulados}
+          indicator={cambios.Anulado}
+          label="Anulados"
+          iconSrc={getIcon(cambios.Anulado)}
           bgColor="#EA4335"
         />
         <TestimonialStat
@@ -200,7 +200,7 @@ function Testimonials() {
         />
       </div>
 
-      <div className="flex items-center justify-between mt-10 py-2 w-full h-auto">
+      <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
         <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
           <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
           <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
@@ -241,26 +241,36 @@ function Testimonials() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3  sm:w-full sm:gap-7 lg:gap-10 justify-start mt-5">
-        {testimoniosFiltrados.length === 0 ? (
-          <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
-            No hay testimonios disponibles para este filtro.
-          </p>
-        ) : (
-          testimoniosFiltrados.map((t) => (
-            <FeedbackCard
-              key={t.id}
-              name={t.name}
-              position={t.position}
-              status={t.status}
-              statusColor={t.statusColor}
-              imageUrl={t.imageUrl}
-              comment={t.comment}
-              onView={() => handleOpenModal(t)}
-            />
-          ))
-        )}
+      {testimoniosFiltrados.length === 0 ? (
+      <div className="w-full flex justify-center items-center mt-10">
+        <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
+          <div>
+            <img src={iconNotResult} className="h-40 w-50 sm:h-60 sm:w-80 mx-auto" alt="Imagen de no resultados" />
+          </div>
+          <div className="font-bold font-adlam text-2xl sm:text-4xl">
+            Oops,
+          </div>
+          <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
+            No hay resultados para su búsqueda. ¡Vamos, inténtelo de nuevo!
+          </div>
+        </div>
       </div>
+    ) : (
+      <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
+        {testimoniosFiltrados.map((t) => (
+          <FeedbackCard
+            key={t.id}
+            name={t.name}
+            position={t.position}
+            status={t.status}
+            statusColor={t.statusColor}
+            imageUrl={t.imageUrl}
+            comment={t.comment}
+            onView={() => handleOpenModal(t)}
+          />
+        ))}
+      </div>
+    )}
 
       {selectedTestimonio && (
         <TestimonialModal

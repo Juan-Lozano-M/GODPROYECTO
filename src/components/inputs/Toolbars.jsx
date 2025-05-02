@@ -61,25 +61,26 @@ export default function Toolbars({ onChange, setTextColor }) {
       const node = selection.anchor.getNode();
       const element = node.getParent();
       
-      // Fix alignment detection
-      const format = element.getFormat();
-      const alignment = element.getFormatType();
-      setTextAlignment(alignment || 'left');
-
-      // List detection remains the same
-      let parent = node.getParent();
-      while (parent !== null) {
-        if ($isListNode(parent)) {
-          const listType = parent.getTag();
-          setIsUnorderedList(listType === 'ul');
-          setIsOrderedList(listType === 'ol');
-          break;
+      // Add null check before accessing getFormat
+      if (element) {
+        const alignment = element.getFormatType?.() || 'left';
+        setTextAlignment(alignment);
+  
+        // List detection with null checks
+        let parent = element;
+        while (parent !== null) {
+          if ($isListNode(parent)) {
+            const listType = parent.getTag();
+            setIsUnorderedList(listType === 'ul');
+            setIsOrderedList(listType === 'ol');
+            break;
+          }
+          parent = parent.getParent();
         }
-        parent = parent.getParent();
-      }
-      if (parent === null) {
-        setIsUnorderedList(false);
-        setIsOrderedList(false);
+        if (parent === null) {
+          setIsUnorderedList(false);
+          setIsOrderedList(false);
+        }
       }
     }
   }, []);
