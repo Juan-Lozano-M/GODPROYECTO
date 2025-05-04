@@ -1,5 +1,5 @@
 import React from 'react';
-import personajeimg2 from '../assets/PERSONAJE NUEVO.png';
+import personajeimg2 from '../assets/PERSONAJE NUEVO1.png';
 
 const Personaje2 = () => {
   return (
@@ -7,7 +7,7 @@ const Personaje2 = () => {
       <img
         src={personajeimg2}
         alt="Personaje Principal"
-        className="h-[900px] w-auto object-contain"
+        className="w-full h-auto object-contain md:mt-[7rem]  object-contain"
       />
     </div>
   );

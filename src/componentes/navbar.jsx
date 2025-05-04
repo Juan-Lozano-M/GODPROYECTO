@@ -1,9 +1,10 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const Navbar = () => {
   return (
     <div className="w-full flex justify-center pt-8 fixed top-0 left-0 z-50">
-      <nav className="flex items-center justify-between w-[50%] max-w-6xl border-2 border-black rounded-md px-8 py-3 bg-white shadow-md overflow-visible">
+      <nav className="flex items-center justify-between w-[50%] max-w-6xl border-2 border-black rounded-md px-8 py-3 bg-[#E8FFBE] shadow-md overflow-visible">
         
         {/* Logo */}
         <div className="flex flex-col text-black items-start">
@@ -12,9 +13,18 @@ const Navbar = () => {
 
         {/* Links */}
         <div className="flex space-x-6 text-xs font-semibold text-black">
-          <a href="#" className="text-inherit hover:underline">Sobre nosotros</a>
-          <a href="#" className="text-inherit hover:underline">Testimonios</a>
-          <a href="#" className="text-inherit hover:underline">Juegos</a>
+          {["Sobre nosotros", "Testimonios", "Juegos"].map((text, index) => (
+            <motion.a
+              key={index}
+              href="#"
+              className="text-inherit hover:underline"
+              whileHover={{ scale: 1.1 }} // agranda el enlace cuando el mouse pasa por encima
+              whileTap={{ scale: 0.95 }} // reduce el tamaño del enlace cuando se hace clic
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }} // rebote suave
+            >
+              {text}
+            </motion.a>
+          ))}
         </div>
 
         {/* Botón Launch */}

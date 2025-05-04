@@ -2,42 +2,26 @@ import React from 'react';
 
 function TextoHero() {
   return (
-    <div className="flex flex-col justify-start text-black space-y-4 text-center">
-      <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-        Tu futuro<br />
-        <span className="text-purple-600 ml-20">Tu decisión</span>
+    <div className="flex flex-col text-black  text-center md:text-left font-nunito md:mt-[7rem] translate-x-4 md:translate-x-[5rem]">
+
+      <h1 className="text-4xl md:text-9xl font-bold leading-tight">
+        Tu futuro
+        <span className="block text-[#732bf9] md:text-8xl font-bold ">Tu decisión</span>
       </h1>
-      
-      {/* Contenedor adicional para los párrafos */}
-      <div className="flex flex-col ml-20 font-semibold text-lg">
-        <p>
-          Conoce más sobre 
-          <button className="bg-purple-600 text-white mr-2 px-2 py-1 rounded-md text-sm ml-2 
-                             hover:bg-purple-800 hover:scale-105 transition duration-300 ease-in-out">
-            Nosotros
-          </button>
-          descubre tu vocación 
-        </p>
 
+      <div className="flex flex-col pl-6 text-lg  font-normal items-center md:items-start">
         <p>
-          Con nuestros 
-          <button className="bg-purple-600 text-white mr-2 px-2 py-1 rounded-md text-sm ml-2
-                             hover:bg-purple-800 hover:scale-105 transition duration-300 ease-in-out">
-            Juegos
-          </button>
-          aprende de aquellos que ya lo 
+        Descubre tu vocación jugando, conoce nuestras
         </p>
-
+        <p>historias y experiencias. Y aclara todas tus dudas</p>
         <p>
-          Han vivido en la seccion 
-          <button className="bg-purple-600 text-white mr-2 px-2 py-1 rounded-md text-sm ml-2
-                             hover:bg-purple-800 hover:scale-105 transition duration-300 ease-in-out">
-            Testimonios
-          </button>
-          o habla con nuestro 
+        Conversando con nuestro chatbot.
         </p>
+        
 
-        <p>chatbot a cerca de tus dudas</p>
+        <button className="mt-6 px-6 py-3 bg-[#732bf9] text-black font-bold rounded-lg border-2 border-black shadow-[0_4px_0_0_black] hover:brightness-110 active:translate-y-1 transition">
+          ¡Juega ahora!
+        </button>
       </div>
     </div>
   );

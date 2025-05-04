@@ -1,11 +1,14 @@
 import React from 'react'
 import Hero from '../componentes/Hero'
+import S2 from '../componentes/Seccion2'
 
 
 function Home() {
   return (
-    <div className="w-screen h-screen bg-gradient-to-br from-[#D4FC79] to-[#96E6A1]">
+    <div className="w-screen min-h-screen bg-[#e1e1e1] ">
       <Hero />
+      <S2></S2>
+
     </div>
   )
 }
