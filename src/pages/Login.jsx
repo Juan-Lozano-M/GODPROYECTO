@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import loginImagen from "../assets/images/imagenLogin.png";
@@ -10,6 +10,14 @@ import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
 import Cursor from "../components/Cursor";
 import InputField from "../components/InputField";
+import { 
+  auth,
+  signInWithEmailAndPassword,
+  googleProvider,
+  signInWithPopup,
+  fetchSignInMethodsForEmail
+} from "../firebaseConfig";
+import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,17 +25,15 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [mensaje, setMensaje] = useState(""); // Estado para el mensaje de error o éxito
+  const [mensaje, setMensaje] = useState(""); // Estado para el mensaje de error o éxito 
 
   const handleLogin = async (event) => {
     event.preventDefault();
   
-    // Limpiar errores previos
     setEmailError("");
     setPasswordError("");
     setMensaje("");
   
-    // Validar que los campos no estén vacíos
     if (!email.trim()) {
       setEmailError("El campo de correo es obligatorio.");
       return;
@@ -39,43 +45,114 @@ const Login = () => {
     }
   
     try {
-      const datos = { correo_usu: email, password };
-      const response = await fetch('http://127.0.0.1:5000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos),
-      });
+      // Check auth methods for this email
+      const methods = await fetchSignInMethodsForEmail(auth, email.trim().toLowerCase());
+      
+      // If the email is registered with Google only
+      if (methods.includes('google.com') && !methods.includes('password')) {
+        setPasswordError("Esta cuenta está registrada con Google. Por favor usa el botón de Google.");
+        return;
+      }
   
-      const result = await response.json();
-      console.log("Respuesta del backend:", result); // 👈 Verifica qué devuelve el backend
+      // If the email is registered with both methods
+      if (methods.includes('google.com') && methods.includes('password')) {
+        try {
+          const userCredential = await signInWithEmailAndPassword(
+            auth, 
+            email.trim().toLowerCase(), 
+            password
+          );
   
-      if (result.status === "success") {
-        console.log("Usuario encontrado:", result);
-        localStorage.setItem("userName", result.user.nombre);
-        localStorage.setItem("userEmail", result.user.correo); // Make sure this line is using the email from response
-        navigate("/dashboard");
-      } else {
-        setMensaje(result.message);
+          const firebaseUser = userCredential.user;
+          const idToken = await firebaseUser.getIdToken();
   
-        if (result.message.includes("Correo no registrado")) {
-          setEmailError("El correo no se encuentra registrado.");
-          console.log("Error de correo no registrado.");
-        } else if (result.message.includes("Correo incorrecto")) {
-          setEmailError("Correo incorrecto.");
-        }
+          const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+            correo_usu: email.trim().toLowerCase(),
+            token: idToken
+          });
   
-        if (result.message.includes("Contraseña incorrecta")) {
+          if (response.data.status === "success") {
+            localStorage.setItem("userName", response.data.user.nombre);
+            localStorage.setItem("userEmail", response.data.user.correo);
+            localStorage.setItem("firebaseUID", firebaseUser.uid);
+            navigate("/dashboard");
+          }
+        } catch (error) {
+          console.error("Error with email/password login:", error);
           setPasswordError("Contraseña incorrecta.");
         }
+        return;
+      }
+  
+      // Regular email/password login
+      const userCredential = await signInWithEmailAndPassword(
+        auth, 
+        email.trim().toLowerCase(), 
+        password
+      );
+  
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+  
+      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+        correo_usu: email.trim().toLowerCase(),
+        token: idToken
+      });
+  
+      if (response.data.status === "success") {
+        localStorage.setItem("userName", response.data.user.nombre);
+        localStorage.setItem("userEmail", response.data.user.correo);
+        localStorage.setItem("firebaseUID", firebaseUser.uid);
+        navigate("/dashboard");
       }
     } catch (error) {
-      setMensaje("Error en la conexión: " + error.message);
+      console.error("Detailed error:", error);
+      
+      switch (error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+          setPasswordError("Contraseña incorrecta.");
+          break;
+        case 'auth/user-not-found':
+          setEmailError("No existe una cuenta con este correo.");
+          break;
+        case 'auth/invalid-email':
+          setEmailError("Formato de correo inválido");
+          break;
+        case 'auth/too-many-requests':
+          setMensaje("Demasiados intentos fallidos. Por favor, intente más tarde.");
+          break;
+        default:
+          setMensaje("Error en el inicio de sesión. Por favor, verifique sus credenciales.");
+      }
     }
   };
-  
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
 
- return (
+      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+        correo_usu: user.email,
+        token: idToken
+      });
+
+      if (response.data.status === "success") {
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("userPhoto", user.photoURL || "");
+        localStorage.setItem("firebaseUID", user.uid);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      setMensaje("Error al iniciar sesión con Google. Por favor, intente nuevamente.");
+    }
+  };
+
+  return (
   <div className="flex min-h-screen w-full bg-[#9CE840] cursor-none flex-grow  ">
     <Cursor/>
     <div className="flex items-end justify-between w-full h-45 absolute ">
@@ -210,7 +287,8 @@ const Login = () => {
         </div>
 
         <div className="flex justify-between h-15 pt-3 mt-7">
-          <SocialLoginButton icon={googleLogo} />
+    
+          <SocialLoginButton icon={googleLogo} onClick={handleGoogleLogin} />
           <SocialLoginButton icon={instagramLogo} />
         </div>
       </div>
