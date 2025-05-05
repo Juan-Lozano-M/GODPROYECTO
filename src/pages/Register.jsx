@@ -1,4 +1,4 @@
-
+import axios from 'axios'
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
@@ -14,7 +14,16 @@ import SocialLoginButton from "../components/buttons/SocialMediaButton"
 import Cursor from '../components/Cursor'
 import InputField from "../components/InputField"
 import Loader from '../components/loader'
-
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  googleProvider,
+  signInWithPopup,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
+  EmailAuthProvider,
+  GoogleAuthProvider
+} from "../firebaseConfig"
 
 const Register = () => {
 
@@ -31,71 +40,106 @@ const Register = () => {
     
       const manejarEnvio = async (event) => {
         event.preventDefault();
-       
-       
-        if (!email || !nombre || !password || !confirmPassword) {
+        
+        try {
+          setIsLoading(true);
+          setMensaje("");
+    
+          if (!email || !nombre || !password || !confirmPassword) {
             setMensaje("Por favor, ingresa todos los campos.");
             return;
-        }
+          }
     
-        if (password !== confirmPassword) {
+          if (password !== confirmPassword) {
             setMensaje("Las contraseñas no coinciden.");
             return;
-        }
+          }
     
-        const datos = {
+          // First create user in Firebase
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const firebaseUser = userCredential.user;
+    
+          // Get Firebase ID token
+          const idToken = await firebaseUser.getIdToken();
+    
+          // Then send data to your backend
+          const datos = {
             correo_usu: email,
             nombre_usu: nombre,
-            password: password
-        };
-    
-        
-    
-        try {
-          const response = await fetch('http://127.0.0.1:5000/auth/register', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(datos),
+            firebase_uid: firebaseUser.uid,
+            token: idToken,
+            contrasena_hash_usu: password  // Changed from password to match database field
+          };
+
+          const response = await axios.post('http://127.0.0.1:5000/auth/register', datos, {
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'  // Added content type header
+            }
           });
-          setIsLoading(true); // Activa el loader antes de la petición
-         
-          const responseText = await response.text();
-          console.log("Respuesta del servidor:", responseText);
-      
-          let result;
-          try {
-              result = JSON.parse(responseText);
-          } catch (error) {
-              throw new Error("Error al convertir respuesta en JSON: " + error.message);
+    
+          if (response.data.status === "success") {
+            localStorage.setItem("userName", nombre);
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("firebaseUID", firebaseUser.uid);
+            navigate("/dashboard");
+          } else {
+            setMensaje(response.data.message);
           }
-      
-          if (result.status === "error" && result.message.includes("Duplicate entry")) {
-              setMensaje("El correo ya está registrado. Usa otro correo.");
-              setIsLoading(false);
-              return;
+    
+        } catch (error) {
+          console.error("Error in registration:", error);
+          if (error.code === 'auth/email-already-in-use') {
+            setMensaje("El correo ya está registrado");
+          } else {
+            setMensaje("Error en el registro: " + error.message);
           }
-      
-          // In the manejarEnvio function, update the success block
-          if (result.status === "success") {
-              console.log("Registrado con éxito:", result);
-              localStorage.setItem("userName", nombre);
-              localStorage.setItem("userEmail", email);  // Add this line
-              setTimeout(() => {
-                  setIsLoading(false);
-                  navigate("/dashboard");
-              }, 2000);
-          }
-          else {
-              setMensaje(result.message);
-              setIsLoading(false);
-          }
-      } catch (error) {
-          setMensaje("Hubo un error al enviar los datos: " + error.message);
+        } finally {
           setIsLoading(false);
-      }
+        }
+      };
+
+      const manejarInicioConGoogle = async () => {
+        try {
+          setIsLoading(true);
+          setMensaje("");
       
-        
-    };
+          // Check if email exists with password authentication
+          const result = await signInWithPopup(auth, googleProvider);
+          const user = result.user;
+          const methods = await fetchSignInMethodsForEmail(auth, user.email);
+      
+          if (methods.includes('password')) {
+            // If email exists with password, link the Google credential
+            const credential = GoogleAuthProvider.credential(
+              result.credential.accessToken
+            );
+            await linkWithCredential(auth.currentUser, credential);
+          }
+      
+          const idToken = await user.getIdToken();
+      
+          const response = await axios.post('http://127.0.0.1:5000/auth/register', {
+            token: idToken,
+            nombre_usu: user.displayName,
+            correo_usu: user.email,
+            firebase_uid: user.uid
+          });
+      
+          if (response.data.status === "success") {
+            localStorage.setItem("userName", user.displayName);
+            localStorage.setItem("userEmail", user.email);
+            localStorage.setItem("userPhoto", user.photoURL || "");
+            localStorage.setItem("firebaseUID", user.uid);
+            navigate("/dashboard");
+          }
+        } catch (error) {
+          console.error("Full error:", error);
+          setMensaje("Error al registrar: " + (error.response?.data?.message || error.message));
+        } finally {
+          setIsLoading(false);
+        }
+      };
     
   
   return (
@@ -205,7 +249,7 @@ const Register = () => {
           </div>
 
           <div className="flex justify-between h-15 pt-3 mt-7">
-            <SocialLoginButton icon={googleLogo} />
+            <SocialLoginButton icon={googleLogo} onClick={manejarInicioConGoogle} />
             <SocialLoginButton icon={instagramLogo} />
           </div>
         </div>
