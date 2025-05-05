@@ -142,9 +142,9 @@ const Sidebar = () => {
           <nav className="md:my-10 rounded-r-2xl md:rounded-3xl w-60 md:w-30 flex flex-col bg-black items-center py-6">
             
             {/* Logo arriba */}
-            <div className="p-4 flex items-center gap-2 shrink-0">
-              <img src={logoGod} className="h-9 md:h-13" alt="Logo de GOD" />
-              <h1 className="text-white font-extrabold text-lg font-adlam md:hidden">Game Of Dreams</h1>
+            <div className="p-4 flex items-center gap-6 shrink-0">
+              <img src={logoGod} className="h-10 md:h-13" alt="Logo de GOD" />
+              <h1 className="text-white font-extrabold text-lg font-adlam md:hidden">GOD</h1>
             </div>
     
             {/* Íconos en el centro */}

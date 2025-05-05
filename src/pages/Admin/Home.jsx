@@ -111,7 +111,6 @@ const Home = () => {
             <Link to={"/home/newscreate"}>
               <CartoonButton />
             </Link>
-           
           </div>
   
           {/* Sección de testimonios */}

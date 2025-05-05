@@ -1,4 +1,4 @@
-const TestimonialStat = ({ value, indicator, label, iconSrc, bgColor }) => {
+const DataStat = ({ value, indicator, label, iconSrc, bgColor }) => {
 
     return (
       
@@ -20,4 +20,4 @@ const TestimonialStat = ({ value, indicator, label, iconSrc, bgColor }) => {
       );
     };
 
-export default TestimonialStat;
+export default DataStat;
