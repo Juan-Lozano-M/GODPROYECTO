@@ -7,8 +7,7 @@ import Sidebar from "../../components/Sidebar";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import FilterButton from "../../components/admin/FilterButton"; // Asegúrate de tener este componente
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png"; // Asegúrate de tener este icono
-import TestimonialCard from "../../components/TestimonialCard";
-import StatCard from "../../components/StatCard";
+import NoticeCard from "../../components/NoticeCard";
 
 import imageNotice from "../../assets/images/imagenNotice.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
@@ -148,14 +147,21 @@ function Notices() {
       
       {/* Seccion de noticias */}
       <section className="w-full h-auto mt-5 flex gap-15">  
-        <div className="flex flex-col gap-3 w-[65%]">
-          <TestimonialCard/>
+        <div className="flex flex-col gap-6 w-[55%]">
+          <NoticeCard/>
+          <NoticeCard/>
+          <NoticeCard/>
         </div>
-        <div className="h-auto w-[35%] flex flex-col gap-5">
-          <img src={imageNotice} className="rounded-xl hidden xl:block" alt="Imagen de Noticia" />
-          <div className="rounded-lg w-full h-24 mt-10 sm:mt-15 xl:mt-0 flex items-center justify-center bg-black/7">
-            <h1 className="text-[18px] sm:text-3xl xl:text-[33px] 2xl:text-[40px] font-black mt-3 xl:mt-5 2xl:mt-3"></h1>
-            <h1 className="text-[13px] sm:text-lg xl:text-[17px] mx-2 font-black flex 2xl:mx-11 mb-3 xl:mb-4"></h1>
+        <div className="hidden lg:flex flex-col gap-6 w-[45%]">
+        <div className="h-[300px] w-full flex flex-col gap-5 bg-black/7 overflow-hidden rounded-lg">
+          <img 
+            src={imageNotice} 
+            alt="Imagen de noticia" 
+            className="w-full h-full object-contain" 
+          />
+        </div>
+          <div className="h-[30%] w-full flex flex-col gap-5 bg-black/7">
+
           </div>
         </div>
       </section>
