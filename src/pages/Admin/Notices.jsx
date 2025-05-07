@@ -147,7 +147,7 @@ function Notices() {
       
       {/* Seccion de noticias */}
       <section className="w-full h-auto mt-5 flex gap-15">  
-        <div className="flex flex-col gap-6 w-[55%]">
+        <div className="flex flex-col gap-6 w-[80%]">
           <NoticeCard/>
           <NoticeCard/>
           <NoticeCard/>
@@ -160,8 +160,9 @@ function Notices() {
             className="w-full h-full object-contain" 
           />
         </div>
-          <div className="h-[30%] w-full flex flex-col gap-5 bg-black/7">
-
+          <div className="h-[30%] w-full flex justify-center items-center gap-4 bg-black/7 font-adlam rounded-lg">
+              <h1 className="text-5xl"> 10 </h1>
+              <h1 className="text-3xl"> Noticias publicadas hoy </h1>
           </div>
         </div>
       </section>
