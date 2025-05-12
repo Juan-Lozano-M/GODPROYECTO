@@ -42,8 +42,8 @@ function Seccion2() {
   ];
 
   return (
-    <div className='bg-[#E8FFBE] h-screen flex flex-col items-center justify-center p-5'>
-      <div className='w-full max-w-5xl text-center font-bold text-4xl md:text-6xl pl-10'
+    <div className='bg-[#E8FFBE] h-screen xl:h-[110vh] flex flex-col items-center justify-center p-5'>
+      <div className='w-full max-w-5xl text-center font-bold text-4xl md:text-6xl pl-4 md:pl-10'
         style={{
           opacity: opacity,
           transform: `scale(${scaleText})`,
@@ -52,7 +52,7 @@ function Seccion2() {
       >
         <h2>Nuevas formas de adaptarnos</h2>
         <div className="flex items-center gap-4 relative mt-2">
-          <h2 className='text-[#732bf9] no-underline ml-20 text-center z-10'>¿A qué nos enfrentamos?</h2>
+          <h2 className='text-[#732bf9] no-underline ml-4 md:ml-20 text-center z-10'>¿A qué nos enfrentamos?</h2>
           <div className="relative w-12 h-12">
             <div className="bg-[#A4FF00] border border-black w-full h-full rounded-md flex items-center justify-center z-10 relative">
               <img src={ArrowIcon} alt="Flecha" className="w-5 h-5" />
@@ -61,7 +61,7 @@ function Seccion2() {
         </div>
       </div>
 
-      <div className='relative flex w-full items-center gap-[10rem] justify-center max-w-5xl mt-20'
+      <div className='relative flex flex-col md:flex-row w-full items-center justify-center gap-10 md:gap-[10rem] max-w-5xl mt-20'
         style={{
           opacity: opacity,
           transform: `scale(${scaleList})`,
@@ -82,7 +82,7 @@ function Seccion2() {
           <img 
             src={Hand} 
             alt="hand" 
-            className='absolute -top-[180px] -left-[110px] max-w-[400px] max-h-[400px] object-contain z-20' 
+            className='absolute left-0 md:-top-[180px] md:-left-[110px] max-w-[400px] max-h-[400px] object-contain z-20' 
             style={{ 
               opacity: opacity,  
               transform: `scale(${scaleHand})`, 
@@ -91,10 +91,10 @@ function Seccion2() {
           />
         </div>
 
-        <div className='flex flex-col gap-6 items-center'>
+        <div className='flex flex-col gap-6 items-center px-2'>
           {items.map((item, index) => (
-            <div key={index} className='relative'>
-              <div className='relative flex items-center bg-[#A4FF00] p-4 rounded-md border border-black w-[560px] h-[80px]'
+            <div key={index} className='relative w-full max-w-[560px]'>
+              <div className='relative flex items-center bg-[#A4FF00] p-4 rounded-md border border-black w-full h-[80px]'
                 style={{
                   opacity: opacity,
                   transform: `scale(${scaleList})`,

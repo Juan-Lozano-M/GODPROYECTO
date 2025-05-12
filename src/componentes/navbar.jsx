@@ -39,10 +39,10 @@ const Navbar = () => {
             duration: 1,
             bounce: 0.7,
           }}
-          className="flex items-center justify-between w-[60%] max-w-6xl border-2 border-black rounded-md px-8 py-3 shadow-md bg-[#E8FFBE]"
+          className="flex items-center justify-between w-[60%] max-w-6xl border-2 border-black rounded-md px-8 py-3 shadow-md bg-[#E8FFBE] hidden lg:flex"
         >
           {/* Texto GOD con tooltip */}
-          <div className="relative group">
+          <div className="relative group cursor-pointer">
             <div className="flex items-center rounded-md px-2 py-1">
               <span className="font-bold text-black text-lg">GOD</span>
             </div>
@@ -84,6 +84,13 @@ const Navbar = () => {
           </button>
         </motion.nav>
       </AnimatePresence>
+
+      {/* Navbar para móviles */}
+      <div className="lg:hidden fixed top-5 right-5 shadow-[0_4px_0_0_#000]  bg-black rounded-md">
+        <div className="w-12 h-12 bg-[#A4FF00] border-2 border-black rounded-md flex justify-center items-center">
+          <span className="text-black font-bold">≡</span> {/* Icono de hamburguesa */}
+        </div>
+      </div>
     </div>
   );
 };
