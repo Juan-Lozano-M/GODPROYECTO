@@ -182,7 +182,7 @@ function Notices() {
       {/* Sección de contenido - Con scroll en la lista de noticias */}
       <div className="flex-grow flex gap-8 mt-5 overflow-hidden">
         {/* Lista de noticias - Con scroll */}
-        <div className="w-full lg:w-[60%] overflow-y-auto pr-4 pb-16">
+        <div className="w-full lg:w-[60%] overflow-y-auto pr-4 pb-16 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
             {noticiasFiltradas.map((noticia) => (
               <NoticeCard
