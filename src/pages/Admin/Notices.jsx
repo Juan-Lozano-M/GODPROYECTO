@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 import Search from "../../components/admin/Search";
 import DataStat from "../../components/admin/DataStat";
@@ -99,110 +100,115 @@ function Notices() {
     activeFilter === "Todas" ? noticias : noticias.filter((n) => n.status === activeFilter);
 
   return (
-    <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
-      <div className="flex w-full items-center">
-        <Search />
-      </div>
+    <div className="h-screen flex flex-col overflow-hidden lg:ml-50 md:mr-10 lg:mr-15 p-7 pt-10">
+      {/* Sección superior - Estática */}
+      <div className="flex-none mb-2">
+        <div className="flex w-full items-center">
+          <Search />
+        </div>
 
-      <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam mt-5">NOTICIAS</h1>
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam mt-5">NOTICIAS</h1>
 
-      <div className="flex flex-wrap mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
-        <DataStat
-          value={totalPublicadas}
-          indicator={cambios.Publicadas}
-          label="Publicadas"
-          iconSrc={getIcon(cambios.Publicadas)}
-          bgColor="#9CE840"
-        />
-        <DataStat
-          value={totalEliminadas}
-          indicator={cambios.Eliminadas}
-          label="Eliminadas"
-          iconSrc={getIcon(cambios.Eliminadas)}
-          bgColor="#EA4335"
-        />
-        <DataStat
-          value={totalArchivadas}
-          indicator={cambios.Archivadas}
-          label="Archivadas"
-          iconSrc={getIcon(cambios.Archivadas)}
-          bgColor="#FFBE00"
-        />
-      </div>
+        <div className="flex flex-wrap mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+          <DataStat
+            value={totalPublicadas}
+            indicator={cambios.Publicadas}
+            label="Publicadas"
+            iconSrc={getIcon(cambios.Publicadas)}
+            bgColor="#9CE840"
+          />
+          <DataStat
+            value={totalEliminadas}
+            indicator={cambios.Eliminadas}
+            label="Eliminadas"
+            iconSrc={getIcon(cambios.Eliminadas)}
+            bgColor="#EA4335"
+          />
+          <DataStat
+            value={totalArchivadas}
+            indicator={cambios.Archivadas}
+            label="Archivadas"
+            iconSrc={getIcon(cambios.Archivadas)}
+            bgColor="#FFBE00"
+          />
+        </div>
 
-      <div className="mt-10 w-full lg:w-190">
-        <Link to="/home/newscreate">
-          <CartoonButton />
-        </Link>
-      </div>
+        <div className="mt-10 w-full lg:w-190">
+          <Link to="/home/newscreate">
+            <CartoonButton />
+          </Link>
+        </div>
 
-      {/* Filtros */}
-      <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
-        <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
-          <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam">Últimas noticias</p>
-          <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
+        {/* Filtros */}
+        <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
+          <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
+            <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam">Últimas noticias</p>
+            <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden lg:flex gap-4">
-              <FilterButton
-                label="Todas"
-                isActive={activeFilter === "Todas"}
-                onClick={() => setActiveFilter("Todas")}
-              />
-              {filters.map((filter) => (
+            <div className="flex items-center gap-4">
+              <div className="hidden lg:flex gap-4">
                 <FilterButton
-                  key={filter}
-                  label={filter}
-                  isActive={activeFilter === filter}
-                  onClick={() => setActiveFilter(filter)}
+                  label="Todas"
+                  isActive={activeFilter === "Todas"}
+                  onClick={() => setActiveFilter("Todas")}
                 />
-              ))}
-            </div>
-            <div className="flex lg:hidden gap-4">
-              <FilterButton
-                label="Filtro"
-                isActive={false}
-                onClick={() => setIsFiltroModalOpen(true)}
-                iconSrc={filtroTestimonial}
-              />
-              <FilterButton
-                label="Todas"
-                isActive={activeFilter === "Todas"}
-                onClick={() => setActiveFilter("Todas")}
-              />
+                {filters.map((filter) => (
+                  <FilterButton
+                    key={filter}
+                    label={filter}
+                    isActive={activeFilter === filter}
+                    onClick={() => setActiveFilter(filter)}
+                  />
+                ))}
+              </div>
+              <div className="flex lg:hidden gap-4">
+                <FilterButton
+                  label="Filtro"
+                  isActive={false}
+                  onClick={() => setIsFiltroModalOpen(true)}
+                  iconSrc={filtroTestimonial}
+                />
+                <FilterButton
+                  label="Todas"
+                  isActive={activeFilter === "Todas"}
+                  onClick={() => setActiveFilter("Todas")}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Lista de noticias y panel derecho */}
-      <section className="w-full h-[calc(100vh-180px)] mt-5 flex gap-15 overflow-hidden">
-        {/* Scroll solo aquí */}
-        <div className="flex flex-col gap-6 w-[60%] h-full overflow-y-auto pr-3">
-          {noticiasFiltradas.map((noticia) => (
-            <NoticeCard
-              key={noticia.id}
-              image={noticia.image}
-              title={noticia.title}
-              author={noticia.author}
-              date={noticia.date}
-              summary={noticia.summary}
-              status={noticia.status.slice(0, -1)}
-            />
-          ))}
+      {/* Sección de contenido - Con scroll en la lista de noticias */}
+      <div className="flex-grow flex gap-8 mt-5 overflow-hidden">
+        {/* Lista de noticias - Con scroll */}
+        <div className="w-full lg:w-[60%] overflow-y-auto pr-4 pb-16">
+          <div className="flex flex-col gap-6">
+            {noticiasFiltradas.map((noticia) => (
+              <NoticeCard
+                key={noticia.id}
+                image={noticia.image}
+                title={noticia.title}
+                author={noticia.author}
+                date={noticia.date}
+                summary={noticia.summary}
+                status={noticia.status.slice(0, -1)}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Panel fijo */}
-        <div className="hidden lg:flex flex-col gap-6 w-[45%]">
-          <div className="hidden xl:flex flex-col sticky top-28 h-[300px] w-full justify-center items-center gap-5 bg-black/7 overflow-hidden rounded-lg">
-            <img src={imageNotice} alt="Imagen de noticia" className="w-75 object-cover rounded-lg" />
-          </div>
-          <div className="hidden xl:flex sticky top-[350px] h-[30%] w-full justify-center items-center 2xl:gap-4 bg-black/7 font-adlam rounded-lg">
+        {/* Panel lateral derecho - Estático */}
+        <div className="hidden lg:flex flex-col gap-8 w-[40%]">
+        <div className="hidden xl:flex flex-col  justify-center items-center gap-5 bg-black/5 overflow-hidden rounded-lg p-4">
+            <img src={imageNotice} className="w-100" alt="Imagen de noticia" />
+        </div>
+          <div className="hidden xl:flex h-40 w-full justify-center items-center 2xl:gap-4 bg-black/5 font-adlam rounded-lg p-4">
             <h1 className="text-3xl 2xl:text-5xl">10</h1>
             <h1 className="text-2xl 2xl:text-4xl">Noticias publicadas hoy</h1>
           </div>
         </div>
-      </section>
+      </div>
 
       <Sidebar />
     </div>

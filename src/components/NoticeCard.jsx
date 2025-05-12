@@ -23,7 +23,7 @@ const NoticeCard = ({ image, title, author, date, summary, status }) => {
           <p className="text-[11px] sm:text-[15px] xl:text-[12px] 2xl:text-[18px] font-adlam mr-2 text-[#3E3E3E]">
             Redactado por: {author} - {date}
           </p>
-          <p className="text-lg font-adlam mt-2">{summary}</p>
+          <p className="text-lg font-adlam mt-5">{summary}</p>
         </div>
 
         {/* Estado y botón "Ver noticia" */}
