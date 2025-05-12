@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,14 +11,13 @@ import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
 import Cursor from "../components/Cursor";
 import InputField from "../components/InputField";
-import { 
+import {
   auth,
-  signInWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
   googleProvider,
-  signInWithPopup,
-  fetchSignInMethodsForEmail
+  signInWithEmailAndPassword,
+  signInWithPopup
 } from "../firebaseConfig";
-import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -177,7 +177,7 @@ const Login = () => {
       </div>
     
       { /* 📌 Botones de inicio de sesión y registro */ }
-      <div className="mr-5 mb-15 flex gap-2 sm:mr-15 lg:mr-30 xl:scale-80 2xl:scale-100 font-mint ">
+      <div className="mr-5 mb-15 flex gap-2 sm:mr-15 lg:mr-30 xl:scale-80 2xl:scale-100 font-adlam ">
             <Link to={"/login"}>
             <motion.button
               className="text-white relative pt-2 hidden sm:block"
@@ -238,7 +238,7 @@ const Login = () => {
           placeholder="Ingresa tu correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%] p-3 mb-4 bg-[#232324]/70 text-white rounded-md  " 
+          className=" " 
         />
           {emailError && (
 
@@ -270,8 +270,11 @@ const Login = () => {
         </div>
 
           <a href="#" className="text-white text-sm float-end font-semibold">
-            ¿Recuperar contraseña?
+           
           </a>
+          <Link to="/login/recoverpassword" className="text-white text-sm float-end font-semibold">
+          ¿Recuperar contraseña?
+          </Link>
 
         <button
           onClick={handleLogin}

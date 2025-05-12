@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const CartoonButton = () => {
   return (
     <StyledWrapper>
-      <button>
+      <button className='cursor-pointer'>
         <span className="button_top"> Crear noticia </span>
       </button>
     </StyledWrapper>

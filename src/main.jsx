@@ -1,19 +1,20 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
+import "./index.css";
 import LoginMain from "./LoginMain.jsx";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard"; 
-import Noticiasv2 from "./pages/Noticias/Noticiasv2";
-import NewDetails from "./pages/Noticias/NewDetail";
 import Home from "./pages/Admin/Home";
-import Testimonial from "./pages/Admin/Testimonial";
+import NewsCreate from "./pages/Admin/NewsCreate.jsx";
 import Notices from "./pages/Admin/Notices";
 import Statics from "./pages/Admin/Statics";
-import NewsCreate from "./pages/Admin/NewsCreate.jsx"
+import Testimonial from "./pages/Admin/Testimonial";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import NewDetails from "./pages/Noticias/NewDetail";
+import Noticiasv2 from "./pages/Noticias/Noticiasv2";
+import RecoverPassword from "./pages/RecoverPassword.jsx";
+import Register from "./pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Login /> },
     ],
+  },
+  {
+    path: "/login/recoverpassword",
+    element: <RecoverPassword />,
   },
   {
     path: "/register",

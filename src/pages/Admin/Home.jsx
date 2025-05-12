@@ -1,20 +1,19 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";  // Add this import
-import { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom"; // Add this import
 
 // Importando los componentes necesarios
-import Sidebar from "../../components/Sidebar";
-import TestimonialCard from "../../components/TestimonialCard";
-import StatCard from "../../components/StatCard";
-import Estadisticas from "../../components/Estadisticas";
+import Search from "../../components/admin/Search";
 import CartoonButton from "../../components/buttons/CartoonButton";
-import Search from "../../components/admin/Search"
+import Estadisticas from "../../components/Estadisticas";
+import Sidebar from "../../components/Sidebar";
+import StatCard from "../../components/StatCard";
+import TestimonialCard from "../../components/TestimonialCard";
 
 // Importando los assets necesarios
-import iconSearch from "../../assets/icons/iconSearch.png";
-import iconNotification from "../../assets/icons/iconNotification.png";
 import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
+import iconNotification from "../../assets/icons/iconNotification.png";
+import iconSearch from "../../assets/icons/iconSearch.png";
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";
 import imagePerfil from "../../assets/images/imagePerfil.png";
 
@@ -61,7 +60,7 @@ const Home = () => {
   }, [activeTab, tabRefs]);
 
   return (
-    <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
+    <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15 cursor-guante">
       
       {/* En pantallas pequeñas, primero mostrar buscador, saludo y stats */}
       <div className="xl:hidden">
