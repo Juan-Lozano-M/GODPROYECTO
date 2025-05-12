@@ -23,7 +23,7 @@ function Hero() {
       <motion.div
         initial={{ x: 300, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 14, delay: 0.3 }}
+        transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.4 }}
         className="absolute bottom-0 -right-10 z-0"
       >
         <Personaje2 />

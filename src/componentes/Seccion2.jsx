@@ -42,7 +42,7 @@ function Seccion2() {
   ];
 
   return (
-    <div className='bg-[#E8FFBE] h-screen xl:h-[110vh] flex flex-col items-center justify-center p-5'>
+    <div className='bg-[#E8FFBE] h-screen xl:h-[90vh] flex flex-col items-center justify-center p-5'>
       <div className='w-full max-w-5xl text-center font-bold text-4xl md:text-6xl pl-4 md:pl-10'
         style={{
           opacity: opacity,
