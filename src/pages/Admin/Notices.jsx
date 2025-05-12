@@ -107,7 +107,7 @@ function Notices() {
           <Search />
         </div>
 
-        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam mt-5">NOTICIAS</h1>
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">NOTICIAS</h1>
 
         <div className="flex flex-wrap mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
           <DataStat
