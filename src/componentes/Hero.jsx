@@ -6,7 +6,7 @@ import TextoHero from "./textohero";
 
 function Hero() {
   return (
-    <div className="relative min-h-screen md:h-screen  xl:h-screen bg-[#A4FF00] overflow-hidden">
+    <div className="relative  md:h-[90vh]  xl:h-[90vh] 2xl:h-[90vh] bg-[#A4FF00] overflow-hidden">
       
 
       <div className="flex items-center justify-center h-[calc(100vh-80px)] px-6 md:px-16 relative z-10">

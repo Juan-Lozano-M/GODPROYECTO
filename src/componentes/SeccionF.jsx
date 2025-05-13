@@ -43,7 +43,7 @@ function SeccionF() {
   return (
     <div
       id="seccionF"
-      className="bg-[#E8FFBE] lg:mt-[5rem] font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
+      className="bg-[#E8FFBE]    font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
     >
       {/* Imagen Gallina */}
       <div
@@ -68,8 +68,8 @@ function SeccionF() {
       >
         <p className="text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl">Unete A</p>
         <p className="bg-[#A4FF00] p-4 lg:text-3xl xl:text-4xl 2xl:text-5xl rounded-md text-5xl">game of dreams</p>
-        <p className="mt-4 text-lg 2xl:text-2xl lg:text-base">Miles de estudiantes ya están</p>
-        <p className="text-lg 2xl:text-2xl lg:text-base">transformando su futuro.</p>
+        <p className="mt-4 text-lg 2xl:text-2xl xl:text-xl lg:text-base">Miles de estudiantes ya están</p>
+        <p className="text-lg  2xl:text-2xl xl:text-xl lg:text-base">transformando su futuro.</p>
 
         {/* Botón */}
         <button

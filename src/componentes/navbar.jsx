@@ -55,7 +55,7 @@ const Navbar = () => {
 
           {/* Links */}
           <div className="flex space-x-6 text-xs font-semibold text-black">
-            {["Sobre nosotros", "Testimonios", "Juegos"].map((text, index) => (
+            {["Sobre nosotros", "Blog", "Juegos"].map((text, index) => (
               <motion.a
                 key={index}
                 href="#"
