@@ -54,26 +54,26 @@ function SeccionF() {
           transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
         }}
       >
-        <img src={Gallo} alt="Gallina" className="w-[380px] lg:w-[300px] h-auto" />
+        <img src={Gallo} alt="Gallina" className="w-[380px] lg:w-[300px] xl:w-[500px] 2xl:w-[700px] h-auto" />
       </div>
 
       {/* Contenedor del texto, botón e iconos */}
       <div
-        className="h-[90%] w-[30%] justify-center items-center flex flex-col lg:gap-1 gap-3"
+        className="h-[90%] w-[30%] justify-center items-center flex flex-col 2xl:gap-3 lg:gap-1 gap-3"
         style={{
           opacity: opacity,
           transform: `scale(${scaleText})`,
           transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
         }}
       >
-        <p className="text-5xl lg:text-3xl">Unete A</p>
-        <p className="bg-[#A4FF00] p-4 lg:text-3xl rounded-md text-5xl">game of dreams</p>
-        <p className="mt-4 text-lg lg:text-base">Miles de estudiantes ya están</p>
-        <p className="text-lg lg:text-base">transformando su futuro.</p>
+        <p className="text-5xl lg:text-3xl 2xl:text-5xl">Unete A</p>
+        <p className="bg-[#A4FF00] p-4 lg:text-3xl 2xl:text-5xl rounded-md text-5xl">game of dreams</p>
+        <p className="mt-4 text-lg 2xl:text-2xl lg:text-base">Miles de estudiantes ya están</p>
+        <p className="text-lg 2xl:text-2xl lg:text-base">transformando su futuro.</p>
 
         {/* Botón */}
         <button
-          className="xl:mt-8 relative mt-8 bg-[#A4FF00] text-black lg:px-6 lg:py-2 lg:text-base font-bold py-3 px-10 border-2 border-black rounded-md text-lg
+          className="xl:mt-8 relative xl:text-xl 2xl:text-3xl mt-8 bg-[#A4FF00] text-black 2xl:px-10 2xl:py-4 lg:px-6 lg:py-2 lg:text-base font-bold py-3 px-10 border-2 border-black rounded-md text-lg
                      shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
                      hover:bg-[#A4FF00] hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
                      active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
@@ -98,13 +98,13 @@ function SeccionF() {
           <img
             src={Face}
             alt="Facebook"
-            className="w-[70px] lg:w-[55px] h-auto cursor-pointer inline-block transition-transform duration-150 ease-in-out
+            className="w-[70px] lg:w-[55px] 2xl:w-[70px] h-auto cursor-pointer inline-block transition-transform duration-150 ease-in-out
                        hover:scale-95 hover:translate-y-1 active:translate-y-2"
           />
           <img
             src={Insta}
             alt="Instagram"
-            className="w-[70px] lg:w-[55px] h-auto cursor-pointer inline-block transition-transform duration-150 ease-in-out
+            className="w-[70px] lg:w-[55px] 2xl:w-[70px] h-auto cursor-pointer inline-block transition-transform duration-150 ease-in-out
                        hover:scale-95 hover:translate-y-1 active:translate-y-2"
           />
         </div>
