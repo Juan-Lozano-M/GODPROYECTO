@@ -3,7 +3,7 @@ import React from 'react';
 function TextoHero() {
   return (
     <div className="flex flex-col items-center xl:mt-[10rem] md:mt-20 justify-center text-center max-w-3xl mx-auto min-h-screen px-4 h-full">
-      <h1 className="text-5xl md:text-9xl xl:text-[7.5rem] font-extrabold text-black leading-tight font-nunito">
+      <h1 className="text-5xl md:text-9xl lg:text-[6rem] xl:text-[7rem] font-extrabold text-black leading-tight font-nunito">
         Tu Futuro 
         <span className='block text-[#732bf9]'>Tu Decisión</span>
       </h1>

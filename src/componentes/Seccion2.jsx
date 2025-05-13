@@ -42,8 +42,8 @@ function Seccion2() {
   ];
 
   return (
-    <div className='bg-[#E8FFBE] h-screen xl:h-[90vh] flex flex-col items-center justify-center p-5'>
-      <div className='w-full max-w-5xl text-center font-bold text-4xl md:text-6xl pl-4 md:pl-10'
+    <div className='bg-[#E8FFBE] h-screen xl:h-[90vh] lg:h-[90vh]  flex flex-col items-center justify-center p-5'>
+      <div className='w-full max-w-5xl text-center lg:mt-20 lg:text-5xl font-bold text-4xl md:text-6xl pl-4 md:pl-10'
         style={{
           opacity: opacity,
           transform: `scale(${scaleText})`,
@@ -52,7 +52,7 @@ function Seccion2() {
       >
         <h2>Nuevas formas de adaptarnos</h2>
         <div className="flex items-center gap-4 relative mt-2">
-          <h2 className='text-[#732bf9] no-underline ml-4 md:ml-20 text-center z-10'>¿A qué nos enfrentamos?</h2>
+          <h2 className='text-[#732bf9] no-underline ml-4 md:ml-20 lg:ml-[10rem] text-center z-10'>¿A qué nos enfrentamos?</h2>
           <div className="relative w-12 h-12">
             <div className="bg-[#A4FF00] border border-black w-full h-full rounded-md flex items-center justify-center z-10 relative">
               <img src={ArrowIcon} alt="Flecha" className="w-5 h-5" />
