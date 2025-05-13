@@ -23,6 +23,7 @@
     "@lottiefiles/dotlottie-react": "^0.13.5",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.2",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/vite": "^4.0.17",
     "axios": "^1.9.0",
     "firebase": "^11.6.1",

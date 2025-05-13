@@ -27,7 +27,7 @@ function Notices() {
       title: "Semana del emprendimiento 2025",
       author: "Gloria Valero",
       date: "25/04/2025",
-      summary: "Una iniciativa para fortalecer ideas de negocio...",
+      summary: "Un evento pensado para motivar a los estudiantes a crear sus propios negocios, con charlas, talleres y actividades dinámicas.",
     },
     {
       id: 2,
@@ -36,7 +36,7 @@ function Notices() {
       title: "Reunión de líderes estudiantiles",
       author: "Carlos Peña",
       date: "24/04/2025",
-      summary: "Discusión sobre nuevas propuestas académicas...",
+      summary: "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
     },
     {
       id: 3,
@@ -45,7 +45,7 @@ function Notices() {
       title: "Feria de ciencias 2025",
       author: "Laura Rodríguez",
       date: "23/04/2025",
-      summary: "Estudiantes presentan proyectos científicos...",
+      summary: "Los estudiantes presentaron sus proyectos científicos con gran creatividad, abordando temas de medio ambiente y tecnología.",
     },
     {
       id: 4,
@@ -54,7 +54,7 @@ function Notices() {
       title: "Campaña de reciclaje en el campus",
       author: "Ana Torres",
       date: "22/04/2025",
-      summary: "Promoviendo la conciencia ambiental...",
+      summary: "Se promovieron hábitos sostenibles mediante actividades de reciclaje y educación ambiental para toda la comunidad escolar.",
     },
   ]);
 
@@ -100,14 +100,14 @@ function Notices() {
     activeFilter === "Todas" ? noticias : noticias.filter((n) => n.status === activeFilter);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden lg:ml-50 md:mr-10 lg:mr-15 p-7 pt-10">
+    <div className="h-screen flex flex-col overflow-hidden lg:ml-50 md:mr-10 lg:mr-15 pt-10">
       {/* Sección superior - Estática */}
       <div className="flex-none mb-2">
         <div className="flex w-full items-center">
           <Search />
         </div>
 
-        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">NOTICIAS</h1>
+        <h1 className="text-3xl md:text-4xl lg:mt-5 lg:text-5xl font-adlam">NOTICIAS</h1>
 
         <div className="flex flex-wrap mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
           <DataStat
@@ -142,7 +142,7 @@ function Notices() {
         {/* Filtros */}
         <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
           <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
-            <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam">Últimas noticias</p>
+            <p className="text-lg sm:text-3xl lg:text-3xl xl:text-4xl font-adlam">Últimas noticias</p>
             <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
 
             <div className="flex items-center gap-4">
@@ -182,7 +182,7 @@ function Notices() {
       {/* Sección de contenido - Con scroll en la lista de noticias */}
       <div className="flex-grow flex gap-8 mt-5 overflow-hidden">
         {/* Lista de noticias - Con scroll */}
-        <div className="w-full lg:w-[60%] overflow-y-auto pr-4 pb-16 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="w-full 2xl:w-[60%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
             {noticiasFiltradas.map((noticia) => (
               <NoticeCard
@@ -198,14 +198,17 @@ function Notices() {
           </div>
         </div>
 
-        {/* Panel lateral derecho - Estático */}
-        <div className="hidden lg:flex flex-col gap-8 w-[40%]">
-        <div className="hidden xl:flex flex-col  justify-center items-center gap-5 bg-black/5 overflow-hidden rounded-lg p-4">
-            <img src={imageNotice} className="w-100" alt="Imagen de noticia" />
-        </div>
-          <div className="hidden xl:flex h-40 w-full justify-center items-center 2xl:gap-4 bg-black/5 font-adlam rounded-lg p-4">
-            <h1 className="text-3xl 2xl:text-5xl">10</h1>
-            <h1 className="text-2xl 2xl:text-4xl">Noticias publicadas hoy</h1>
+        {/* Panel lateral derecho - Con ancho y alto fijos */}
+        <div className="hidden xl:flex flex-col gap-8 w-80 h-auto flex-shrink-0">
+          {/* Primer contenedor con alto y ancho fijo */}
+          <div className="hidden xl:flex flex-col justify-center items-center gap-5 bg-black/5 overflow-hidden rounded-lg p-4 w-full h-68">
+            <img src={imageNotice} className="w-full h-full object-cover" alt="Imagen de noticia" />
+          </div>
+          
+          {/* Segundo contenedor con alto y ancho fijo */}
+          <div className="hidden 2xl:flex h-20 w-full justify-center items-center 2xl:gap-4 bg-black/5 font-adlam rounded-lg p-4">
+            <h1 className="text-3xl xl:text-lg 2xl:text-5xl">10</h1>
+            <h1 className="text-2xl xl:text-lg 2xl:text-4xl">Noticias publicadas hoy</h1>
           </div>
         </div>
       </div>
