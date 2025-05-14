@@ -34,7 +34,7 @@ function Seccion2() {
   ];
 
   return (
-    <div className='bg-[#E8FFBE] h-screen xl:h-[100vh] 2xl:h-[75vh] lg:h-[75vh] flex flex-col items-center justify-center xl:mt-[2rem] p-5'>
+    <div className='bg-[#E8FFBE] sm-height:mt-[7rem] h-screen xl:h-[100vh] 2xl:h-[75vh] lg:h-[75vh] flex flex-col items-center justify-center xl:mt-[2rem] p-5'>
       <div
         className='w-full max-w-3xl mx-auto text-left font-bold transition-all duration-500'
         style={{
