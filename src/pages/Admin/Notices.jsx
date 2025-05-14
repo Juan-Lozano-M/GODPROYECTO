@@ -100,16 +100,16 @@ function Notices() {
     activeFilter === "Todas" ? noticias : noticias.filter((n) => n.status === activeFilter);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden lg:ml-50 md:mr-10 lg:mr-15 pt-10">
+    <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-46 lg:ml-50 md:mr-10 lg:mr-15 pt-10">
       {/* Sección superior - Estática */}
       <div className="flex-none mb-2">
         <div className="flex w-full items-center">
           <Search />
         </div>
 
-        <h1 className="text-3xl md:text-4xl lg:mt-5 lg:text-5xl font-adlam">NOTICIAS</h1>
+        <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">NOTICIAS</h1>
 
-        <div className="flex flex-wrap mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+        <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
           <DataStat
             value={totalPublicadas}
             indicator={cambios.Publicadas}
@@ -180,7 +180,7 @@ function Notices() {
       </div>
 
       {/* Sección de contenido - Con scroll en la lista de noticias */}
-      <div className="flex-grow flex gap-8 mt-5 overflow-hidden">
+      <div className="flex-grow flex gap-8 sm:mt-5 overflow-hidden">
         {/* Lista de noticias - Con scroll */}
         <div className="w-full 2xl:w-[65%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
@@ -199,17 +199,17 @@ function Notices() {
         </div>
 
         {/* Panel lateral derecho - Con ancho y alto fijos */}
-        <div className="hidden xl:flex flex-col gap-8 w-80 h-50 flex-shrink-0">
+        <div className="hidden xl:flex flex-col gap-8 h-68 2xl:h-80 flex-shrink-0">
 
           {/* Primer contenedor con alto y ancho fijo */}
-          <div className="hidden xl:flex flex-col justify-center items-center gap-5 bg-black/5 overflow-hidden rounded-lg p-4 w-full h-68">
-            <img src={imageNotice} className="w-full h-full object-cover" alt="Imagen de noticia" />
+          <div className="hidden xl:flex flex-col justify-center items-center bg-black/5 overflow-hidden rounded-lg w-full h-70 2xl:h-200 ">
+            <img src={imageNotice} className="h-70 2xl:w-50 object-cover" alt="Imagen de noticia" />
           </div>
           
           {/* Segundo contenedor con alto y ancho fijo */}
-          <div className="hidden 2xl:flex h-20 w-full justify-center items-center 2xl:gap-4 bg-black/5 font-adlam rounded-lg p-4">
-            <h1 className="text-3xl xl:text-lg 2xl:text-5xl">10</h1>
-            <h1 className="text-2xl xl:text-lg 2xl:text-4xl">Noticias publicadas hoy</h1>
+          <div className="hidden h-20 w-full justify-center items-center 2xl:gap-4 2xl:flex 2xl:h-50 bg-black/5 font-adlam rounded-lg p-4">
+            <h1 className="text-3xl xl:text-lg 2xl:text-4xl">10</h1>
+            <h1 className="text-2xl xl:text-lg 2xl:text-3xl">Noticias publicadas hoy</h1>
           </div>
         </div>
       </div>
