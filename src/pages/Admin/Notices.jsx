@@ -182,7 +182,7 @@ function Notices() {
       {/* Sección de contenido - Con scroll en la lista de noticias */}
       <div className="flex-grow flex gap-8 mt-5 overflow-hidden">
         {/* Lista de noticias - Con scroll */}
-        <div className="w-full 2xl:w-[60%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="w-full 2xl:w-[65%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
             {noticiasFiltradas.map((noticia) => (
               <NoticeCard
@@ -199,7 +199,8 @@ function Notices() {
         </div>
 
         {/* Panel lateral derecho - Con ancho y alto fijos */}
-        <div className="hidden xl:flex flex-col gap-8 w-80 h-auto flex-shrink-0">
+        <div className="hidden xl:flex flex-col gap-8 w-80 h-50 flex-shrink-0">
+
           {/* Primer contenedor con alto y ancho fijo */}
           <div className="hidden xl:flex flex-col justify-center items-center gap-5 bg-black/5 overflow-hidden rounded-lg p-4 w-full h-68">
             <img src={imageNotice} className="w-full h-full object-cover" alt="Imagen de noticia" />
