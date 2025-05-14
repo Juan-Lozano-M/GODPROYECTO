@@ -14,6 +14,9 @@ module.exports = {
         '11xl': '12rem', // Lo puedes ajustar a tu necesidad
         '12xl': '14rem',
       },
+      screens: {
+        'sm-height': { 'raw': '(max-height: 600px)' }, // Pantallas con altura máxima de 600px
+      },
     },
   },
   plugins: [],

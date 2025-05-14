@@ -43,7 +43,7 @@ function SeccionF() {
   return (
     <div
       id="seccionF"
-      className="bg-[#E8FFBE]    font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
+      className="bg-[#E8FFBE] xl:mt-10 xl:mb-10   font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
     >
       {/* Imagen Gallina */}
       <div

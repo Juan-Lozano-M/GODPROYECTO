@@ -6,7 +6,7 @@ const Personaje2 = () => {
     <img
       src={personajeimg2}
       alt="Personaje Principal"
-      className="w-[300px] md:w-[550px] lg:w-[200px] 2xl:w-[700px] xl:w-[550px] h-auto object-contain"
+      className="w-[30vw] min-w-[150px] max-w-[700px] h-auto object-contain"
     />
   );
 };

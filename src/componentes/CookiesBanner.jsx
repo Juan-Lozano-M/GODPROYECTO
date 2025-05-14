@@ -13,29 +13,31 @@ function CookiesBanner() {
       {/* Contenedor general relativo para posicionar el botón sobre la línea */}
       <div className="relative">
         {/* Banner principal */}
-        <div className="bg-[#732bf9] text-black text-sm w-[360px] rounded-md p-4 flex items-start justify-between shadow-lg border-[2px] border-black">
+        <div className="bg-[#E8FFBE] text-black text-sm w-[360px] rounded-md p-4 flex items-start justify-between shadow-lg border-[2px] border-black">
           <div className="flex gap-3">
             <img src={Galle} alt="cookie" className="w-10 h-10 mt-2" />
             <div className="flex flex-col">
               <p className="leading-tight">
                 Este sitio web usa cookies. Al continuar navegando, aceptas su uso según nuestra{" "}
-                <a href="/privacy" className="underline hover:text-white transition-all">Política de Privacidad</a>.
+                <a href="/privacy" className="underline hover:text-[#732bf9] transition-all">Política de Privacidad</a>.
               </p>
             </div>
           </div>
 
           {/* Botón de cerrar con hover verde y más grande */}
           <button
-            onClick={() => setVisible(false)}
-            className="group transition-all"
-          >
-            <img
-              src={CloseIcon}
-              alt="close"
-              className="w-10 h-4 transition-all duration-200 ease-in-out transform
-                         group-hover:scale-125 group-hover:brightness-0 group-hover:invert group-hover:hue-rotate-[90deg]"
-            />
-          </button>
+  onClick={() => setVisible(false)}
+  className="group transition-all"
+>
+  <img
+    src={CloseIcon}
+    alt="close"
+    className="w-10 h-4 transition-all duration-200 ease-in-out transform
+               group-hover:scale-125 group-hover:brightness-100
+               group-hover:filter-[invert(21%) sepia(97%) saturate(7053%) hue-rotate(263deg) brightness(95%) contrast(101%)]"
+  />
+</button>
+
         </div>
 
         {/* Botón Accept más pequeño, centrado y sobresaliendo del contenedor */}
