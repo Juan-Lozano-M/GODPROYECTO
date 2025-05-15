@@ -110,7 +110,11 @@ function Tes() {
                              hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
                              active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
                 >
-                  <img src={Like} alt="Botón de Like" className="w-5 h-5" />
+                  {Like ? (
+                    <img src={Like} alt="Botón de Like" className="w-5 h-5" />
+                  ) : (
+                    <span role="img" aria-label="like">👍</span>
+                  )}
                 </button>
               </div>
 
