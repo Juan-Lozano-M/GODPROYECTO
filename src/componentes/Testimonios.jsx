@@ -72,8 +72,8 @@ function Tes() {
           className="absolute left-0 top-1/2 transform -translate-y-1/2
                    bg-[#A4FF00] border border-black w-[50px] h-[50px] rounded-md 
                    shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
-                   hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
-                   active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
+                   hover:scale-95 hover:translate-y-0.2 hover:shadow-[0px_2px_0px_0px_black]
+                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]"
         >
           <span className="text-black text-xl font-bold">‹</span>
         </button>
@@ -129,8 +129,8 @@ function Tes() {
           className="absolute right-0 top-1/2 transform -translate-y-1/2
                    bg-[#A4FF00] border border-black w-[50px] h-[50px] rounded-md 
                    shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
-                   hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
-                   active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
+                   hover:scale-95 hover:translate-y-0.2 hover:shadow-[0px_2px_0px_0px_black]
+                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]"
         >
           <span className="text-black text-xl font-bold">›</span>
         </button>
