@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Gallo from '../assets/gallina.png';
 import Face from '../assets/Facebook.png';
 import Insta from '../assets/Instagram.png';
+import { Link } from 'react-router-dom';
 
 function SeccionF() {
-  const [scrollY, setScrollY] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const [scaleGallo, setScaleGallo] = useState(0.5);
   const [scaleText, setScaleText] = useState(0.5);
   const [scaleBtn, setScaleBtn] = useState(0.5);
   const [scaleIcons, setScaleIcons] = useState(0.5);
 
+  const sectionRef = useRef(null);
+
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPos = window.scrollY;
-      const sectionTop = document.getElementById('seccionF').offsetTop;
-      const sectionHeight = document.getElementById('seccionF').offsetHeight;
+      if (!sectionRef.current) return;
+
+      const rect = sectionRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Verificar si la sección está visible en la ventana
-      if (scrollPos + windowHeight > sectionTop && scrollPos < sectionTop + sectionHeight) {
-        const scaleFactor = Math.min(1, (scrollPos + windowHeight - sectionTop) / sectionHeight);
+      if (rect.top < windowHeight && rect.bottom > 0) {
+        const visibleAmount = Math.min(1, (windowHeight - rect.top) / rect.height);
 
-        setOpacity(scaleFactor);
-        setScaleGallo(Math.min(1, scaleFactor + 0.5));
-        setScaleText(Math.min(1, scaleFactor + 0.5));
-        setScaleBtn(Math.min(1, scaleFactor + 0.5));
-        setScaleIcons(Math.min(1, scaleFactor + 0.5));
+        setOpacity(visibleAmount);
+        setScaleGallo(Math.min(1, visibleAmount + 0.5));
+        setScaleText(Math.min(1, visibleAmount + 0.5));
+        setScaleBtn(Math.min(1, visibleAmount + 0.5));
+        setScaleIcons(Math.min(1, visibleAmount + 0.5));
       } else {
         setOpacity(0);
         setScaleGallo(0.5);
@@ -37,19 +38,21 @@ function SeccionF() {
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // para el caso donde ya está en viewport al cargar
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <div
+      ref={sectionRef}
       id="seccionF"
-      className="bg-[#E8FFBE] xl:mt-10 xl:mb-10 sm-height:mt-[9rem]  font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
+      className="bg-[#E8FFBE] xl:mt-10 xl:mb-10 sm-height:mt-[9rem] font-nunito font-bold h-[80vh] overflow-hidden flex justify-center items-end"
     >
       {/* Imagen Gallina */}
       <div
         className="h-[90%] w-[30%] flex items-end justify-center"
         style={{
-          opacity: opacity,
+          opacity,
           transform: `scale(${scaleGallo})`,
           transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
         }}
@@ -61,7 +64,7 @@ function SeccionF() {
       <div
         className="h-[90%] w-[30%] justify-center items-center flex flex-col 2xl:gap-3 lg:gap-1 gap-3"
         style={{
-          opacity: opacity,
+          opacity,
           transform: `scale(${scaleText})`,
           transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
         }}
@@ -69,20 +72,19 @@ function SeccionF() {
         <p className="text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl">Unete A</p>
         <p className="bg-[#A4FF00] p-4 lg:text-3xl xl:text-4xl 2xl:text-5xl rounded-md text-5xl">game of dreams</p>
         <p className="mt-4 text-lg 2xl:text-2xl xl:text-xl lg:text-base">Miles de estudiantes ya están</p>
-        <p className="text-lg  2xl:text-2xl xl:text-xl lg:text-base">transformando su futuro.</p>
+        <p className="text-lg 2xl:text-2xl xl:text-xl lg:text-base">transformando su futuro.</p>
 
         {/* Botón */}
-        <button
-          className="xl:mt-8 relative xl:text-xl 2xl:text-3xl mt-8 bg-[#A4FF00] text-black 2xl:px-10 2xl:py-4 lg:px-6 lg:py-2 lg:text-base font-bold py-3 px-10 border-2 border-black rounded-md text-lg
-                     shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
-                     hover:bg-[#A4FF00] hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
-                     active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
-          style={{
-            opacity: opacity, // Mantener el estilo de opacity aquí
-          }}
-        >
-          ¡CONTACTANOS!
-        </button>
+        <Link
+            to="/contacto"
+            className="xl:mt-8 relative xl:text-xl 2xl:text-3xl mt-8 bg-[#A4FF00] text-black 2xl:px-10 2xl:py-4 lg:px-6 lg:py-2 lg:text-base font-bold py-3 px-10 border-2 border-black rounded-md text-lg
+                      shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
+                      hover:bg-[#A4FF00] hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
+                      active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
+            style={{ opacity }}
+          >
+            ¡CONTACTANOS!
+        </Link>
 
         {/* Redes Sociales */}
         <p className="text-base mt-4 text-black">Redes:</p>
@@ -90,7 +92,7 @@ function SeccionF() {
         <div
           className="flex gap-4 items-center justify-center"
           style={{
-            opacity: opacity,
+            opacity,
             transform: `scale(${scaleIcons})`,
             transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
           }}
