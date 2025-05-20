@@ -42,12 +42,15 @@ function Seccion2() {
           transform: `scale(${scale})`,
         }}
       >
-        <h2 className="text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] text-center">Nuevas formas de adaptarnos</h2>
-        <div className="flex items-center gap-2 relative justify-center">
-          <h2 className='text-[#732bf9] text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] z-10'>¿A qué nos enfrentamos?</h2>
-          <div className="relative w-12 h-12">
+        <h2 className=" text-[1.8rem] md:text-[2.8rem] lg:text-[3.2rem] text-center">Nuevas formas de adaptarnos</h2>
+
+        <div className="flex flex-row sm:flex-row items-center justify-center gap-2 mt-2">
+          <h2 className='text-[#732bf9] text-[1.6rem] sm:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] z-10 text-center sm:text-left'>
+            ¿A qué nos enfrentamos?
+          </h2>
+          <div className="relative w-8 h-8 sm:w-12 sm:h-12">
             <div className="bg-[#A4FF00] border border-black w-full h-full rounded-md flex items-center justify-center z-10 relative">
-              <img src={ArrowIcon} alt="Flecha" className="w-5 h-5" />
+              <img src={ArrowIcon} alt="Flecha" className="w-3 h-3 sm:w-5 sm:h-5" />
             </div>
           </div>
         </div>
@@ -61,32 +64,29 @@ function Seccion2() {
           transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
         }}
       >
-        {/* Imagenes del portal y mano */}
-        <div className='relative flex items-center justify-center w-[220px] h-[220px] md:w-[260px] md:h-[260px] lg:w-[300px] lg:h-[300px]'>
+        {/* Contenedor imagen: mano y portal ocultos en móvil */}
+        <div className='relative hidden sm:flex flex-col items-center justify-center w-full sm:w-[260px] sm:h-[260px] lg:w-[300px] lg:h-[300px]'>
+          {/* Portal */}
           <img
             src={Portal}
             alt="portal"
-            className='absolute w-[15%] z-10 object-contain'
+            className='absolute w-[15%] object-contain z-10'
             style={{
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
             }}
           />
+          {/* Mano */}
           <img
             src={Hand}
             alt="hand"
-            className='absolute w-[160%] z-20 object-contain'
-            style={{
-              top: '35%',
-              left: '70%',
-              transform: 'translate(-50%, -50%)',
-            }}
+            className='relative w-[120px] sm:absolute sm:w-[160%] object-contain z-20 sm:top-[35%] sm:left-[70%] sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2'
           />
         </div>
 
         {/* Lista de elementos */}
-        <div className='flex flex-col gap-6  items-center px-2'>
+        <div className='flex flex-col gap-6 items-center px-2'>
           {items.map((item, index) => (
             <div key={index} className='relative w-full max-w-[560px]'>
               <div

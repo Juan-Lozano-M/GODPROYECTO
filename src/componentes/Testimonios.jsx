@@ -35,51 +35,56 @@ function Tes() {
   };
 
   return (
-    <div className='bg-[#E8FFBE] xl:mt-2 xl:mb-2 h-screen xl:h-[90vh] 2xl:h-[75vh] lg:h-[75vh] flex flex-col items-center justify-center p-5 relative overflow-hidden'>
+    <div className='bg-[#E8FFBE] h-auto min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden'>
 
       {/* Imagen Fisgona */}
       <img
         src={Fisgona}
         alt="Personaje fisgón observando"
-        className="absolute top-[9rem] right-0 w-24 md:w-28 lg:w-32 xl:w-[600px]"
+        className="absolute right-0 top-[17%] w-[18rem] sm:w-28 md:w-32 lg:w-44 xl:w-[600px] max-w-full select-none pointer-events-none 
+                  sm:right-4 sm:top-20 xs:right-2 xs:top-16"
+        style={{ maxHeight: '80vh' }}
       />
 
+
       {/* Título */}
-      <div className='w-full max-w-5xl xl:ml-10 lg:mt-20 text-center'>
-        <h2 className='font-bold text-[2.4rem] md:text-[2.8rem] sm-height:text-[2.2rem] lg:text-[3.2rem] '>
+      <div className='w-full max-w-5xl xl:ml-10 lg:mt-20 text-center px-2 sm:px-0'>
+        <h2 className='font-bold text-[1.8rem] sm:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] leading-tight'>
           <span className='text-[#732BF9]'>Voces</span> de quienes ya comenzaron
         </h2>
-        <div className="flex items-center text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] gap-4 relative mt-2 justify-center">
-          <h2 className='no-underline z-10 text-left'>
+        <div className="flex items-center text-[1.8rem] sm:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] gap-3  justify-center flex-wrap">
+          <h2 className='no-underline ml-5 sm:ml-0 z-10 text-left'>
             su <span className='text-[#732BF9]'>camino.</span>
           </h2>
 
           {/* Flecha decorativa */}
-          <div className="relative w-12 h-12">
+          <div className="relative w-8 h-8 sm:w-12 sm:h-12">
             <div className="bg-[#A4FF00] border border-black w-full h-full rounded-md flex items-center justify-center z-10 relative">
-              <img src={ArrowIcon} alt="Flecha decorativa" className="w-5 h-5" />
+              <img src={ArrowIcon} alt="Flecha decorativa" className="w-3 h-3 sm:w-5 sm:h-5" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Carrusel con botones fijos */}
-      <div className="mt-12 w-full max-w-5xl flex items-center justify-center relative">
+      {/* Carrusel */}
+      <div className="mt-10 w-full max-w-5xl flex items-center justify-center relative px-4 sm:px-0">
 
-        {/* Botón izquierdo (estático) */}
+        {/* Botón izquierdo (solo en pantallas sm y superiores) */}
         <button
           onClick={handlePrev}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2
-                   bg-[#A4FF00] border border-black w-[50px] h-[50px] rounded-md 
+          className="hidden items-center justify-center sm:flex absolute left-0 top-1/2 transform -translate-y-1/2
+                   bg-[#A4FF00] border border-black w-8 h-8 sm:w-[50px] sm:h-[50px] rounded-md 
                    shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
                    hover:scale-95 hover:translate-y-0.2 hover:shadow-[0px_2px_0px_0px_black]
-                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]"
+                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]
+                   z-20"
+          aria-label="Anterior"
         >
-          <span className="text-black text-xl font-bold">‹</span>
+          <span className="text-black text-xl font-bold select-none">‹</span>
         </button>
 
-        {/* Testimonio centrado en contenedor fijo */}
-        <div className="w-full max-w-4xl h-[300px] px-10 flex items-center justify-center relative">
+        {/* Testimonio */}
+        <div className="w-full max-w-4xl min-h-[250px] sm:min-h-[300px] px-6 sm:px-10 flex items-center justify-center relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
@@ -87,19 +92,34 @@ function Tes() {
               animate={{ x: 0, opacity: 1, scale: 1 }}
               exit={{ x: -80, opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.6, bounce: 0.4, type: "spring" }}
-              className="absolute text-center max-w-3xl"
+              className="absolute text-center max-w-full sm:max-w-3xl px-2 sm:px-0"
+              style={{ wordBreak: 'break-word' }}
             >
-              <p className="text-black text-[1.4rem] md:text-[1.8rem] lg:text-[2rem] font-semibold leading-relaxed mb-6">
+              <p className="text-black text-[1.2rem] sm:text-[1.4rem] md:text-[1.8rem] lg:text-[2rem] font-semibold leading-relaxed mb-6">
                 {testimonios[index].texto}
               </p>
 
-              <div className="flex justify-center items-center gap-3 flex-wrap">
+              {/* Botones + navegación en móviles */}
+              <div className="flex justify-center items-center gap-3 flex-wrap sm:gap-5">
+
+                {/* Botón izquierdo en móviles */}
+                <button
+                  onClick={handlePrev}
+                  className="flex sm:hidden bg-[#A4FF00] items-center justify-center border border-black w-8 h-8 rounded-md 
+                             shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
+                             hover:scale-95 hover:translate-y-0.5 hover:shadow-[0px_2px_0px_0px_black]
+                             active:translate-y-1 active:shadow-[0px_1px_0px_0px_black]"
+                  aria-label="Anterior"
+                >
+                  <span className="text-black text-xl font-bold select-none">‹</span>
+                </button>
+
                 <button
                   onClick={añadirTestimonio}
-                  className="bg-[#A4FF00] border border-black px-4 py-2 text-base rounded-md 
+                  className="bg-[#A4FF00] border border-black px-4 py-2 text-sm sm:text-base rounded-md 
                              shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
                              hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
-                             active:translate-y-2 active:shadow-[0px_1px_0px_0px_black] sm-height:py-2 sm-height:px-6"
+                             active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
                 >
                   Añadir Testimonio
                 </button>
@@ -109,35 +129,49 @@ function Tes() {
                              shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
                              hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
                              active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
+                  aria-label="Me gusta"
                 >
-                  {Like ? (
-                    <img src={Like} alt="Botón de Like" className="w-5 h-5" />
-                  ) : (
-                    <span role="img" aria-label="like">👍</span>
-                  )}
+                  <img src={Like} alt="Botón de Like" className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
+
+                {/* Botón derecho en móviles */}
+                <button
+                  onClick={handleNext}
+                  className="flex sm:hidden bg-[#A4FF00] items-center justify-center border border-black w-8 h-8 rounded-md 
+                             shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
+                             hover:scale-95 hover:translate-y-0.5 hover:shadow-[0px_2px_0px_0px_black]
+                             active:translate-y-1 active:shadow-[0px_1px_0px_0px_black]"
+                  aria-label="Siguiente"
+                >
+                  <span className="text-black text-xl font-bold select-none">›</span>
+                </button>
+
               </div>
 
-              <p className="mt-6 font-bold text-lg md:text-xl lg:text-2xl">{testimonios[index].autor}</p>
+              <p className="mt-6 font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+                {testimonios[index].autor}
+              </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Botón derecho (estático) */}
+        {/* Botón derecho (solo en sm y superiores) */}
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2
-                   bg-[#A4FF00] border border-black w-[50px] h-[50px] rounded-md 
+          className="hidden sm:flex absolute items-center justify-center right-0 top-1/2 transform -translate-y-1/2
+                   bg-[#A4FF00] border border-black w-8 h-8 sm:w-[50px] sm:h-[50px] rounded-md 
                    shadow-[0_4px_0_0_#000] transition-all duration-150 ease-in-out
                    hover:scale-95 hover:translate-y-0.2 hover:shadow-[0px_2px_0px_0px_black]
-                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]"
+                   active:translate-y-0.3 active:shadow-[0px_1px_0px_0px_black]
+                   z-20"
+          aria-label="Siguiente"
         >
-          <span className="text-black text-xl font-bold">›</span>
+          <span className="text-black text-xl font-bold select-none">›</span>
         </button>
       </div>
 
       {/* Indicadores */}
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex gap-2 justify-center">
         {testimonios.map((_, i) => (
           <div
             key={i}
