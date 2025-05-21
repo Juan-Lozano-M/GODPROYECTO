@@ -1,13 +1,16 @@
+// Importación de hooks de React y librerías necesarias
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
+// Importación de componentes personalizados
 import Search from "../../components/admin/Search";
 import DataStat from "../../components/admin/DataStat";
 import Sidebar from "../../components/Sidebar";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import FilterButton from "../../components/admin/FilterButton";
 
+// Importación de imágenes y recursos
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import imageNotice from "../../assets/images/imagenNotice.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
@@ -19,6 +22,7 @@ import imageNotice3 from "../../assets/images/imageNotice3.png";
 import imageNotice4 from "../../assets/images/imageNotice4.png";
 
 function Notices() {
+  // Estado inicial con las noticias
   const [noticias, setNoticias] = useState([
     {
       id: 1,
@@ -58,28 +62,34 @@ function Notices() {
     },
   ]);
 
+  // Filtros disponibles para las noticias
   const filters = ["Publicadas", "Eliminadas", "Archivadas"];
   const [activeFilter, setActiveFilter] = useState("Todas");
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
 
+  // Función que cuenta las noticias por estado
   const countByStatus = (status) => noticias.filter((n) => n.status === status).length;
 
+  // Conteo total de noticias por estado
   const totalPublicadas = countByStatus("Publicadas");
   const totalEliminadas = countByStatus("Eliminadas");
   const totalArchivadas = countByStatus("Archivadas");
 
+  // Referencia a conteos anteriores para calcular variación
   const prevCounts = useRef({
     Publicadas: totalPublicadas,
     Eliminadas: totalEliminadas,
     Archivadas: totalArchivadas,
   });
 
+  // Estado que guarda los cambios (diferencias de cantidad)
   const [cambios, setCambios] = useState({
     Publicadas: 0,
     Eliminadas: 0,
     Archivadas: 0,
   });
 
+  // useEffect para actualizar los cambios al detectar modificación en noticias
   useEffect(() => {
     setCambios({
       Publicadas: totalPublicadas - prevCounts.current.Publicadas,
@@ -87,6 +97,7 @@ function Notices() {
       Archivadas: totalArchivadas - prevCounts.current.Archivadas,
     });
 
+    // Se actualiza la referencia con los valores actuales
     prevCounts.current = {
       Publicadas: totalPublicadas,
       Eliminadas: totalEliminadas,
@@ -94,21 +105,28 @@ function Notices() {
     };
   }, [noticias]);
 
+  // Retorna la flecha arriba/abajo según el valor del cambio
   const getIcon = (cambio) => (cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo);
 
+  // Filtra las noticias según el filtro activo
   const noticiasFiltradas =
     activeFilter === "Todas" ? noticias : noticias.filter((n) => n.status === activeFilter);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-46 lg:ml-50 md:mr-10 lg:mr-15 pt-10">
-      {/* Sección superior - Estática */}
+
+      {/* Parte superior - Búsqueda y estadísticas */}
       <div className="flex-none mb-2">
+
+        {/* Buscador */}
         <div className="flex w-full items-center">
           <Search />
         </div>
 
+        {/* Título */}
         <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">NOTICIAS</h1>
 
+        {/* Tarjetas de estadísticas por estado */}
         <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
           <DataStat
             value={totalPublicadas}
@@ -133,13 +151,14 @@ function Notices() {
           />
         </div>
 
+        {/* Botón para crear nueva noticia */}
         <div className="mt-10 w-full lg:w-190">
           <Link to="/home/newscreate">
             <CartoonButton />
           </Link>
         </div>
 
-        {/* Filtros */}
+        {/* Filtros de noticias */}
         <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
           <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
             <p className="text-lg sm:text-3xl lg:text-3xl xl:text-4xl font-adlam">Últimas noticias</p>
@@ -213,7 +232,8 @@ function Notices() {
           </div>
         </div>
       </div>
-
+      
+      {/* Sidebar (menú lateral) */}
       <Sidebar />
     </div>
   );
