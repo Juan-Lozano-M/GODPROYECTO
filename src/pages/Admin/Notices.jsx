@@ -1,7 +1,6 @@
 // Importación de hooks de React y librerías necesarias
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // Importación de componentes personalizados
 import Search from "../../components/admin/Search";
@@ -9,20 +8,20 @@ import DataStat from "../../components/admin/DataStat";
 import Sidebar from "../../components/Sidebar";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import FilterButton from "../../components/admin/FilterButton";
+import NoticeCard from "../../components/NoticeCard";
 
 // Importación de imágenes y recursos
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import imageNotice from "../../assets/images/imagenNotice.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
-import NoticeCard from "../../components/NoticeCard";
 import imageNotice1 from "../../assets/images/imageNotice1.png";
 import imageNotice2 from "../../assets/images/imageNotice2.png";
 import imageNotice3 from "../../assets/images/imageNotice3.png";
 import imageNotice4 from "../../assets/images/imageNotice4.png";
+import iconNotResult from "../../assets/icons/iconNotResult.png";
 
 function Notices() {
-  // Estado inicial con las noticias
   const [noticias, setNoticias] = useState([
     {
       id: 1,
@@ -31,17 +30,19 @@ function Notices() {
       title: "Semana del emprendimiento 2025",
       author: "Gloria Valero",
       date: "25/04/2025",
-      summary: "Un evento pensado para motivar a los estudiantes a crear sus propios negocios, con charlas, talleres y actividades dinámicas.",
+      summary:
+        "Un evento pensado para motivar a los estudiantes a crear sus propios negocios, con charlas, talleres y actividades dinámicas.",
     },
-    {
+/*     {
       id: 2,
       status: "Eliminadas",
       image: imageNotice2,
       title: "Reunión de líderes estudiantiles",
       author: "Carlos Peña",
       date: "24/04/2025",
-      summary: "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
-    },
+      summary:
+        "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
+    }, */
     {
       id: 3,
       status: "Archivadas",
@@ -49,7 +50,8 @@ function Notices() {
       title: "Feria de ciencias 2025",
       author: "Laura Rodríguez",
       date: "23/04/2025",
-      summary: "Los estudiantes presentaron sus proyectos científicos con gran creatividad, abordando temas de medio ambiente y tecnología.",
+      summary:
+        "Los estudiantes presentaron sus proyectos científicos con gran creatividad, abordando temas de medio ambiente y tecnología.",
     },
     {
       id: 4,
@@ -58,38 +60,32 @@ function Notices() {
       title: "Campaña de reciclaje en el campus",
       author: "Ana Torres",
       date: "22/04/2025",
-      summary: "Se promovieron hábitos sostenibles mediante actividades de reciclaje y educación ambiental para toda la comunidad escolar.",
+      summary:
+        "Se promovieron hábitos sostenibles mediante actividades de reciclaje y educación ambiental para toda la comunidad escolar.",
     },
   ]);
 
-  // Filtros disponibles para las noticias
   const filters = ["Publicadas", "Eliminadas", "Archivadas"];
   const [activeFilter, setActiveFilter] = useState("Todas");
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
 
-  // Función que cuenta las noticias por estado
   const countByStatus = (status) => noticias.filter((n) => n.status === status).length;
-
-  // Conteo total de noticias por estado
   const totalPublicadas = countByStatus("Publicadas");
   const totalEliminadas = countByStatus("Eliminadas");
   const totalArchivadas = countByStatus("Archivadas");
 
-  // Referencia a conteos anteriores para calcular variación
   const prevCounts = useRef({
     Publicadas: totalPublicadas,
     Eliminadas: totalEliminadas,
     Archivadas: totalArchivadas,
   });
 
-  // Estado que guarda los cambios (diferencias de cantidad)
   const [cambios, setCambios] = useState({
     Publicadas: 0,
     Eliminadas: 0,
     Archivadas: 0,
   });
 
-  // useEffect para actualizar los cambios al detectar modificación en noticias
   useEffect(() => {
     setCambios({
       Publicadas: totalPublicadas - prevCounts.current.Publicadas,
@@ -97,7 +93,6 @@ function Notices() {
       Archivadas: totalArchivadas - prevCounts.current.Archivadas,
     });
 
-    // Se actualiza la referencia con los valores actuales
     prevCounts.current = {
       Publicadas: totalPublicadas,
       Eliminadas: totalEliminadas,
@@ -105,28 +100,25 @@ function Notices() {
     };
   }, [noticias]);
 
-  // Retorna la flecha arriba/abajo según el valor del cambio
-  const getIcon = (cambio) => (cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo);
+  const getIcon = (cambio) =>
+    cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
 
-  // Filtra las noticias según el filtro activo
   const noticiasFiltradas =
-    activeFilter === "Todas" ? noticias : noticias.filter((n) => n.status === activeFilter);
+    activeFilter === "Todas"
+      ? noticias
+      : noticias.filter((n) => n.status === activeFilter);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-46 lg:ml-50 md:mr-10 lg:mr-15 pt-10">
-
-      {/* Parte superior - Búsqueda y estadísticas */}
+      {/* Header con buscador y estadísticas */}
       <div className="flex-none mb-2">
-
-        {/* Buscador */}
         <div className="flex w-full items-center">
           <Search />
         </div>
+        <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">
+          NOTICIAS
+        </h1>
 
-        {/* Título */}
-        <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">NOTICIAS</h1>
-
-        {/* Tarjetas de estadísticas por estado */}
         <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
           <DataStat
             value={totalPublicadas}
@@ -151,17 +143,19 @@ function Notices() {
           />
         </div>
 
-        {/* Botón para crear nueva noticia */}
-        <div className="mt-10 w-full lg:w-190">
+        {/* Botón de creación */}
+        <div className="mt-10 w-full lg:w-200">
           <Link to="/home/newscreate">
             <CartoonButton />
           </Link>
         </div>
 
-        {/* Filtros de noticias */}
+        {/* Filtros */}
         <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
           <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
-            <p className="text-lg sm:text-3xl lg:text-3xl xl:text-4xl font-adlam">Últimas noticias</p>
+            <p className="text-lg sm:text-3xl xl:text-4xl font-adlam">
+              Últimas noticias
+            </p>
             <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
 
             <div className="flex items-center gap-4">
@@ -180,6 +174,7 @@ function Notices() {
                   />
                 ))}
               </div>
+
               <div className="flex lg:hidden gap-4">
                 <FilterButton
                   label="Filtro"
@@ -198,42 +193,53 @@ function Notices() {
         </div>
       </div>
 
-      {/* Sección de contenido - Con scroll en la lista de noticias */}
+      {/* Lista de noticias y panel lateral */}
       <div className="flex-grow flex gap-8 sm:mt-5 overflow-hidden">
-        {/* Lista de noticias - Con scroll */}
         <div className="w-full 2xl:w-[65%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
-            {noticiasFiltradas.map((noticia) => (
-              <NoticeCard
-                key={noticia.id}
-                image={noticia.image}
-                title={noticia.title}
-                author={noticia.author}
-                date={noticia.date}
-                summary={noticia.summary}
-                status={noticia.status.slice(0, -1)}
-              />
-            ))}
+            {noticiasFiltradas.length > 0 ? (
+              noticiasFiltradas.map((noticia) => (
+                <NoticeCard
+                  key={noticia.id}
+                  image={noticia.image}
+                  title={noticia.title}
+                  author={noticia.author}
+                  date={noticia.date}
+                  summary={noticia.summary}
+                  status={noticia.status.slice(0, -1)}
+                />
+              ))
+            ) : (
+              <div className="flex flex-col items-center mt-20 text-center text-gray-400 gap-6">
+                <img
+                  src={iconNotResult}
+                  className="w-32 sm:w-48 md:w-52"
+                  alt="Sin resultados"
+                />
+                <h2 className="font-bold font-adlam text-2xl sm:text-4xl">
+                  Oops,
+                </h2>
+                <p className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
+                  Parece que no hay noticias que coincidan con este filtro. Prueba con otra opción.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Panel lateral derecho - Con ancho y alto fijos */}
-        <div className="hidden xl:flex flex-col gap-8 h-68 2xl:h-80 flex-shrink-0">
-
-          {/* Primer contenedor con alto y ancho fijo */}
-          <div className="hidden xl:flex flex-col justify-center items-center bg-black/5 overflow-hidden rounded-lg w-full h-70 2xl:h-200 ">
-            <img src={imageNotice} className="h-70 2xl:w-50 object-cover" alt="Imagen de noticia" />
-          </div>
-          
-          {/* Segundo contenedor con alto y ancho fijo */}
-          <div className="hidden h-20 w-full justify-center items-center 2xl:gap-4 2xl:flex 2xl:h-50 bg-black/5 font-adlam rounded-lg p-4">
-            <h1 className="text-3xl xl:text-lg 2xl:text-4xl">10</h1>
-            <h1 className="text-2xl xl:text-lg 2xl:text-3xl">Noticias publicadas hoy</h1>
+        {/* Panel lateral derecho */}
+        <div className="hidden xl:flex flex-col bg-black/7 h-105 w-112 flex-shrink-0">
+          <div className="flex flex-col justify-center items-center overflow-hidden rounded-lg w-full h-70 2xl:h-200">
+            <img
+              src={imageNotice}
+              className="h-70 2xl:w-50 object-cover"
+              alt="Imagen de noticia"
+            />
           </div>
         </div>
       </div>
-      
-      {/* Sidebar (menú lateral) */}
+
+      {/* Sidebar */}
       <Sidebar />
     </div>
   );

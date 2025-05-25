@@ -279,7 +279,7 @@ function Testimonials() {
             Oops,
           </div>
           <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
-            No hay resultados para su búsqueda. ¡Vamos, inténtelo de nuevo!
+            No hay testimonios disponibles en esta categoría por el momento.
           </div>
         </div>
       </div>
