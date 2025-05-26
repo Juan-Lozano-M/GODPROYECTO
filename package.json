@@ -12,8 +12,8 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
+    "@heroui/toast": "^2.0.9",
     "@lexical/link": "^0.31.0",
     "@lexical/list": "^0.30.0",
     "@lexical/react": "^0.30.0",

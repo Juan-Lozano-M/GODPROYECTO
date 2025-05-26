@@ -2,7 +2,6 @@ import axios from 'axios'
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import offEye from '../assets/icons/offEye.png'
 import xIcon from '../assets/icons/xIcon.png'
 import imagenRegister from '../assets/images/imagenRegister.png'
 import GODlogo from '../assets/logos/logoGOD.png'
@@ -17,12 +16,11 @@ import Loader from '../components/loader'
 import {
   auth,
   createUserWithEmailAndPassword,
-  googleProvider,
-  signInWithPopup,
   fetchSignInMethodsForEmail,
+  GoogleAuthProvider,
+  googleProvider,
   linkWithCredential,
-  EmailAuthProvider,
-  GoogleAuthProvider
+  signInWithPopup
 } from "../firebaseConfig"
 
 const Register = () => {
@@ -55,26 +53,40 @@ const Register = () => {
             return;
           }
     
-          // First create user in Firebase
+          // First check if user exists in backend
+          try {
+            const checkResponse = await axios.post('http://127.0.0.1:5000/auth/check-email', {
+              email: email
+            });
+            
+            if (checkResponse.data.exists) {
+              setMensaje("El correo ya está registrado");
+              return;
+            }
+          } catch (error) {
+            if (error.response && error.response.status !== 404) {
+              setMensaje("Error al verificar el correo");
+              return;
+            }
+          }
+    
+          // Then create user in Firebase
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const firebaseUser = userCredential.user;
-    
-          // Get Firebase ID token
           const idToken = await firebaseUser.getIdToken();
     
-          // Then send data to your backend
+          // Finally create user in backend
           const datos = {
             correo_usu: email,
             nombre_usu: nombre,
             firebase_uid: firebaseUser.uid,
             token: idToken,
-            contrasena_hash_usu: password  // Changed from password to match database field
+            contrasena_hash_usu: password // Backend will hash this
           };
-
+    
           const response = await axios.post('http://127.0.0.1:5000/auth/register', datos, {
             headers: {
-              'Authorization': `Bearer ${idToken}`,
-              'Content-Type': 'application/json'  // Added content type header
+              'Authorization': `Bearer ${idToken}`
             }
           });
     
@@ -84,16 +96,14 @@ const Register = () => {
             localStorage.setItem("firebaseUID", firebaseUser.uid);
             navigate("/dashboard");
           } else {
+            // If backend registration fails, delete Firebase user
+            await firebaseUser.delete();
             setMensaje(response.data.message);
           }
     
         } catch (error) {
           console.error("Error in registration:", error);
-          if (error.code === 'auth/email-already-in-use') {
-            setMensaje("El correo ya está registrado");
-          } else {
-            setMensaje("Error en el registro: " + error.message);
-          }
+          setMensaje("Error en el registro: " + (error.response?.data?.message || error.message));
         } finally {
           setIsLoading(false);
         }
@@ -153,7 +163,7 @@ const Register = () => {
       <div className="flex items-end justify-between w-full h-45 absolute">
             <div className="flex justify-between items-center ml-5 sm:ml-20 xl:scale-80  2xl:scale-100">
               <Link to={"/"}> <img src={GODlogo} className='h-15 mb-15'/></Link>
-              <h1 className="hidden sm:flex font-mint font-semibold text-white text-[22px] ml-3 mb-15 "> game of dreams </h1>
+              <h1 className="hidden sm:flex  font-semibold text-white text-[22px] ml-3 mb-15 "> game of dreams </h1>
             </div>
           
             { /* 📌 Botones de inicio de sesión y registro */ }
@@ -197,6 +207,7 @@ const Register = () => {
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-50px]"
           />
           <InputField 
             type="text" 
@@ -205,6 +216,7 @@ const Register = () => {
             value={nombre} 
             onChange={(e) => setNombre(e.target.value)}
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]" 
+            iconClassName="right-[-50px]"
           />
           <InputField 
             type="text" 
@@ -213,22 +225,23 @@ const Register = () => {
             value={apellido} 
             onChange={(e) => setApellido(e.target.value)}
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]" 
+            iconClassName="right-[-35px] sm:right-[-50px]"
           />
           <InputField 
             type="password" 
             placeholder="••••••••" 
-            icon={offEye} 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-35px] sm:right-[-50px]"
           />
           <InputField 
             type="password" 
             placeholder="••••••••" 
-            icon={offEye} 
             value={confirmPassword} 
             onChange={(e) => setConfirmPassword(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-35px] sm:right-[-50px] "
           />
 
 <button 
@@ -263,7 +276,7 @@ const Register = () => {
           animate={{ y: [0, -12, 0], rotate: [-2, 2, -2] }} 
           transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }} 
         />
-          <h1 className="text-[50px] font-mint font-bold xl:text-[40px] 2xl:text-[50px] xl:translate-y-[-80px] 2xl:translate-y-[-40px]">
+          <h1 className="text-[50px]  font-bold xl:text-[40px] 2xl:text-[50px] xl:translate-y-[-80px] 2xl:translate-y-[-40px]">
           <Textwriter 
           words={["Regístrate hoy y da el primer \n paso hacia el futuro."]} 
           loop={false} 
@@ -275,8 +288,8 @@ const Register = () => {
         />
           </h1>
           <div className="relative xl:translate-y-[-80px] 2xl:translate-y-[-40px] "> 
-          <p className="mt-3 text-[20px] font-mint font-bold xl:text-[15px] 2xl:text-[20px]">Si ya tienes una cuenta</p>
-          <Link to="/login" className="text-white text-[20px] font-mint font-bold xl:text-[15px] 2xl:text-[20px]">
+          <p className="mt-3 text-[20px]  font-bold xl:text-[15px] 2xl:text-[20px]">Si ya tienes una cuenta</p>
+          <Link to="/login" className="text-white text-[20px]  font-bold xl:text-[15px] 2xl:text-[20px]">
               Inicia sesión aqui!
           </Link>
           </div>
