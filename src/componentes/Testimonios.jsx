@@ -35,7 +35,7 @@ function Tes() {
   };
 
   return (
-    <div className='bg-[#E8FFBE] h-auto min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden'>
+    <div className=' h-auto min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden'>
 
       {/* Imagen Fisgona */}
       <img

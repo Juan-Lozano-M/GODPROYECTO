@@ -46,7 +46,7 @@ function SeccionF() {
     <div
   ref={sectionRef}
   id="seccionF"
-  className="bg-[#E8FFBE] font-nunito font-bold h-auto min-h-[100vh] flex flex-col sm:flex-row sm:justify-center sm:items-end items-center justify-center px-4 py-8"
+  className=" font-nunito font-bold h-auto min-h-[100vh] flex flex-col sm:flex-row sm:justify-center sm:items-end items-center justify-center px-4 py-8"
 >
   {/* Imagen Gallina */}
   <div

@@ -11,8 +11,8 @@ import Test from "../componentes/Testimonios";
 
 function Home() {
   return (
-    <div className="min-h-screen bg-[#E8FFBE]  overflow-x-hidden">
-      <Navbar />
+    <div className="min-h-screen bg-white  overflow-x-hidden">
+      
       <Hero />
       <S2 />
       <Test></Test>

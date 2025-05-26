@@ -3,6 +3,7 @@ import Portal from '../assets/Ellipse 2.png';
 import Hand from '../assets/hand.png';
 import ArrowIcon from '../assets/ArrowIcon.png';
 
+
 function Seccion2() {
   const [scrollY, setScrollY] = useState(0);
   const [opacity, setOpacity] = useState(0);
@@ -34,7 +35,7 @@ function Seccion2() {
   ];
 
   return (
-    <div className='bg-[#E8FFBE] sm-height:mt-[7rem] h-screen xl:h-[100vh] 2xl:h-[75vh] lg:h-[75vh] flex flex-col items-center justify-center xl:mt-[2rem] p-5'>
+    <div className=' sm-height:mt-[7rem] h-screen xl:h-[100vh] 2xl:h-[75vh] lg:h-[75vh] flex flex-col items-center justify-center xl:mt-[2rem] p-5'>
       <div
         className='w-full max-w-3xl mx-auto text-left font-bold transition-all duration-500'
         style={{
@@ -55,6 +56,9 @@ function Seccion2() {
           </div>
         </div>
       </div>
+      
+      
+
 
       <div
         className='relative flex flex-col md:flex-row w-full items-center justify-start gap-5 md:gap-[2rem] max-w-5xl mt-[2.8rem]'

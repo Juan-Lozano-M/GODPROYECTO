@@ -39,7 +39,7 @@ const Navbar = () => {
             duration: 1,
             bounce: 0.7,
           }}
-          className="flex items-center justify-between w-[60%] max-w-6xl border-2 border-black rounded-md px-8 py-3 shadow-md bg-[#E8FFBE] hidden lg:flex"
+          className="flex items-center justify-between w-full max-w-6xl border-2 border-black rounded-md px-8 py-3 shadow-md  hidden lg:flex"
         >
           {/* Texto GOD con tooltip */}
           <div className="relative group cursor-pointer">

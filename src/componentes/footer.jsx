@@ -1,5 +1,7 @@
 import React from 'react';
 
+
+
 function Foot() {
   return (
     <div className="bg-black text-white font-nunito font-bold min-h-[500px] flex flex-col gap-10 px-8 py-8">
