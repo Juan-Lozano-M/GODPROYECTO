@@ -185,7 +185,7 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8 text-gray-600 hover:text-[#9CE840]"
+                  className="w-8 h-8 text-black hover:text-[#9CE840]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

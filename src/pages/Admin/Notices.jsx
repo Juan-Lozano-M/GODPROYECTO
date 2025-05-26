@@ -1,16 +1,14 @@
-// Importación de hooks de React y librerías necesarias
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-// Importación de componentes personalizados
 import Search from "../../components/admin/Search";
 import DataStat from "../../components/admin/DataStat";
 import Sidebar from "../../components/Sidebar";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import FilterButton from "../../components/admin/FilterButton";
 import NoticeCard from "../../components/NoticeCard";
+import FiltroModal from "../../components/admin/FiltroModal";
 
-// Importación de imágenes y recursos
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import imageNotice from "../../assets/images/imagenNotice.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
@@ -20,6 +18,7 @@ import imageNotice2 from "../../assets/images/imageNotice2.png";
 import imageNotice3 from "../../assets/images/imageNotice3.png";
 import imageNotice4 from "../../assets/images/imageNotice4.png";
 import iconNotResult from "../../assets/icons/iconNotResult.png";
+
 
 function Notices() {
   const [noticias, setNoticias] = useState([
@@ -33,7 +32,7 @@ function Notices() {
       summary:
         "Un evento pensado para motivar a los estudiantes a crear sus propios negocios, con charlas, talleres y actividades dinámicas.",
     },
-/*     {
+    {
       id: 2,
       status: "Eliminadas",
       image: imageNotice2,
@@ -42,7 +41,7 @@ function Notices() {
       date: "24/04/2025",
       summary:
         "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
-    }, */
+    },
     {
       id: 3,
       status: "Archivadas",
@@ -103,6 +102,7 @@ function Notices() {
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
 
+  // Filtrado según activeFilter; "Todas" muestra todo
   const noticiasFiltradas =
     activeFilter === "Todas"
       ? noticias
@@ -159,6 +159,7 @@ function Notices() {
             <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
 
             <div className="flex items-center gap-4">
+              {/* Filtros grandes: mostramos Todas + filtros */}
               <div className="hidden lg:flex gap-4">
                 <FilterButton
                   label="Todas"
@@ -175,6 +176,7 @@ function Notices() {
                 ))}
               </div>
 
+              {/* Filtros móviles: botón que abre modal con solo los filtros (sin "Todas") + botón "Todas" fuera */}
               <div className="flex lg:hidden gap-4">
                 <FilterButton
                   label="Filtro"
@@ -232,12 +234,28 @@ function Notices() {
           <div className="flex flex-col justify-center items-center overflow-hidden rounded-lg w-full h-70 2xl:h-200">
             <img
               src={imageNotice}
-              className="h-70 2xl:w-50 object-cover"
-              alt="Imagen de noticia"
+              alt="Noticias ilustración"
+              className="object-contain w-full h-full"
             />
           </div>
+          <p className="font-quicksand text-lg mt-4">
+            Aquí encontrarás las noticias más recientes y relevantes de tu comunidad.
+          </p>
         </div>
       </div>
+
+      {/* Modal de filtros para móviles */}
+      {isFiltroModalOpen && (
+        <FiltroModal
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={(filter) => {
+            setActiveFilter(filter);
+            setIsFiltroModalOpen(false);
+          }}
+          onClose={() => setIsFiltroModalOpen(false)}
+        />
+      )}
 
       {/* Sidebar */}
       <Sidebar />
