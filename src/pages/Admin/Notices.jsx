@@ -42,7 +42,7 @@ function Notices() {
       summary:
         "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
     },
-    {
+/*     {
       id: 3,
       status: "Archivadas",
       image: imageNotice3,
@@ -51,7 +51,7 @@ function Notices() {
       date: "23/04/2025",
       summary:
         "Los estudiantes presentaron sus proyectos científicos con gran creatividad, abordando temas de medio ambiente y tecnología.",
-    },
+    }, */
     {
       id: 4,
       status: "Publicadas",
@@ -109,7 +109,7 @@ function Notices() {
       : noticias.filter((n) => n.status === activeFilter);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-46 lg:ml-50 md:mr-10 lg:mr-15 pt-10">
+    <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15 pt-10">
       {/* Header con buscador y estadísticas */}
       <div className="flex-none mb-2">
         <div className="flex w-full items-center">
@@ -238,9 +238,6 @@ function Notices() {
               className="object-contain w-full h-full"
             />
           </div>
-          <p className="font-quicksand text-lg mt-4">
-            Aquí encontrarás las noticias más recientes y relevantes de tu comunidad.
-          </p>
         </div>
       </div>
 
