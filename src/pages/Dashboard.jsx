@@ -1,20 +1,32 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { auth } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import axios from "../config/axiosConfig";
 import ImagenDashboard from "../assets/images/imagenDashboard.png";
 import Checkboxmore from "../components/checkbox/Checkboxmore";
-import { Link } from "react-router-dom";
 import LogoutButton from "../components/buttons/LogoutButton";
 import CareerPathPuzzle from '../components/dashboard/CareerPathPuzzle';
+import ProfileImageUpload from '../components/profile/ProfileImageUpload';
+import Toast from '../components/alertas/Toast';
+import InputEditable from '../components/inputs/InputEditable';
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [interestError, setInterestError] = useState("");
-  const navigate = useNavigate();
   const [isEditingProfileInterests, setIsEditingProfileInterests] = useState(false);
-
   const [showAllInterests, setShowAllInterests] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
+  const [googleProfileImage, setGoogleProfileImage] = useState("");
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({ title: '', message: '' });
+
+  const navigate = useNavigate();
 
   const interests = [
     "Investigación",
@@ -29,6 +41,7 @@ const Dashboard = () => {
     "Cocina"
   ];
 
+  // Ordena intereses para que los seleccionados aparezcan primero
   const sortInterests = (interestsList) => {
     return [...interestsList].sort((a, b) => {
       const aSelected = selectedInterests.includes(a);
@@ -39,25 +52,91 @@ const Dashboard = () => {
     });
   };
 
-  const visibleInterests = showAllInterests 
-    ? interests 
-    : sortInterests(interests).slice(0, 7);
-  const sortedInterests = visibleInterests;
-  const handleEditProfileInterests = () => {
-    if (isEditingProfileInterests) {
-      localStorage.setItem("userInterests", JSON.stringify(selectedInterests));
-    }
-    setIsEditingProfileInterests(!isEditingProfileInterests);
-  };
+
+  const visibleInterests = showAllInterests
+  ? interests
+  : sortInterests(interests).slice(0, 7);
+
+
   useEffect(() => {
-    const storedName = localStorage.getItem("userName");
-    const storedEmail = localStorage.getItem("userEmail");
-    const storedInterests = JSON.parse(localStorage.getItem("userInterests") || "[]");
-    
-    if (storedName) setUserName(storedName);
-    if (storedEmail) setUserEmail(storedEmail); // Make sure this is working
-    if (storedInterests.length > 0) setSelectedInterests(storedInterests);
-  }, []);
+    const fetchUserData = async (user) => {
+      if (!user) return;
+      try {
+        setIsLoading(true);
+        // Force token refresh and add retry logic
+        const idToken = await user.getIdToken(true);
+        
+        // Add error handling and timeout
+        const response = await axios.get('/api/user/profile', {
+          headers: {
+            'Authorization': `Bearer ${idToken}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 5000, // 5 second timeout
+          validateStatus: (status) => {
+            return status >= 200 && status < 300; // Only accept success status codes
+          }
+        });
+
+        if (response.data.status === 'success') {
+          const userData = response.data.user;
+          setUserName(userData.nombre_usu);
+          setUserEmail(userData.correo_usu);
+          setProfileImage(userData.profile_image || user.photoURL || "");
+          if (userData.intereses && userData.intereses.length > 0) {
+            setSelectedInterests(userData.intereses);
+          }
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        if (error.response) {
+          console.error("Server response:", error.response.data);
+        }
+        // You might want to show a toast or error message to the user here
+        setToastMessage({
+          title: 'Error',
+          message: 'No se pudo cargar la información del usuario'
+        });
+        setShowToast(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Check if user has a Google profile photo
+        if (user.photoURL) {
+          setGoogleProfileImage(user.photoURL);
+        }
+        fetchUserData(user);
+      } else {
+        setIsLoading(false); // Set loading to false if no user
+        navigate('/login');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F1F1F1]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#87C232]"></div>
+      </div>
+    );
+  }
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   const handleInterestToggle = (interest) => {
     setSelectedInterests(prev => {
@@ -70,22 +149,80 @@ const Dashboard = () => {
     setInterestError("");
   };
 
-  const handleSaveInterests = () => {
+  const handleSaveInterests = async () => {
     if (selectedInterests.length < 2) {
       setInterestError("Por favor selecciona al menos 2 intereses");
       return;
     }
-    localStorage.setItem("userInterests", JSON.stringify(selectedInterests));
-    setInterestError("¡Intereses guardados exitosamente!");
-    sortInterests(interests);
+
+    try {
+      const currentUser = auth.currentUser;
+      const idToken = await currentUser.getIdToken();
+      
+      const response = await axios.put('/api/user/interests', {
+        interests: selectedInterests
+      }, {
+        headers: {
+          'Authorization': `Bearer ${idToken}`
+        }
+      });
+
+      if (response.data.status === 'success') {
+        setInterestError("¡Intereses guardados exitosamente!");
+        setIsEditingProfileInterests(false);
+      }
+    } catch (error) {
+      console.error("Error saving interests:", error);
+      setInterestError("Error al guardar los intereses");
+    }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    navigate("/");
+  const handleEditProfileInterests = () => {
+    if (isEditingProfileInterests) {
+      handleSaveInterests();
+    }
+    setIsEditingProfileInterests(!isEditingProfileInterests);
+  };
+  const handleEmailUpdate = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      const idToken = await currentUser.getIdToken();
+
+      // Update email in Firebase
+      await currentUser.updateEmail(newEmail);
+
+      // Update email in backend
+      const response = await axios.put('/api/user/profile', 
+        { email: newEmail },
+        { 
+          headers: { 
+            'Authorization': `Bearer ${idToken}`
+          }
+        }
+      );
+
+      if (response.data.status === 'success') {
+        setUserEmail(newEmail);
+        setIsEditingEmail(false);
+        setToastMessage({
+          title: '¡Éxito!',
+          message: 'Correo electrónico actualizado correctamente'
+        });
+        setShowToast(true);
+      }
+    } catch (error) {
+      console.error('Error updating email:', error);
+      setToastMessage({
+        title: 'Error',
+        message: 'No se pudo actualizar el correo electrónico'
+      });
+      setShowToast(true);
+    }
   };
 
+  // Update the email section in the return statement
   return (
     <div className="min-h-screen bg-[#F1F1F1]">
       <nav className="bg-white shadow-lg">
@@ -97,9 +234,17 @@ const Dashboard = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-[#87C232] text-white rounded-full flex items-center justify-center text-xl font-semibold">
-                  {userName.charAt(0).toUpperCase()}
-                </div>
+                {profileImage ? (
+                  <img 
+                    src={profileImage}
+                    alt="Profile" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-[#87C232] text-white rounded-full flex items-center justify-center text-xl font-semibold">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <span className="ml-3 font-medium text-gray-700">{userName}</span>
               </div>
               <div onClick={handleLogout}>
@@ -142,11 +287,23 @@ const Dashboard = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="bg-white rounded-lg shadow-lg p-6 lg:w-1/4">
             <div className="flex flex-col items-center">
-              <div className="w-32 h-32 bg-[#87C232] rounded-full flex items-center justify-center text-6xl text-white mb-4">
-                {userName.charAt(0).toUpperCase()}
+              <div className="relative group">
+                {profileImage ? (
+                  <img 
+                    src={profileImage}
+                    alt="Profile" 
+                    className="w-32 h-32 rounded-full object-cover mb-4"
+                  />
+                ) : (
+                  <div className="w-32 h-32 bg-[#87C232] rounded-full flex items-center justify-center text-6xl text-white mb-4">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="absolute bottom-4 right-0">
+                  <ProfileImageUpload onImageUpdate={setProfileImage} />
+                </div>
               </div>
               <p className="text-xl font-semibold mb-2">{userName}</p>
-
               <p className="text-gray-500 text-sm mb-4">{userEmail}</p>
               
               <div className="flex gap-2 mb-4">
@@ -188,89 +345,79 @@ const Dashboard = () => {
                 Información Personal
               </h2>
               
+         
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-gray-600 mb-2">Nombre:</label>
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      value={userName}
-                      className="bg-gray-100 p-2 rounded-md flex-grow"
-                      disabled
+                  <InputEditable
+                    value={userName}
+                    onChange={setUserName}
+                    field="nombre_usu"
+                    placeholder="Nuevo nombre"
+                    onSuccess={() => {
+                      setToastMessage({
+                        title: '¡Éxito!',
+                        message: 'Nombre actualizado correctamente'
+                      });
+                      setShowToast(true);
+                    }}
                     />
-                    <button className="ml-2 bg-[#9CE840] p-2 rounded-[10px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                    
+                    {/* Add this near the end of your return statement if not already present */}
 
+                </div>
+              
                 <div>
                   <label className="block text-gray-600 mb-2">Correo:</label>
-                  <div className="flex items-center">
-
-                    <input
-                        type="email"
-                        value={userEmail}
-                        className="bg-gray-100 p-2 rounded-md flex-grow"
-                        disabled
-                    />
-                    <button className="ml-2 bg-[#9CE840] p-2 rounded-[10px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <InputEditable
+                    value={userEmail}
+                    onChange={setNewEmail}
+                    field="correo_usu"
+                    type="email"
+                    placeholder="Nuevo correo electrónico"
+                    onSuccess={() => {
+                      setToastMessage({
+                        title: '¡Éxito!',
+                        message: 'Correo electrónico actualizado correctamente'
+                      });
+                      setShowToast(true);
+                    }}
+                  />
                 </div>
-
+              
                 <div>
                   <label className="block text-gray-600 mb-2">Contraseña:</label>
-                  <div className="flex items-center">
-                    <input
-                      type="password"
-                      value="••••••"
-                      className="bg-gray-100 p-2 rounded-md flex-grow"
-                      disabled
-                    />
-                    <button className="ml-2 bg-[#9CE840] p-2 rounded-[10px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <InputEditable
+                    value="••••••"
+                    type="password"
+                    disabled={true}
+                    placeholder="Nueva contraseña"
+                  />
                 </div>
-
+              
                 <div>
                   <label className="block text-gray-600 mb-2">Fecha nacimiento:</label>
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      className="bg-gray-100 p-2 rounded-md flex-grow"
-                      disabled
-                    />
-                    <button className="ml-2 bg-[#9CE840] p-2 rounded-[10px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <InputEditable
+                    value=""
+                    type="date"
+                    onChange={(date) => {
+                      // Add date update logic here
+                      console.log('Update date:', date);
+                    }}
+                    disabled={true} // Temporarily disabled until we implement date update
+                  />
                 </div>
-
+              
                 <div className="col-span-full">
                   <label className="block text-gray-600 mb-2">Institución:</label>
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      className="bg-gray-100 p-2 rounded-md flex-grow"
-                      disabled
-                    />
-                    <button className="ml-2 bg-[#9CE840] p-2 rounded-[10px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <InputEditable
+                    value=""
+                    onChange={(institution) => {
+                      // Add institution update logic here
+                      console.log('Update institution:', institution);
+                    }}
+                    disabled={true} // Temporarily disabled until we implement institution update
+                  />
                 </div>
               </div>
             </div>
@@ -287,7 +434,7 @@ const Dashboard = () => {
                         ? 'max-h-[800px] opacity-100 scale-100' 
                         : 'max-h-[45px] opacity-90 scale-95'
                     } transform origin-top overflow-hidden`}>
-                      {sortedInterests.map((interest) => (
+                      {visibleInterests.map((interest) => (
                         <button
                           key={interest}
                           onClick={() => isEditingProfileInterests && handleInterestToggle(interest)}
@@ -353,6 +500,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+    {/* Add Toast component with fixed positioning */}
+        {showToast && (
+          <div className="fixed top-4 right-4 z-50">
+            <Toast
+              title={toastMessage.title}
+              message={toastMessage.message}
+              onClose={() => setShowToast(false)}
+            />
+          </div>
+        )}
     </div>
   );
 };

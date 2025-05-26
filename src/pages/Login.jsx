@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { sendPasswordResetEmail } from "firebase/auth";
 import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,7 +27,9 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [mensaje, setMensaje] = useState(""); // Estado para el mensaje de error o éxito 
-
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  
   const handleLogin = async (event) => {
     event.preventDefault();
   
@@ -152,6 +155,30 @@ const Login = () => {
     }
   };
 
+  // Add this new function to handle password reset
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      setMensaje("Por favor, ingresa tu correo electrónico");
+      return;
+    }
+    
+    try {
+      // Use Firebase client SDK to send reset email directly
+      await sendPasswordResetEmail(auth, resetEmail, {
+        url: 'http://localhost:5173/login/recoverpassword',
+        handleCodeInApp: true
+      });
+      
+      setResetEmailSent(true);
+      setMensaje("Se ha enviado un enlace para restablecer la contraseña a tu correo");
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      setMensaje(`Error al enviar correo: ${error.message}`);
+    }
+  };
+
   return (
   <div className="flex min-h-screen w-full bg-[#9CE840] cursor-none flex-grow  ">
     <Cursor/>
@@ -235,6 +262,7 @@ const Login = () => {
         <div className="relative">
         <InputField
           type="email"
+          autoComplete="email"
           placeholder="Ingresa tu correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -272,7 +300,7 @@ const Login = () => {
           <a href="#" className="text-white text-sm float-end font-semibold">
            
           </a>
-          <Link to="/login/recoverpassword" className="text-white text-sm float-end font-semibold">
+          <Link to="/login/recoverpassword" className="text-white text-lg float-end font-semibold">
           ¿Recuperar contraseña?
           </Link>
 
@@ -301,3 +329,24 @@ const Login = () => {
 };
 
 export default Login;
+
+
+// En tu función de manejo de inicio de sesión
+const handleLogin = async (userCredential) => {
+  try {
+    const idToken = await userCredential.user.getIdToken();
+    const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+      token: idToken
+    });
+
+    if (response.data.status === 'success') {
+      // Actualizar el estado global con TODA la información del usuario
+      setUserData(response.data.user);
+      // Navegar al dashboard
+      navigate('/dashboard');
+    }
+  } catch (error) {
+    console.error('Error en inicio de sesión:', error);
+    // Manejar el error apropiadamente
+  }
+};

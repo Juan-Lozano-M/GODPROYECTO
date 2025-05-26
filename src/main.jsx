@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
+import ProtectedResetRoute from "./guards/ProtectedResetRoute.jsx";
 import "./index.css";
 import LoginMain from "./LoginMain.jsx";
 import Home from "./pages/Admin/Home";
@@ -9,12 +10,14 @@ import NewsCreate from "./pages/Admin/NewsCreate.jsx";
 import Notices from "./pages/Admin/Notices";
 import Statics from "./pages/Admin/Statics";
 import Testimonial from "./pages/Admin/Testimonial";
+import RecoverPassword from "./pages/Auth/RecoverPassword.jsx";
+import ResetPassword from "./pages/Auth/ResetPassword.jsx";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewDetails from "./pages/Noticias/NewDetail";
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
-import RecoverPassword from "./pages/RecoverPassword.jsx";
 import Register from "./pages/Register";
+
 
 const router = createBrowserRouter([
   {
@@ -52,6 +55,14 @@ const router = createBrowserRouter([
   {
     path: "/login/recoverpassword",
     element: <RecoverPassword />,
+  },
+  {
+    path: "/login/resetpassword",
+    element: (
+      <ProtectedResetRoute>
+        <ResetPassword />
+      </ProtectedResetRoute>
+    ),
   },
   {
     path: "/register",

@@ -53,7 +53,7 @@ const InputField = ({
       {type === "password" && (
         <button 
           onClick={togglePasswordVisibility} 
-          className={`absolute right-5 ${iconClassName}`}
+          className={`absolute right-5 top-0 ${iconClassName}`}
           type="button"
         >
           <img
@@ -65,7 +65,7 @@ const InputField = ({
       )}
 
       {/* Custom icon */}
-      {icon && type !== "password" && !value && (
+      {icon && type !== "password" && !value && !showClearButton && (
         <div className={`absolute right-5 top-3 ${iconClassName}`}>
           <img src={icon} alt="Input icon" />
         </div>
