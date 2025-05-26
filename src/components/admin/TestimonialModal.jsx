@@ -6,84 +6,168 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 function TestimonialModal({ isOpen, onClose, testimonio }) {
   useEffect(() => {
     if (isOpen) {
+      // Aplicar overflow hidden inmediatamente y forzar el reflow
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "0px"; // Evita el shift del contenido
+      document.documentElement.style.overflow = "hidden"; // También en html
     } else {
-      document.body.style.overflow = "";
+      // Restaurar scroll con un pequeño delay para evitar parpadeos
+      setTimeout(() => {
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+        document.documentElement.style.overflow = "";
+      }, 100);
     }
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
 
+    // Cleanup function
     return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
+      if (isOpen) {
+        window.removeEventListener("keydown", handleKeyDown);
+      }
+      // Solo restaurar si el componente se desmonta mientras está abierto
+      if (isOpen) {
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+        document.documentElement.style.overflow = "";
+      }
     };
   }, [isOpen, onClose]);
 
   const backdropVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, transition: { duration: 0.3 } },
+    visible: { 
+      opacity: 1, 
+      transition: { 
+        duration: 0.2,
+        ease: "easeOut"
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      transition: { 
+        duration: 0.2,
+        ease: "easeIn"
+      } 
+    },
   };
 
   const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8, y: 40 },
+    hidden: { 
+      opacity: 0, 
+      scale: 0.9, 
+      y: 20 
+    },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { type: "spring", damping: 25, stiffness: 300, duration: 0.4 },
+      transition: { 
+        type: "spring", 
+        damping: 25, 
+        stiffness: 400, 
+        duration: 0.3 
+      },
     },
     exit: {
       opacity: 0,
-      scale: 0.8,
-      y: 40,
-      transition: { type: "spring", damping: 25, stiffness: 300, duration: 0.4 },
+      scale: 0.9,
+      y: 20,
+      transition: { 
+        duration: 0.2,
+        ease: "easeIn"
+      },
     },
   };
 
   const contentVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+    visible: { 
+      opacity: 1, 
+      transition: { 
+        staggerChildren: 0.08, 
+        delayChildren: 0.1 
+      } 
+    },
     exit: {
       opacity: 0,
-      transition: { staggerChildren: 0.05, staggerDirection: -1, when: "afterChildren" },
+      transition: { 
+        staggerChildren: 0.03, 
+        staggerDirection: -1, 
+        when: "afterChildren" 
+      },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", damping: 20, stiffness: 300 },
+      transition: { 
+        type: "spring", 
+        damping: 20, 
+        stiffness: 300,
+        duration: 0.3
+      },
     },
-    exit: { opacity: 0, y: 20, transition: { duration: 0.2 } },
+    exit: { 
+      opacity: 0, 
+      y: 10, 
+      transition: { duration: 0.15 } 
+    },
   };
 
   const buttonVariants = {
-    hover: { scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 10 } },
+    hover: { 
+      scale: 1.05, 
+      transition: { 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 10 
+      } 
+    },
     tap: { scale: 0.95 },
     initial: { scale: 1 },
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && testimonio && (
         <motion.div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
           onClick={onClose}
+          style={{
+            // Asegurar que el modal ocupe toda la pantalla sin causar overflow
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: 'hidden'
+          }}
         >
           <motion.div
-            className="md:ml-34 2xl:ml-0 rounded-2xl bg-white px-7 pt-7 sm:px-10 sm:pt-10 shadow-lg max-h-full overflow-y-auto z-50"
-            style={{ width: "auto" }}
+            className="md:ml-34 2xl:ml-0 rounded-2xl bg-white px-7 pt-7 sm:px-10 sm:pt-10 shadow-2xl max-h-[90vh] overflow-y-auto z-50"
+            style={{ 
+              width: "auto",
+              maxWidth: "min(90vw, 600px)",
+              maxHeight: "90vh",
+              // Ocultar completamente cualquier scrollbar
+              overflow: "hidden",
+              contain: "layout"
+            }}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -94,16 +178,18 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
             <div className="text-end">
               <motion.button
                 onClick={onClose}
-                whileHover={{ rotate: 90 }}
+                whileHover={{ rotate: 90, scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.2 }}
+                className="hover:bg-gray-100 rounded-full p-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-10 text-black hover:text-[#9CE840]"
+                  className="w-8 h-8 text-gray-600 hover:text-[#9CE840]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -122,7 +208,7 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
                 <motion.img
                   src={testimonio.imageUrl}
                   alt={testimonio.name}
-                  className="h-15 w-15 sm:w-30 sm:h-30 rounded-full mb-4"
+                  className="h-15 w-15 sm:w-30 sm:h-30 rounded-full mb-4 object-cover"
                   variants={itemVariants}
                 />
                 <motion.h3 variants={itemVariants} className="text-xl sm:text-4xl font-adlam">
@@ -163,14 +249,14 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
                 <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
                   <GameButton
                     text="Aprobar"
-                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840]"
+                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840] hover:bg-[#8BD635] transition-colors"
                     icon={<CheckIcon className="text-black" strokeWidth={2.5} />}
                   />
                 </motion.div>
                 <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
                   <GameButton
                     text="Rechazar"
-                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#EA4335]"
+                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#EA4335] hover:bg-[#D33B2C] transition-colors"
                     icon={<XMarkIcon className="text-black" strokeWidth={2.5} />}
                   />
                 </motion.div>

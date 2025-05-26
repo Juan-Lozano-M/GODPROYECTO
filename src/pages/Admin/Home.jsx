@@ -1,3 +1,4 @@
+// Importamos motion para animaciones, hooks de React, y Link para navegación entre rutas
 import { motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom"; // Add this import
@@ -17,20 +18,26 @@ import iconSearch from "../../assets/icons/iconSearch.png";
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";
 import imagePerfil from "../../assets/images/imagePerfil.png";
 
+// Componente principal de la página de inicio del administrador
 const Home = () => {
-  const [activeTab, setActiveTab] = useState("nuevos");
-  const [tabRefs, setTabRefs] = useState({
 
+  // Estado para controlar qué pestaña está activa: "nuevos" o "pendientes"
+  const [activeTab, setActiveTab] = useState("nuevos");
+
+  // Refs de los botones de las pestañas para animar el subrayado dinámico
+  const [tabRefs, setTabRefs] = useState({
     nuevos: null,
     pendientes: null
   })
 
+  // Lista de testimonios nuevos 
   const testimoniosNuevos = [
     { image: "/src/assets/images/imageTestimonial1.png", name: "Thompson Mark", title: "Vicepresidente de Tecnología." },
     { image: "/src/assets/images/imageTestimonial2.png", name: "James Kim", title: "Jefe de ingeniería en DataPro." },
     { image: "/src/assets/images/imageTestimonial3.png", name: "Emily Watson", title: "Responsable de producto." }
   ];
 
+  // Lista de testimonios pendientes 
   const testimoniosPendientes = [
     { image: "/src/assets/images/imageTestimonial4.png", name: "Sarah Johnson", title: "Gerente de marketing." },
     { image: "/src/assets/images/imageTestimonial5.png", name: "Richard White", title: "Director de operaciones." },
@@ -41,6 +48,7 @@ const Home = () => {
 
   // Funcion para establecer las referencias de los botones
   const setTabRef = (tab, element) => {
+    
     if (element && tabRefs[tab] !== element) {
       setTabRefs(prev => ({
         ...prev,
@@ -48,6 +56,7 @@ const Home = () => {
       }));
     }
   };
+
   // Calculo de la pocision y ancho del indicador
   const getIndicatorStyles = useMemo (() => {
     

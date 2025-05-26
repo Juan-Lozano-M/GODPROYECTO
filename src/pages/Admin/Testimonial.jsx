@@ -1,4 +1,7 @@
+// Importaciones de React y hooks necesarios
 import React, { useState, useEffect, useRef } from "react";
+
+// Componentes personalizados
 import Sidebar from "../../components/Sidebar";
 import DataStat from "../../components/admin/DataStat";
 import Search from "../../components/admin/Search";
@@ -7,6 +10,7 @@ import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import FiltroModal from "../../components/admin/FiltroModal"; // <- Nuevo modal de filtros
 
+// Imágenes y recursos utilizados
 import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
 import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
 import imageTestimonial3 from "../../assets/images/imageTestimonial3.png";
@@ -19,12 +23,17 @@ import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
 
+// Componente principal
 function Testimonials() {
+
+  // Estados del componente
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
-  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // <- Estado modal de filtros
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
 
+  // Lista de testimonios 
   const [testimonios, setTestimonios] = useState([
+    // Testimonios de ejemplo con datos de usuarios
 /*     {
       id: 1,
       name: "Thompson Mark",
@@ -107,6 +116,7 @@ function Testimonials() {
     },
   ]);
 
+  // Traducción de filtros para usarlos con los estados de los testimonios
   const filtroTraducido = {
     Aprobados: "Aprobado",
     Anulados: "Anulado",
@@ -114,33 +124,39 @@ function Testimonials() {
     Todos: "Todos",
   };
 
-  const filters = ["Aprobados", "Anulados", "En espera"];
+  const filters = ["Aprobados", "Anulados", "En espera"]; // Filtros disponibles
 
+  // Filtrado de testimonios basado en el filtro activo
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
     if (filtro === "Todos") return true;
     return t.status === filtro;
   });
 
+  // Función para contar cuántos testimonios hay por estado
   const countByStatus = (status) =>
     testimonios.filter((t) => t.status === status).length;
 
+  // Conteo por estado
   const totalAprobados = countByStatus("Aprobado");
   const totalAnulados = countByStatus("Anulado");
   const totalEnEspera = countByStatus("En espera");
 
+  // Referencia para guardar valores anteriores y detectar cambios
   const prevCounts = useRef({
     Aprobado: totalAprobados,
     Anulado: totalAnulados,
     "En espera": totalEnEspera,
   });
 
+  // Estado para mostrar cambio en las estadísticas
   const [cambios, setCambios] = useState({
     Aprobado: 0,
     Anulado: 0,
     "En espera": 0,
   });
 
+  // useEffect que actualiza los cambios cuando se modifica la lista de testimonios
   useEffect(() => {
     setCambios({
       Aprobado: totalAprobados - prevCounts.current.Aprobado,
@@ -148,6 +164,7 @@ function Testimonials() {
       "En espera": totalEnEspera - prevCounts.current["En espera"],
     });
 
+    // Actualiza los valores previos
     prevCounts.current = {
       Aprobado: totalAprobados,
       Anulado: totalAnulados,
@@ -155,27 +172,35 @@ function Testimonials() {
     };
   }, [testimonios]);
 
+  // Devuelve el ícono de cambio
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
 
+  // Maneja la apertura del modal
   const handleOpenModal = (testimonio) => {
     setSelectedTestimonio(testimonio);
   };
 
+  // Maneja el cierre del modal
   const handleCloseModal = () => {
     setSelectedTestimonio(null);
   };
 
   return (
+
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
+
+      {/* Barra de búsqueda */}
       <div className="flex w-full items-center">
         <Search />
       </div>
 
+      {/* Título */}
       <div>
         <h1 className="mt-6 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
 
+      {/* Estadísticas generales */}
       <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <DataStat
           value={totalAprobados}
@@ -200,11 +225,13 @@ function Testimonials() {
         />
       </div>
 
+      {/* Filtros para testimonios */}
       <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
         <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
           <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
           <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
 
+          {/* Filtros (adaptados a pantalla grande o móvil) */}
           <div className="flex items-center gap-4">
             {/* Desktop: mostrar todos los filtros */}
             <div className="hidden lg:flex gap-4">
@@ -240,7 +267,8 @@ function Testimonials() {
           </div>
         </div>
       </div>
-
+      
+      {/* Si no hay resultados */}
       {testimoniosFiltrados.length === 0 ? (
       <div className="w-full flex justify-center items-center mt-10">
         <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
@@ -251,7 +279,7 @@ function Testimonials() {
             Oops,
           </div>
           <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
-            No hay resultados para su búsqueda. ¡Vamos, inténtelo de nuevo!
+            No hay testimonios disponibles en esta categoría por el momento.
           </div>
         </div>
       </div>
@@ -272,6 +300,7 @@ function Testimonials() {
       </div>
     )}
 
+      {/* Modal con detalles del testimonio */}
       {selectedTestimonio && (
         <TestimonialModal
           isOpen={!!selectedTestimonio}
@@ -290,6 +319,7 @@ function Testimonials() {
         />
       )}
 
+      {/* Sidebar de navegación */}
       <Sidebar />
     </div>
   );
