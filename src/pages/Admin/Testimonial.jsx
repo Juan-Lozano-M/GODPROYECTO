@@ -314,10 +314,10 @@ function Testimonials() {
         <FiltroModal
           filters={filters}
           activeFilter={activeFilter}
-          onFilterChange={(filter) => {           // ← NUEVA LÍNEA
-            setActiveFilter(filter);              // ← NUEVA LÍNEA
-            setIsFiltroModalOpen(false);          // ← NUEVA LÍNEA
-          }}                                      // ← NUEVA LÍNEA
+          onFilterChange={(filter) => {           
+            setActiveFilter(filter);              
+            setIsFiltroModalOpen(false);          
+          }}                                      
           onClose={() => setIsFiltroModalOpen(false)}
         />
       )}
