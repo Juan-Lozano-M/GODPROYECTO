@@ -1,9 +1,13 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
-import StaticsTestimonial from "../../components/admin/StaticsTestimonial";
 import Search from "../../components/admin/Search";
 
-// Datos para cada estadística
+// Importar los tres componentes de estadísticas separados
+import StaticsViews from "../../components/admin/StaticsViews";
+import StaticsTestimonial from "../../components/admin/StaticsTestimonial";
+import StaticsNotice from "../../components/admin/StaticsNotice";
+
+// Datos para visualizaciones (para StaticsViews)
 const visualizacionesData = [
   { mes: "Ene", esteMes: 100, mesPasado: 150 },
   { mes: "Feb", esteMes: 200, mesPasado: 250 },
@@ -14,24 +18,22 @@ const visualizacionesData = [
   { mes: "Jul", esteMes: 600, mesPasado: 700 },
 ];
 
+// Datos para testimonios (para TestimonialsBarChart)
 const testimoniosData = [
-  { mes: "Ene", esteMes: 25, mesPasado: 30 },
-  { mes: "Feb", esteMes: 45, mesPasado: 35 },
-  { mes: "Mar", esteMes: 60, mesPasado: 50 },
-  { mes: "Abr", esteMes: 80, mesPasado: 65 },
-  { mes: "May", esteMes: 95, mesPasado: 85 },
-  { mes: "Jun", esteMes: 120, mesPasado: 100 },
-  { mes: "Jul", esteMes: 140, mesPasado: 115 },
+  { plataforma: "Linux", valor: 18, color: "#8b5cf6" },
+  { plataforma: "Mac", valor: 28, color: "#10b981" },
+  { plataforma: "iOS", valor: 22, color: "#1f2937" },
+  { plataforma: "Windows", valor: 32, color: "#60a5fa" },
+  { plataforma: "Android", valor: 15, color: "#3b82f6" },
+  { plataforma: "Other", valor: 25, color: "#84cc16" },
 ];
 
+// Datos para noticias (para NewsPieChart)
 const noticiasData = [
-  { mes: "Ene", esteMes: 15, mesPasado: 20 },
-  { mes: "Feb", esteMes: 30, mesPasado: 25 },
-  { mes: "Mar", esteMes: 45, mesPasado: 40 },
-  { mes: "Abr", esteMes: 60, mesPasado: 55 },
-  { mes: "May", esteMes: 75, mesPasado: 70 },
-  { mes: "Jun", esteMes: 90, mesPasado: 80 },
-  { mes: "Jul", esteMes: 105, mesPasado: 95 },
+  { pais: "United States", valor: 52.1, color: "#1f2937" },
+  { pais: "Canada", valor: 22.8, color: "#60a5fa" },
+  { pais: "Mexico", valor: 15.9, color: "#10b981" },
+  { pais: "Other", valor: 11.2, color: "#e5e7eb" },
 ];
 
 function Statics() {
@@ -39,65 +41,53 @@ function Statics() {
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
       <Sidebar />
       <main>
-
-          {/* Barra de búsqueda */}
+        {/* Barra de búsqueda */}
         <div className="flex w-full items-center">
           <Search />
         </div>
 
         {/* Título */}
         <div>
-          <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> ESTADISTICAS </h1>
+          <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam">
+            ESTADISTICAS
+          </h1>
         </div>
 
-        <div className="max-w-7xl mx-auto space-y-8">
+        {/* Contenedor principal de estadísticas */}
+        <div className="max-w-7xl mx-auto mt-10">
           
-          {/* Gráfica de Visualizaciones */}
-          <StaticsTestimonial
-            title="Visualizaciones por mes"
-            data={visualizacionesData}
-            currentLabel="Este mes"
-            previousLabel="Mes pasado"
-            color="#90ff7e"
-            highlightPoint={{ x: "Abr", y: 550 }}
-          />
-          
-          {/* Gráfica de Testimonios */}
-          <StaticsTestimonial
-            title="Testimonios por mes"
-            data={testimoniosData}
-            currentLabel="Este mes"
-            previousLabel="Mes pasado"
-            color="#60a5fa" // Azul
-            highlightPoint={{ x: "Jun", y: 120 }}
-          />
-          
-          {/* Gráfica de Noticias */}
-          <StaticsTestimonial
-            title="Noticias publicadas por mes"
-            data={noticiasData}
-            currentLabel="Este mes"
-            previousLabel="Mes pasado"
-            color="#f97316" // Naranja
-            highlightPoint={{ x: "Jul", y: 105 }}
-          />
-          
-          {/* También puedes crear una vista en grid para 2 columnas */}
-          {/* 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <StatisticChart
-              title="Testimonios por mes"
-              data={testimoniosData}
-              color="#60a5fa"
-            />
-            <StatisticChart
-              title="Noticias por mes"
-              data={noticiasData}
-              color="#f97316"
+          {/* Gráfica de Visualizaciones - Ocupa todo el ancho */}
+          <div className="mb-12">
+            <h2 className="mb-4 font-adlam text-3xl">Visualizaciones</h2>
+            <StaticsViews 
+              title="Visualizaciones por mes"
+              data={visualizacionesData}
+              highlightPoint={{ mes: "Abr", valor: 550 }}
             />
           </div>
-          */}
-          
+
+          {/* Grid para Testimonios y Noticias lado a lado */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            {/* Gráfica de Testimonios */}
+            <div>
+              <h2 className="mb-4 font-adlam text-3xl">Testimonios</h2>
+              <StaticsTestimonial
+                title="Testimonios aprobados por mes"
+                data={testimoniosData}
+              />
+            </div>
+
+            {/* Gráfica de Noticias */}
+            <div>
+              <h2 className="mb-4 font-adlam text-3xl">Noticias</h2>
+              <StaticsNotice
+                title="Noticias más vistas"
+                data={noticiasData}
+              />
+            </div>
+            
+          </div>
         </div>
       </main>
     </div>

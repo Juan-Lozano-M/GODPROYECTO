@@ -1,111 +1,65 @@
 import React from "react";
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  Legend,
   ResponsiveContainer,
-  ReferenceDot,
-  ReferenceLine,
 } from "recharts";
 
-// Tooltip personalizado
-const StaticsTestimonial = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-lime-400 text-black px-3 py-1 rounded-full font-semibold text-sm">
-        {payload[0].value}
-      </div>
-    );
-  }
-  return null;
-};
+// Datos de ejemplo para testimonios por plataforma
+const testimoniosData = [
+  { plataforma: "Linux", valor: 18, color: "#8b5cf6" },
+  { plataforma: "Mac", valor: 28, color: "#10b981" },
+  { plataforma: "iOS", valor: 22, color: "#1f2937" },
+  { plataforma: "Windows", valor: 32, color: "#60a5fa" },
+  { plataforma: "Android", valor: 15, color: "#3b82f6" },
+  { plataforma: "Other", valor: 25, color: "#84cc16" },
+];
 
-// Componente de gráfica reutilizable
-const StatisticChart = ({ 
-  title, 
-  data, 
-  currentLabel = "Este mes", 
-  previousLabel = "Mes pasado",
-  color = "#90ff7e",
-  highlightPoint = null // { x: "Abr", y: 550 }
+const StaticsTestimonial = ({ 
+  title = "Testimonios aprobados por mes",
+  data = testimoniosData 
 }) => {
-  const gradientId = `gradiente-${title.toLowerCase().replace(/\s+/g, '-')}`;
-  
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+      <h2 className="text-xl font-bold mb-6">{title}</h2>
+      
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={data}>
-          {/* Definición del gradiente */}
-          <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity={0.6} />
-              <stop offset="100%" stopColor={color} stopOpacity={0.1} />
-            </linearGradient>
-          </defs>
-          
+        <BarChart
+          data={data}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 20,
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="mes" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend
-            payload={[
-              {
-                value: currentLabel,
-                type: "circle",
-                color: color,
-              },
-              {
-                value: previousLabel,
-                type: "line",
-                color: "#000",
-              },
-            ]}
+          <XAxis 
+            dataKey="plataforma" 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+          />
+          <YAxis 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+            tickFormatter={(value) => `${value}K`}
           />
           
-          {/* Área con degradado para datos actuales */}
-          <Area
-            type="monotone"
-            dataKey="esteMes"
-            stroke={color}
-            strokeWidth={3}
-            fill={`url(#${gradientId})`}
-            dot={{ r: 5, stroke: color, strokeWidth: 2, fill: "#fff" }}
-          />
-          
-          {/* Línea punteada para datos anteriores */}
-          <Area
-            type="monotone"
-            dataKey="mesPasado"
-            stroke="#000"
-            strokeDasharray="5 5"
-            strokeWidth={2}
-            fill="none"
-            dot={false}
-          />
-          
-          {/* Punto destacado opcional */}
-          {highlightPoint && (
-            <>
-              <ReferenceDot 
-                x={highlightPoint.x} 
-                y={highlightPoint.y} 
-                r={6} 
-                fill={color} 
-                stroke="#000" 
-              />
-              <ReferenceLine 
-                x={highlightPoint.x} 
-                stroke="#aaa" 
-                strokeDasharray="3 3" 
-              />
-            </>
-          )}
-        </AreaChart>
+          <Bar 
+            dataKey="valor" 
+            radius={[4, 4, 0, 0]}
+            fill={(entry) => entry.color}
+          >
+            {data.map((entry, index) => (
+              <Bar key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Bar>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );
