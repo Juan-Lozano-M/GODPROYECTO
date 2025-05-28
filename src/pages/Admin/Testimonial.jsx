@@ -197,7 +197,7 @@ function Testimonials() {
 
       {/* Título */}
       <div>
-        <h1 className="mt-6 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
+        <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
 
       {/* Estadísticas generales */}

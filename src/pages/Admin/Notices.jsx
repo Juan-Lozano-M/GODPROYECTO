@@ -115,7 +115,7 @@ function Notices() {
         <div className="flex w-full items-center">
           <Search />
         </div>
-        <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">
+        <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl font-adlam">
           NOTICIAS
         </h1>
 
