@@ -1,13 +1,12 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
 import Search from "../../components/admin/Search";
-
-// Importar los tres componentes de estadísticas separados
 import StaticsViews from "../../components/admin/StaticsViews";
 import StaticsTestimonial from "../../components/admin/StaticsTestimonial";
 import StaticsNotice from "../../components/admin/StaticsNotice";
+import ButtonStatics from "../../components/admin/ButtonStatics";
 
-// Datos para visualizaciones (para StaticsViews)
+// Datos
 const visualizacionesData = [
   { mes: "Ene", esteMes: 100, mesPasado: 150 },
   { mes: "Feb", esteMes: 200, mesPasado: 250 },
@@ -18,7 +17,6 @@ const visualizacionesData = [
   { mes: "Jul", esteMes: 600, mesPasado: 700 },
 ];
 
-// Datos para testimonios (para TestimonialsBarChart)
 const testimoniosData = [
   { plataforma: "Linux", valor: 18, color: "#8b5cf6" },
   { plataforma: "Mac", valor: 28, color: "#10b981" },
@@ -28,7 +26,6 @@ const testimoniosData = [
   { plataforma: "Other", valor: 25, color: "#84cc16" },
 ];
 
-// Datos para noticias (para NewsPieChart)
 const noticiasData = [
   { pais: "United States", valor: 52.1, color: "#1f2937" },
   { pais: "Canada", valor: 22.8, color: "#60a5fa" },
@@ -36,7 +33,7 @@ const noticiasData = [
   { pais: "Other", valor: 11.2, color: "#e5e7eb" },
 ];
 
-function Statics() {
+export default function Statics() {
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
       <Sidebar />
@@ -55,21 +52,24 @@ function Statics() {
 
         {/* Contenedor principal de estadísticas */}
         <div className="max-w-7xl mx-auto mt-10">
-          
-          {/* Gráfica de Visualizaciones - Ocupa todo el ancho */}
-          <div className="mb-12">
-            <h2 className="mb-4 font-adlam text-3xl">Visualizaciones</h2>
-            <StaticsViews 
-              title="Visualizaciones por mes"
-              data={visualizacionesData}
-              highlightPoint={{ mes: "Abr", valor: 550 }}
-            />
+
+          {/* Contenedor para gráfica de Visualizaciones + Botones */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-12">
+            <div className="lg:col-span-2">
+              <h2 className="mb-4 font-adlam text-3xl">Visualizaciones</h2>
+              <StaticsViews
+                title="Visualizaciones por mes"
+                data={visualizacionesData}
+                highlightPoint={{ mes: "Abr", valor: 550 }}
+              />
+            </div>
+            <div>
+              <ButtonStatics />
+            </div>
           </div>
 
           {/* Grid para Testimonios y Noticias lado a lado */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            {/* Gráfica de Testimonios */}
             <div>
               <h2 className="mb-4 font-adlam text-3xl">Testimonios</h2>
               <StaticsTestimonial
@@ -77,8 +77,6 @@ function Statics() {
                 data={testimoniosData}
               />
             </div>
-
-            {/* Gráfica de Noticias */}
             <div>
               <h2 className="mb-4 font-adlam text-3xl">Noticias</h2>
               <StaticsNotice
@@ -86,12 +84,10 @@ function Statics() {
                 data={noticiasData}
               />
             </div>
-            
           </div>
+
         </div>
       </main>
     </div>
   );
 }
-
-export default Statics;

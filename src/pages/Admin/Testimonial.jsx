@@ -132,7 +132,7 @@ function Testimonials() {
     if (filtro === "Todos") return true;
     return t.status === filtro;
   });
-
+  
   // Función para contar cuántos testimonios hay por estado
   const countByStatus = (status) =>
     testimonios.filter((t) => t.status === status).length;
