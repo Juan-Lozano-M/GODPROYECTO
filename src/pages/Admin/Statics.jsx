@@ -51,11 +51,11 @@ export default function Statics() {
         </div>
 
         {/* Contenedor principal de estadísticas */}
-        <div className="max-w-7xl mx-auto mt-10">
-
-          {/* Contenedor para gráfica de Visualizaciones + Botones */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-12">
-            <div className="lg:col-span-2">
+        <div className="w-full mt-10">
+          {/* Sección superior: Gráfica de Visualizaciones + Tarjetas de estadísticas */}
+          <div className="flex flex-col lg:flex-row gap-8 mb-12">
+            {/* Gráfica de Visualizaciones */}
+            <div className="flex flex-col">
               <h2 className="mb-4 font-adlam text-3xl">Visualizaciones</h2>
               <StaticsViews
                 title="Visualizaciones por mes"
@@ -63,21 +63,26 @@ export default function Statics() {
                 highlightPoint={{ mes: "Abr", valor: 550 }}
               />
             </div>
-            <div>
+
+            {/* Tarjetas de estadísticas */}
+            <div className="flex justify-center items-center ml-10">
               <ButtonStatics />
             </div>
           </div>
 
-          {/* Grid para Testimonios y Noticias lado a lado */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
+          {/* Sección inferior: Testimonios y Noticias lado a lado */}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Testimonios */}
+            <div className="flex-1">
               <h2 className="mb-4 font-adlam text-3xl">Testimonios</h2>
               <StaticsTestimonial
                 title="Testimonios aprobados por mes"
                 data={testimoniosData}
               />
             </div>
-            <div>
+
+            {/* Noticias */}
+            <div className="flex-1">
               <h2 className="mb-4 font-adlam text-3xl">Noticias</h2>
               <StaticsNotice
                 title="Noticias más vistas"
@@ -85,7 +90,6 @@ export default function Statics() {
               />
             </div>
           </div>
-
         </div>
       </main>
     </div>

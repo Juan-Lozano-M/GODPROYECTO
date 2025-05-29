@@ -58,13 +58,13 @@ const StaticsViews = ({
   title = "Visualizaciones por mes",
   data = visualizacionesData,
   highlightPoint = { mes: "Jun", valor: 550 },
-  color = "#90ff7e"
+  color = "#B4EF45", // Color por defecto
 }) => {
   const gradientId = `gradiente-${title.toLowerCase().replace(/\s+/g, '-')}`;
   
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-md">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+    <div className="bg-white rounded-2xl p-6 shadow-lg 2xl:w-180">
+      <h2 className="text-xl font-bold mb-4"></h2>
       
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart
