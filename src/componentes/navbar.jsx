@@ -1,98 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import godLogo from '../assets/png_God 1.png';
 
-const Navbar = () => {
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setShowNavbar(false);
-      } else {
-        setShowNavbar(true);
-      }
-
-      setIsScrolled(currentScrollY > 10);
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+function Navbar() {
   return (
-    <div className="w-full flex justify-center pt-2 fixed top-0 left-0 z-50">
-      <AnimatePresence>
-        <motion.nav
-          key="navbar"
-          initial={{ y: 0 }}
-          animate={{ y: showNavbar ? 0 : -120 }}
-          exit={{ y: -120 }}
-          transition={{
-            type: 'spring',
-            stiffness: 250,
-            damping: 15,
-            duration: 1,
-            bounce: 0.7,
-          }}
-          className="flex items-center justify-between w-full max-w-6xl border-2 border-black rounded-md px-8 py-3 shadow-md  hidden lg:flex"
-        >
-          {/* Texto GOD con tooltip */}
-          <div className="relative group cursor-pointer">
-            <div className="flex items-center rounded-md px-2 py-1">
-              <span className="font-bold text-black text-lg">GOD</span>
-            </div>
+    <nav className="flex justify-between items-center px-6 md:px-16 py-6 relative z-10">
+      {/* Logo animado */}
+      <div className="relative ml-20 group w-[40px] h-[40px]">
+        {/* Círculo verde con logo (gira hacia la derecha) */}
+        <div className="absolute inset-0 bg-[#9CE840] rounded-full flex items-center justify-center transform transition-all duration-700 ease-in-out group-hover:-translate-x-6 group-hover:-rotate-[50deg] z-20">
+          <img
+            src={godLogo}
+            alt="GOD Logo"
+            className="w-6 h-6 transform transition-transform duration-700 ease-in-out group-hover:-rotate-[60deg]"
+          />
+        </div>
 
-            {/* Tooltip */}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-[#A4FF00] border-2 border-black rounded-md text-black text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              Inicio
-            </div>
-          </div>
+        {/* Círculo negro detrás */}
+        <div className="absolute inset-0 bg-black rounded-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-          {/* Links */}
-          <div className="flex space-x-6 text-xs font-semibold text-black">
-            {["Sobre nosotros", "Blog", "Juegos"].map((text, index) => (
-              <motion.a
-                key={index}
-                href="#"
-                className="text-inherit hover:underline"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 300,
-                  damping: 20,
-                }}
-              >
-                {text}
-              </motion.a>
-            ))}
-          </div>
-
-          {/* Botón Launch */}
-          <button
-            className="border-2 border-black bg-[#A4FF00] text-black font-bold text-sm px-6 py-2 rounded-md
-              shadow-[0px_6px_0px_0px_black] transition-all duration-150 ease-in-out
-              hover:bg-gray-100 hover:scale-95 hover:translate-y-1 hover:shadow-[0px_2px_0px_0px_black]
-              active:translate-y-2 active:shadow-[0px_1px_0px_0px_black]"
-          >
-            Launch
-          </button>
-        </motion.nav>
-      </AnimatePresence>
-
-      {/* Navbar para móviles */}
-      <div className="lg:hidden fixed top-5 right-5 shadow-[0_4px_0_0_#000]  bg-black rounded-md">
-        <div className="w-12 h-12 bg-[#A4FF00] border-2 border-black rounded-md flex justify-center items-center">
-          <span className="text-black font-bold">≡</span> {/* Icono de hamburguesa */}
+        {/* Contenedor del texto con z-index controlado */}
+        <div className="absolute inset-y-0 left-0 flex items-center pl-2 font-extrabold text-md whitespace-nowrap z-10 group-hover:z-30 transition-[z-index] duration-0">
+          <span className="text-black opacity-0 cartoon-slide pointer-events-none group-hover:pointer-events-auto">
+            game of dreams
+          </span>
         </div>
       </div>
-    </div>
+
+      {/* Menú */}
+      <ul className="flex space-x-6 text-[#2E1E68] mr-[6rem] font-medium">
+        <li className="hover:underline cursor-pointer">Noticias</li>
+        <li className="hover:underline cursor-pointer">Contacto</li>
+        <li className="hover:underline cursor-pointer">Testimonios</li>
+        <li className="hover:underline cursor-pointer">FAQ</li>
+        <li className="hover:underline cursor-pointer">Proyectos</li>
+      </ul>
+
+      {/* Animación cartoon (CSS) */}
+      <style>{`
+        .cartoon-slide {
+          opacity: 0;
+          transform: translateX(-20px);
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+
+        /* Animación de entrada con rebote */
+        .group:hover .cartoon-slide {
+          animation: slideInBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation-delay: 0.35s;
+          pointer-events: auto;
+        }
+
+        /* Animación de salida con desplazamiento y desvanecimiento (más rápida) */
+        .group:not(:hover) .cartoon-slide {
+          animation: slideOutHide 0.2s ease forwards;
+          pointer-events: none;
+        }
+
+        @keyframes slideInBounce {
+          0% {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          60% {
+            opacity: 1;
+            transform: translateX(45px);
+          }
+          80% {
+            transform: translateX(35px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(40px);
+          }
+        }
+
+        @keyframes slideOutHide {
+          0% {
+            opacity: 1;
+            transform: translateX(40px);
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+        }
+      `}</style>
+    </nav>
   );
-};
+}
 
 export default Navbar;
