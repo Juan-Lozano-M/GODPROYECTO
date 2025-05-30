@@ -38,12 +38,10 @@ const CustomLegend = ({ payload }) => {
 };
 
 const StaticsNotice = ({ 
-  title = "Noticias más vistas",
   data = noticiasData 
 }) => {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md">
-      <h2 className="text-xl font-bold mb-6">{title}</h2>
       
       <div className="flex items-center justify-center">
         <ResponsiveContainer width="100%" height={280}>

@@ -18,12 +18,12 @@ const visualizacionesData = [
 ];
 
 const testimoniosData = [
-  { plataforma: "Linux", valor: 18, color: "#8b5cf6" },
-  { plataforma: "Mac", valor: 28, color: "#10b981" },
-  { plataforma: "iOS", valor: 22, color: "#1f2937" },
-  { plataforma: "Windows", valor: 32, color: "#60a5fa" },
-  { plataforma: "Android", valor: 15, color: "#3b82f6" },
-  { plataforma: "Other", valor: 25, color: "#84cc16" },
+  { mes: "Enero", valor: 18, color: "#9F9FF8" },
+  { mes: "Febrero", valor: 28, color: "#96E2D6" },
+  { mes: "Marzo", valor: 22, color: "#000000" },
+  { mes: "Abril", valor: 32, color: "#92BFFF" },
+  { mes: "Mayo", valor: 15, color: "#AEC7ED" },
+  { mes: "Junio", valor: 25, color: "#B9FF65" },
 ];
 
 const noticiasData = [
@@ -65,7 +65,7 @@ export default function Statics() {
             </div>
 
             {/* Tarjetas de estadísticas */}
-            <div className="flex justify-center items-center ml-10">
+            <div className="flex justify-center items-center ml-40">
               <ButtonStatics />
             </div>
           </div>
@@ -76,7 +76,6 @@ export default function Statics() {
             <div className="flex-1">
               <h2 className="mb-4 font-adlam text-3xl">Testimonios</h2>
               <StaticsTestimonial
-                title="Testimonios aprobados por mes"
                 data={testimoniosData}
               />
             </div>
@@ -85,7 +84,6 @@ export default function Statics() {
             <div className="flex-1">
               <h2 className="mb-4 font-adlam text-3xl">Noticias</h2>
               <StaticsNotice
-                title="Noticias más vistas"
                 data={noticiasData}
               />
             </div>
