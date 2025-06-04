@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"; // Add this import
 // Importando los componentes necesarios
 import Search from "../../components/admin/Search";
 import CartoonButton from "../../components/buttons/CartoonButton";
-import Estadisticas from "../../components/Estadisticas";
+import TestimonialStatic from "../../components/admin/StaticsTestimonial";
 import Sidebar from "../../components/Sidebar";
 import StatCard from "../../components/StatCard";
 import TestimonialCard from "../../components/TestimonialCard";
@@ -194,7 +194,7 @@ const Home = () => {
           <div className="hidden xl:flex xl:flex-col mt-17">
             <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadisticas </h1>
             <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobacion de testimonios </h1>
-            <Estadisticas/>
+            <TestimonialStatic/>
           </div>
         </div>
       </div>

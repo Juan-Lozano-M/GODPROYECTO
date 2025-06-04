@@ -1,67 +1,45 @@
-import React from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  } from 'recharts';
+  
+  const data = [
+    { name: 'Ene', aprobados: 30, total: 50 },
+    { name: 'Feb', aprobados: 35, total: 50 },
+    { name: 'Mar', aprobados: 28, total: 50 },
+    { name: 'Abr', aprobados: 38, total: 50 },
+    { name: 'May', aprobados: 32, total: 50 },
+    { name: 'Jun', aprobados: 36, total: 50 },
+  ];
+  
+  export default function TestimonialStatics() {
+    return (
+      <div className="bg-black/3 p-6 rounded-2xl shadow-md w-full max-w-xl">
 
-// Datos de ejemplo para testimonios por plataforma
-const testimoniosData = [
-  { mes: "Enero", valor: 18, color: "#9F9FF8" },
-  { mes: "Febrero", valor: 28, color: "#96E2D6" },
-  { mes: "Marzo", valor: 22, color: "#000000" },
-  { mes: "Abril", valor: 32, color: "#92BFFF" },
-  { mes: "Mayo", valor: 15, color: "#AEC7ED" },
-  { mes: "Junio", valor: 25, color: "#B9FF65" },
-];
-
-const StaticsTestimonial = ({ 
-  data = testimoniosData 
-}) => {
-  return (
-    <div className="w-130">
-      <div className="bg-gray-100 rounded-lg p-4">
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart
-            data={data}
-            margin={{
-              top: 20,
-              right: 30,
-              left: 20,
-              bottom: 20,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis 
-              dataKey="mes" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: '#6b7280' }}
-            />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: '#bdbdbd' }}
-            />
-            <Bar 
-              dataKey="valor" 
-              radius={[4, 4, 0, 0]}
-              barSize={24}
-              fill={(entry) => entry.color}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+            <CartesianGrid 
+                vertical={false} 
+                stroke="#EFEFEF" // <- color personalizado
+                />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "#888", dy: 10 }}
+                axisLine={{ stroke: "#D3D3D3", strokeWidth: 1 }}  // color y grosor
+                tickLine={false}
+                />
+              <YAxis
+                tick={{ fill: "#888", dx: -28 }}  // color de los números
+                axisLine={false}         // oculta la línea vertical
+                tickLine={false}       // oculta las rayitas pequeñas de cada tick
+                />
+              <Tooltip />
+             
+              <Bar dataKey="aprobados" fill="#9CE840" barSize={20} radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-    </div>
-  );
-};
-
-export default StaticsTestimonial;
+    );
+  }
+  

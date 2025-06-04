@@ -31,22 +31,22 @@ export default function ButtonStatics() {
   return (
     <div className="w-full">
       {/* Contenedor principal con flexbox */}
-      <div className="flex flex-wrap gap-5 justify-center max-w-md mx-auto">
+      <div className="flex gap-10 2xl:gap-25 justify-center ">
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="bg-lime-400 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between w-50 h-25"
+            className="bg-lime-400 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between w-full h-30"
           >
             {/* Título */}
-            <div className="mb-1">
-              <h3 className="text-black font-adlam text-[16px] opacity-80">
+            <div>
+              <h3 className="text-black font-adlam text-[25px] opacity-80 ml-3">
                 {stat.title}
               </h3>
             </div>
             
             {/* Valor principal */}
-            <div className="flex gap-3">
-              <div className="mb-2">
+            <div className="flex gap-3 ml-3">
+              <div>
                 <p className="text-black text-xl font-adlam">
                   {stat.value}
                 </p>
@@ -54,7 +54,7 @@ export default function ButtonStatics() {
               
               {/* Porcentaje con ícono */}
               <div className="flex items-center justify-center">
-                <span className={`text-xs font-adlam flex items-center ${
+                <span className={`text-sm font-adlam flex items-center ${
                   stat.isPositive ? 'text-green-700' : 'text-red-600'
                 }`}>
                   {stat.isPositive ? (

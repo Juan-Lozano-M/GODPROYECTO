@@ -50,23 +50,22 @@ export default function Statics() {
           </h1>
         </div>
 
+        {/* Tarjetas de estadísticas */}
+        <div className="flex justify-center items-center w-full mt-10">
+          <ButtonStatics />
+        </div>
+
         {/* Contenedor principal de estadísticas */}
         <div className="w-full mt-10">
           {/* Sección superior: Gráfica de Visualizaciones + Tarjetas de estadísticas */}
           <div className="flex flex-col lg:flex-row gap-8 mb-12">
             {/* Gráfica de Visualizaciones */}
             <div className="flex flex-col">
-              <h2 className="mb-4 font-adlam text-3xl">Visualizaciones</h2>
               <StaticsViews
                 title="Visualizaciones por mes"
                 data={visualizacionesData}
                 highlightPoint={{ mes: "Abr", valor: 550 }}
               />
-            </div>
-
-            {/* Tarjetas de estadísticas */}
-            <div className="flex justify-center items-center ml-40">
-              <ButtonStatics />
             </div>
           </div>
 
@@ -74,7 +73,6 @@ export default function Statics() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Testimonios */}
             <div className="flex-1">
-              <h2 className="mb-4 font-adlam text-3xl">Testimonios</h2>
               <StaticsTestimonial
                 data={testimoniosData}
               />
@@ -82,7 +80,6 @@ export default function Statics() {
 
             {/* Noticias */}
             <div className="flex-1">
-              <h2 className="mb-4 font-adlam text-3xl">Noticias</h2>
               <StaticsNotice
                 data={noticiasData}
               />
