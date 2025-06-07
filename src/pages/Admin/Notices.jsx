@@ -115,7 +115,7 @@ function Notices() {
         <div className="flex w-full items-center">
           <Search />
         </div>
-        <h1 className="text-3xl mt-4 md:mt-5 md:text-4xl lg:text-5xl font-adlam">
+        <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl font-adlam">
           NOTICIAS
         </h1>
 
@@ -197,7 +197,7 @@ function Notices() {
 
       {/* Lista de noticias y panel lateral */}
       <div className="flex-grow flex gap-8 sm:mt-5 overflow-hidden">
-        <div className="w-full 2xl:w-[65%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="w-full 2xl:w-[90%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
           <div className="flex flex-col gap-6">
             {noticiasFiltradas.length > 0 ? (
               noticiasFiltradas.map((noticia) => (
@@ -226,17 +226,6 @@ function Notices() {
                 </p>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Panel lateral derecho */}
-        <div className="hidden xl:flex flex-col bg-black/7 h-105 w-112 flex-shrink-0">
-          <div className="flex flex-col justify-center items-center overflow-hidden rounded-lg w-full h-70 2xl:h-200">
-            <img
-              src={imageNotice}
-              alt="Noticias ilustración"
-              className="object-contain w-full h-full"
-            />
           </div>
         </div>
       </div>
