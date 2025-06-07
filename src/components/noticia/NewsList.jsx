@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NewsCard from "./NewsCard";
+import axios from "axios";
 
 const NewsList = () => {
   // Estados para manejar las noticias y la paginación
@@ -7,12 +8,20 @@ const NewsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 6; // Cantidad de noticias por página
 
-  // Efecto para cargar las noticias desde el archivo JSON
+  // Efecto para cargar las noticias desde el backend
   useEffect(() => {
-    fetch("/news.json")
-      .then((response) => response.json())
-      .then((data) => setNews(data))
-      .catch((error) => console.error("Error cargando noticias:", error));
+    axios.get("http://localhost:5000/api/news/get-news")
+      .then((response) => {
+        console.log("Datos recibidos del backend:", response.data);
+        if (response.data.status === "success") {
+          setNews(response.data.news);
+        } else {
+          console.error("Error al cargar noticias:", response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error al conectar con el backend:", error);
+      });
   }, []);
 
   // Cálculos para la paginación
@@ -50,7 +59,17 @@ const NewsList = () => {
     <div className="container mx-auto px-4">
       {/* Mapeo de las noticias actuales */}
       {currentNews.map((item, index) => (
-        <NewsCard key={index} {...item} />
+        <NewsCard 
+          key={item.id_noticia || index} // Usar id_noticia como key es mejor que el index
+          categoria={item.categoria}
+          imagen_url={item.imagen_url}
+          autor={item.autor}
+          fecha_creacion={item.fecha_creacion}
+          titulo={item.titulo}
+          descripcion={item.descripcion}
+          id_noticia={item.id_noticia}
+          slug={item.slug} // NUEVO: pasar el slug del backend
+        />
       ))}
 
       {/* Navegación de paginación */}

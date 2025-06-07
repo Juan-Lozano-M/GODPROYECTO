@@ -26,91 +26,56 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [mensaje, setMensaje] = useState(""); // Estado para el mensaje de error o éxito 
+  const [mensaje, setMensaje] = useState(""); 
   const [resetEmail, setResetEmail] = useState("");
   const [resetEmailSent, setResetEmailSent] = useState(false);
-  
+
   const handleLogin = async (event) => {
     event.preventDefault();
-  
     setEmailError("");
     setPasswordError("");
     setMensaje("");
-  
+
     if (!email.trim()) {
       setEmailError("El campo de correo es obligatorio.");
       return;
     }
-  
+
     if (!password.trim()) {
       setPasswordError("El campo de contraseña es obligatorio.");
       return;
     }
-  
+
     try {
-      // Check auth methods for this email
-      const methods = await fetchSignInMethodsForEmail(auth, email.trim().toLowerCase());
-      
-      // If the email is registered with Google only
-      if (methods.includes('google.com') && !methods.includes('password')) {
-        setPasswordError("Esta cuenta está registrada con Google. Por favor usa el botón de Google.");
-        return;
-      }
-  
-      // If the email is registered with both methods
-      if (methods.includes('google.com') && methods.includes('password')) {
-        try {
-          const userCredential = await signInWithEmailAndPassword(
-            auth, 
-            email.trim().toLowerCase(), 
-            password
-          );
-  
-          const firebaseUser = userCredential.user;
-          const idToken = await firebaseUser.getIdToken();
-  
-          const response = await axios.post('http://127.0.0.1:5000/auth/login', {
-            correo_usu: email.trim().toLowerCase(),
-            token: idToken
-          });
-  
-          if (response.data.status === "success") {
-            localStorage.setItem("userName", response.data.user.nombre);
-            localStorage.setItem("userEmail", response.data.user.correo);
-            localStorage.setItem("firebaseUID", firebaseUser.uid);
-            navigate("/dashboard");
-          }
-        } catch (error) {
-          console.error("Error with email/password login:", error);
-          setPasswordError("Contraseña incorrecta.");
-        }
-        return;
-      }
-  
-      // Regular email/password login
-      const userCredential = await signInWithEmailAndPassword(
-        auth, 
-        email.trim().toLowerCase(), 
-        password
-      );
-  
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
       const firebaseUser = userCredential.user;
       const idToken = await firebaseUser.getIdToken();
-  
+
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {
         correo_usu: email.trim().toLowerCase(),
         token: idToken
       });
-  
+
       if (response.data.status === "success") {
         localStorage.setItem("userName", response.data.user.nombre);
         localStorage.setItem("userEmail", response.data.user.correo);
         localStorage.setItem("firebaseUID", firebaseUser.uid);
-        navigate("/dashboard");
+        localStorage.setItem("userRole", response.data.user.role); // Store the role
+
+        localStorage.setItem("authToken", idToken);
+
+        // Check the user's role from the database response
+        console.log("User role:", response.data.user.role); // Debug log
+        if (response.data.user.role === "Admin") {
+          console.log("Redirecting to /home"); // Debug log
+          navigate("/home");
+        } else {
+          console.log("Redirecting to /dashboard"); // Debug log
+          navigate("/dashboard");
+        } 
       }
     } catch (error) {
       console.error("Detailed error:", error);
-      
       switch (error.code) {
         case 'auth/invalid-credential':
         case 'auth/wrong-password':
@@ -147,7 +112,17 @@ const Login = () => {
         localStorage.setItem("userEmail", user.email);
         localStorage.setItem("userPhoto", user.photoURL || "");
         localStorage.setItem("firebaseUID", user.uid);
-        navigate("/dashboard");
+        localStorage.setItem("userRole", response.data.user.role); // Store the role
+
+        // Check the user's role from the database response
+        console.log("Google user role:", response.data.user.role); // Debug log
+        if (response.data.user.role === "Admin") {
+          console.log("Redirecting to /home"); // Debug log
+          navigate("/home");
+        } else {
+          console.log("Redirecting to /dashboard"); // Debug log
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       console.error("Google login error:", error);
@@ -195,12 +170,6 @@ const Login = () => {
           animate={{ y: [0, -12, 0], rotate: [-2, 2, -2] }} 
           transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }} 
         />
-
-
-
-
-
-       
       </div>
     
       { /* 📌 Botones de inicio de sesión y registro */ }
@@ -241,7 +210,7 @@ const Login = () => {
           words={["Descubre tu camino, construye tu futuro."]} 
           loop={false} 
           cursor={true} 
-        cursorStyle={"|"} 
+          cursorStyle={"|"} 
           typeSpeed={60} 
 
         />
@@ -329,24 +298,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-// En tu función de manejo de inicio de sesión
-const handleLogin = async (userCredential) => {
-  try {
-    const idToken = await userCredential.user.getIdToken();
-    const response = await axios.post('http://127.0.0.1:5000/auth/login', {
-      token: idToken
-    });
-
-    if (response.data.status === 'success') {
-      // Actualizar el estado global con TODA la información del usuario
-      setUserData(response.data.user);
-      // Navegar al dashboard
-      navigate('/dashboard');
-    }
-  } catch (error) {
-    console.error('Error en inicio de sesión:', error);
-    // Manejar el error apropiadamente
-  }
-};

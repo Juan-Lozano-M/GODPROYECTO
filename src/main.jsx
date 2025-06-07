@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import ProtectedResetRoute from "./guards/ProtectedResetRoute.jsx";
+import AdminRoute from "./guards/AdminRoute.jsx"; // Import the AdminRoute
 import "./index.css";
 import LoginMain from "./LoginMain.jsx";
 import Home from "./pages/Admin/Home";
@@ -17,6 +18,7 @@ import Login from "./pages/Login";
 import NewDetails from "./pages/Noticias/NewDetail";
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
 import Register from "./pages/Register";
+import VerifyEmail from "./pages/Auth/VerifyEmail.jsx";
 
 
 const router = createBrowserRouter([
@@ -27,7 +29,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    element: <Home />,
+    element: (
+      <AdminRoute>
+        <Home />
+      </AdminRoute>
+    ),
     errorElement: <Navigate to="/" />,
   },
   {
@@ -67,6 +73,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/verify-email",
+    element: (
+      <ProtectedResetRoute>
+        <VerifyEmail />
+      </ProtectedResetRoute>
+  ),
   },
   {
     path: "/dashboard",

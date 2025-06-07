@@ -1,5 +1,3 @@
-
-
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection, TextNode } from 'lexical';
 import React, { useState } from 'react';
@@ -38,10 +36,29 @@ export function ColorPicker({ onColorChange }) {
     setShowPalette(false);
   };
 
+  const handleColorButtonClick = (e) => {
+    e.preventDefault(); // Prevenir el comportamiento por defecto
+    e.stopPropagation(); // Evitar que el evento se propague
+    setShowPalette(!showPalette);
+  };
+
+  const handleColorClick = (e, color) => {
+    e.preventDefault();
+    e.stopPropagation();
+    applyColor(color);
+  };
+
+  const handleApplyCustomColor = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    applyColor(customColor);
+  };
+
   return (
     <div className="relative">
       <button
-        onClick={() => setShowPalette(!showPalette)}
+        type="button" // Especificar explícitamente que es un botón normal
+        onClick={handleColorButtonClick}
         className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center gap-2"
         title="Color de texto"
       >
@@ -60,7 +77,8 @@ export function ColorPicker({ onColorChange }) {
               {themeColors.map((color) => (
                 <button
                   key={color}
-                  onClick={() => applyColor(color)}
+                  type="button"
+                  onClick={(e) => handleColorClick(e, color)}
                   className={`w-8 h-8 rounded-lg transition-all duration-200 transform hover:scale-110 flex items-center justify-center ${
                     color === customColor ? 'ring-2 ring-offset-2 ring-blue-500' : ''
                   }`}
@@ -86,7 +104,8 @@ export function ColorPicker({ onColorChange }) {
               {standardColors.map((color) => (
                 <button
                   key={color}
-                  onClick={() => applyColor(color)}
+                  type="button"
+                  onClick={(e) => handleColorClick(e, color)}
                   className={`w-8 h-8 rounded-lg transition-all duration-200 transform hover:scale-110 ${
                     color === customColor ? 'ring-2 ring-offset-2 ring-blue-500' : ''
                   }`}
@@ -106,7 +125,8 @@ export function ColorPicker({ onColorChange }) {
               title="Color personalizado"
             />
             <button
-              onClick={() => applyColor(customColor)}
+              type="button"
+              onClick={handleApplyCustomColor}
               className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium"
             >
               Aplicar color
@@ -117,5 +137,3 @@ export function ColorPicker({ onColorChange }) {
     </div>
   );
 }
-  
-  

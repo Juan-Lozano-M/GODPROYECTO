@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, getAuth, verifyBeforeUpdateEmail, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import axios from "../config/axiosConfig";
 import ImagenDashboard from "../assets/images/imagenDashboard.png";
 import Checkboxmore from "../components/checkbox/Checkboxmore";
@@ -10,9 +10,12 @@ import CareerPathPuzzle from '../components/dashboard/CareerPathPuzzle';
 import ProfileImageUpload from '../components/profile/ProfileImageUpload';
 import Toast from '../components/alertas/Toast';
 import InputEditable from '../components/inputs/InputEditable';
+import ReauthModal from '../components/ReauthModal';
+import InstitutionSelector from "../components/inputs/InstitutionSelector";
 
 const Dashboard = () => {
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  // TODOS LOS HOOKS DEBEN IR AL INICIO - ANTES DE CUALQUIER RETURN CONDICIONAL
+  const [isLoading, setIsLoading] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -25,7 +28,13 @@ const Dashboard = () => {
   const [newEmail, setNewEmail] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', message: '' });
-
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [isReauthenticating, setIsReauthenticating] = useState(false);
+  const [isReauthModalOpen, setIsReauthModalOpen] = useState(false); // MOVIDO AQUÍ
+  const [oldEmail, setOldEmail] = useState("");
+  const [userBirthdate, setUserBirthdate] = useState("");
+  const [userInstitution, setUserInstitution] = useState("");
+  
   const navigate = useNavigate();
 
   const interests = [
@@ -52,75 +61,239 @@ const Dashboard = () => {
     });
   };
 
-
   const visibleInterests = showAllInterests
-  ? interests
-  : sortInterests(interests).slice(0, 7);
+    ? interests
+    : sortInterests(interests).slice(0, 7);
 
-
-  useEffect(() => {
-    const fetchUserData = async (user) => {
-      if (!user) return;
+    const handleInstitutionUpdate = async (institution) => {
       try {
-        setIsLoading(true);
-        // Force token refresh and add retry logic
-        const idToken = await user.getIdToken(true);
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          console.error('No authenticated user found');
+          return;
+        }
         
-        // Add error handling and timeout
-        const response = await axios.get('/api/user/profile', {
+        console.log('Updating institution to:', institution); // Debug log
+        
+        const idToken = await currentUser.getIdToken();
+        
+        const response = await axios.put('/api/user/institution', {
+          institution: institution
+        }, {
           headers: {
             'Authorization': `Bearer ${idToken}`,
             'Content-Type': 'application/json'
-          },
-          timeout: 5000, // 5 second timeout
-          validateStatus: (status) => {
-            return status >= 200 && status < 300; // Only accept success status codes
           }
         });
-
+    
+        console.log('Server response:', response.data); // Debug log
+    
         if (response.data.status === 'success') {
-          const userData = response.data.user;
-          setUserName(userData.nombre_usu);
-          setUserEmail(userData.correo_usu);
-          setProfileImage(userData.profile_image || user.photoURL || "");
-          if (userData.intereses && userData.intereses.length > 0) {
-            setSelectedInterests(userData.intereses);
-          }
-        } else {
-          throw new Error('Invalid response format');
+          setUserInstitution(institution);
+          setToastMessage({
+            title: '¡Éxito!',
+            message: 'Institución actualizada correctamente'
+          });
+          setShowToast(true);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        if (error.response) {
-          console.error("Server response:", error.response.data);
-        }
-        // You might want to show a toast or error message to the user here
+        console.error('Error updating institution:', error);
+        console.error('Error response:', error.response?.data); // More detailed error logging
         setToastMessage({
           title: 'Error',
-          message: 'No se pudo cargar la información del usuario'
+          message: error.response?.data?.message || 'No se pudo actualizar la institución'
         });
         setShowToast(true);
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Check if user has a Google profile photo
-        if (user.photoURL) {
-          setGoogleProfileImage(user.photoURL);
+    useEffect(() => {
+      const fetchUserData = async (user) => {
+        if (!user) return;
+        try {
+          setIsLoading(true);
+          const idToken = await user.getIdToken(true);
+          
+          const response = await axios.get('/api/user/profile', {
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            timeout: 5000,
+            validateStatus: (status) => {
+              return status >= 200 && status < 300;
+            }
+          });
+    
+          if (response.data.status === 'success') {
+            const userData = response.data.user;
+            setUserName(userData.nombre_usu);
+            setUserEmail(userData.correo_usu);
+            setProfileImage(userData.profile_image || user.photoURL || "");
+            
+            // Agregar esta línea para cargar la fecha de nacimiento
+            setUserBirthdate(userData.fecha_nacimiento || "");
+            setUserInstitution(userData.institucion || "");
+            
+            if (userData.intereses && userData.intereses.length > 0) {
+              setSelectedInterests(userData.intereses);
+            }
+          } else {
+            throw new Error('Invalid response format');
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          if (error.response) {
+            console.error("Server response:", error.response.data);
+          }
+          setToastMessage({
+            title: 'Error',
+            message: 'No se pudo cargar la información del usuario'
+          });
+          setShowToast(true);
+        } finally {
+          setIsLoading(false);
         }
-        fetchUserData(user);
-      } else {
-        setIsLoading(false); // Set loading to false if no user
-        navigate('/login');
+      };
+    
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          if (user.photoURL) {
+            setGoogleProfileImage(user.photoURL);
+          }
+          fetchUserData(user);
+        } else {
+          setIsLoading(false);
+          navigate('/login');
+        }
+      });
+    
+      return () => unsubscribe();
+    }, [navigate]);
+
+    const formatDisplayDate = (dateString) => {
+      if (!dateString) return "No especificada";
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
+    };
+  // FUNCIONES PARA MANEJAR EL CAMBIO DE EMAIL
+  const handleEmailUpdate = async (email) => {
+    setOldEmail(userEmail); // Guardar email actual antes del cambio
+    setNewEmail(email);
+    setIsReauthModalOpen(true);
+  };
+
+  // Reemplaza tu función handleReauthentication actual con esta versión
+  const handleReauthentication = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      
+      if (!currentUser) {
+        throw new Error("Usuario no autenticado");
+      }
+  
+      // Reautenticar al usuario
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+  
+      // Guardar el email actual ANTES de la verificación
+      setOldEmail(currentUser.email);
+      
+      console.log(`Iniciando proceso de cambio de email de ${currentUser.email} a ${newEmail}`);
+      
+      // Enviar email de verificación
+      await verifyBeforeUpdateEmail(currentUser, newEmail);
+  
+      // Limpiar estados del modal
+      setIsReauthModalOpen(false);
+      setCurrentPassword("");
+      setNewEmail("");
+  
+      setToastMessage({
+        title: '¡Verificación enviada!',
+        message: 'Se ha enviado un enlace de verificación al nuevo correo. Una vez que hagas clic en el enlace, tu email se actualizará automáticamente.'
+      });
+      setShowToast(true);
+  
+    } catch (error) {
+      console.error('Error updating email:', error);
+      let errorMessage = 'No se pudo procesar el cambio de correo electrónico';
+      
+      if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Contraseña incorrecta';
+      } else if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Este correo ya está siendo usado por otra cuenta';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Correo electrónico inválido';
+      } else if (error.code === 'auth/requires-recent-login') {
+        errorMessage = 'Es necesario volver a iniciar sesión para realizar esta acción';
+      }
+  
+      // Limpiar estados en caso de error
+      setOldEmail("");
+      setCurrentPassword("");
+      setNewEmail("");
+  
+      setToastMessage({
+        title: 'Error',
+        message: errorMessage
+      });
+      setShowToast(true);
+    }
+  };
+
+  // OPCIONAL: Función para escuchar cuando el email se actualiza después de la verificación
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user && user.emailVerified && oldEmail) {
+        // Check if the email has changed and is verified
+        if (user.email !== oldEmail) {
+          console.log(`Email verification detected. Updating from ${oldEmail} to ${user.email}`);
+          
+          try {
+            const idToken = await user.getIdToken(true);
+            
+            const response = await axios.put('/api/user/email', {
+              old_email: oldEmail, // Previous email
+              new_email: user.email // New email from Firebase
+            }, {
+              headers: {
+                'Authorization': `Bearer ${idToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (response.data.status === 'success') {
+              // Update local state after database update
+              setUserEmail(user.email);
+              setOldEmail(""); // Clear to prevent multiple updates
+              
+              setToastMessage({
+                title: '¡Éxito!',
+                message: 'Correo electrónico actualizado correctamente en Firebase y base de datos'
+              });
+              setShowToast(true);
+            } else {
+              throw new Error(response.data.message || 'Error actualizando email');
+            }
+          } catch (error) {
+            console.error('Error updating email in backend:', error);
+            
+            setToastMessage({
+              title: 'Error',
+              message: 'El email se actualizó en Firebase pero hubo un error actualizando la base de datos'
+            });
+            setShowToast(true);
+          }
+        }
       }
     });
 
     return () => unsubscribe();
-  }, [navigate]);
+  }, [oldEmail]);
+  
 
+  // LOADING STATE - AHORA DESPUÉS DE TODOS LOS HOOKS
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F1F1F1]">
@@ -183,46 +356,7 @@ const Dashboard = () => {
     }
     setIsEditingProfileInterests(!isEditingProfileInterests);
   };
-  const handleEmailUpdate = async () => {
-    try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
 
-      const idToken = await currentUser.getIdToken();
-
-      // Update email in Firebase
-      await currentUser.updateEmail(newEmail);
-
-      // Update email in backend
-      const response = await axios.put('/api/user/profile', 
-        { email: newEmail },
-        { 
-          headers: { 
-            'Authorization': `Bearer ${idToken}`
-          }
-        }
-      );
-
-      if (response.data.status === 'success') {
-        setUserEmail(newEmail);
-        setIsEditingEmail(false);
-        setToastMessage({
-          title: '¡Éxito!',
-          message: 'Correo electrónico actualizado correctamente'
-        });
-        setShowToast(true);
-      }
-    } catch (error) {
-      console.error('Error updating email:', error);
-      setToastMessage({
-        title: 'Error',
-        message: 'No se pudo actualizar el correo electrónico'
-      });
-      setShowToast(true);
-    }
-  };
-
-  // Update the email section in the return statement
   return (
     <div className="min-h-screen bg-[#F1F1F1]">
       <nav className="bg-white shadow-lg">
@@ -318,21 +452,24 @@ const Dashboard = () => {
               </div>
 
               <div className="flex justify-start w-full gap-2 text-sm text-gray-500 mb-2">
-                <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                  </svg>
-                  <span>04/09/2006</span>
-                </div>
+              <div className="flex justify-start w-full gap-2 text-sm text-gray-500 mb-2">
+              <div className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                </svg>
+                <span>{formatDisplayDate(userBirthdate)}</span>
+              </div>
+            </div>
               </div>
               <div className="flex justify-start w-full gap-2 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                  </svg>
-
-                  <span>Instituto de bolivar</span>
-                </div>
+              <div className="flex justify-start w-full gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                </svg>
+                <span>{userInstitution || "Sin especificar"}</span>
+              </div>
+            </div>
                 
               </div>
 
@@ -366,7 +503,6 @@ const Dashboard = () => {
                     {/* Add this near the end of your return statement if not already present */}
 
                 </div>
-              
                 <div>
                   <label className="block text-gray-600 mb-2">Correo:</label>
                   <InputEditable
@@ -375,13 +511,7 @@ const Dashboard = () => {
                     field="correo_usu"
                     type="email"
                     placeholder="Nuevo correo electrónico"
-                    onSuccess={() => {
-                      setToastMessage({
-                        title: '¡Éxito!',
-                        message: 'Correo electrónico actualizado correctamente'
-                      });
-                      setShowToast(true);
-                    }}
+                    onSuccess={() => handleEmailUpdate(newEmail)}
                   />
                 </div>
               
@@ -398,25 +528,33 @@ const Dashboard = () => {
                 <div>
                   <label className="block text-gray-600 mb-2">Fecha nacimiento:</label>
                   <InputEditable
-                    value=""
+                    value={userBirthdate}
+                    onChange={setUserBirthdate}
+                    field="fecha_nacimiento"
                     type="date"
-                    onChange={(date) => {
-                      // Add date update logic here
-                      console.log('Update date:', date);
+                    placeholder="Selecciona tu fecha de nacimiento"
+                    onSuccess={() => {
+                      setToastMessage({
+                        title: '¡Éxito!',
+                        message: 'Fecha de nacimiento actualizada correctamente'
+                      });
+                      setShowToast(true);
                     }}
-                    disabled={true} // Temporarily disabled until we implement date update
                   />
                 </div>
               
                 <div className="col-span-full">
                   <label className="block text-gray-600 mb-2">Institución:</label>
-                  <InputEditable
-                    value=""
-                    onChange={(institution) => {
-                      // Add institution update logic here
-                      console.log('Update institution:', institution);
+                  <InstitutionSelector
+                    value={userInstitution}
+                    onChange={(institutionName) => {
+                      setUserInstitution(institutionName);
+                      handleInstitutionUpdate(institutionName);
                     }}
-                    disabled={true} // Temporarily disabled until we implement institution update
+                    onSuccess={() => {
+                      // Ya no necesitas llamar handleInstitutionUpdate aquí
+                      console.log('Institution selected successfully');
+                    }}
                   />
                 </div>
               </div>
@@ -501,15 +639,24 @@ const Dashboard = () => {
         </div>
       </div>
     {/* Add Toast component with fixed positioning */}
-        {showToast && (
-          <div className="fixed top-4 right-4 z-50">
-            <Toast
-              title={toastMessage.title}
-              message={toastMessage.message}
-              onClose={() => setShowToast(false)}
-            />
-          </div>
-        )}
+    {showToast && (
+      <div className="fixed top-4 right-4 z-[9999]"> {/* z-index más alto */}
+        <Toast
+          title={toastMessage.title}
+          message={toastMessage.message}
+          show={showToast}
+          setShow={setShowToast}
+        />
+      </div>
+    )}
+    {/* Add the ReauthModal component */}
+    <ReauthModal
+      isOpen={isReauthModalOpen}
+      onClose={() => setIsReauthModalOpen(false)}
+      onReauthenticate={handleReauthentication}
+      currentPassword={currentPassword}
+      setCurrentPassword={setCurrentPassword}
+    />
     </div>
   );
 };
