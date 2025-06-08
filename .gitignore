@@ -1,24 +1,20 @@
-# Logs
-logs
+# Ignorar archivos y carpetas del sistema
+/home/
+/root/
+/etc/
+/*.xml
+/*.pyc
+
+# Archivos personales y de configuración
+.bash*
+.dmrc
+.gitconfig
+.Xauthority
+.gnome*
+
+# Archivos de VS Code
+.vscode/
+.env
+node_modules/
+dist/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

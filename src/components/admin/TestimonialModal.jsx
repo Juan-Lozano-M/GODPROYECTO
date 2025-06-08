@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import GameButton from "../buttons/GameButton";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-function TestimonialModal({ isOpen, onClose, testimonio }) {
+function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange }) {
+
+  const inicial = testimonio?.name ? testimonio.name.charAt(0).toUpperCase() : "?";
+  const imageUrl = testimonio?.imageUrl;
+
   useEffect(() => {
     if (isOpen) {
       // Aplicar overflow hidden inmediatamente y forzar el reflow
@@ -18,7 +22,7 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
         document.documentElement.style.overflow = "";
       }, 100);
     }
-
+    
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
@@ -40,6 +44,17 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
       }
     };
   }, [isOpen, onClose]);
+
+const handleAprobar = async () => {
+  await fetch(`http://localhost:5000/api/testimonios/${testimonio.id}/aprobar`, { method: "PUT" });
+  if (onStatusChange) await onStatusChange();
+};
+
+const handleRechazar = async () => {
+  await fetch(`http://localhost:5000/api/testimonios/${testimonio.id}/anular`, { method: "PUT" });
+  if (onStatusChange) await onStatusChange();
+};
+
 
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -205,12 +220,18 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
               exit="exit"
             >
               <motion.div variants={itemVariants} className="w-full flex flex-col items-center">
-                <motion.img
-                  src={testimonio.imageUrl}
-                  alt={testimonio.name}
-                  className="h-15 w-15 sm:w-30 sm:h-30 rounded-full mb-4 object-cover"
-                  variants={itemVariants}
-                />
+                {imageUrl ? (
+                  <motion.img
+                    src={imageUrl}
+                    alt={testimonio.name}
+                    className="h-15 w-15 sm:w-30 sm:h-30 rounded-full mb-4 object-cover"
+                    variants={itemVariants}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center rounded-full bg-gray-600 text-white font-bold text-3xl h-15 w-15 sm:w-30 sm:h-30 mb-4">
+                    {inicial}
+                  </div>
+                )}
                 <motion.h3 variants={itemVariants} className="text-xl sm:text-4xl font-adlam">
                   {testimonio.name}
                 </motion.h3>
@@ -251,6 +272,7 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
                     text="Aprobar"
                     buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840] hover:bg-[#8BD635] transition-colors"
                     icon={<CheckIcon className="text-black" strokeWidth={2.5} />}
+                    onClick={handleAprobar}
                   />
                 </motion.div>
                 <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
@@ -258,13 +280,27 @@ function TestimonialModal({ isOpen, onClose, testimonio }) {
                     text="Rechazar"
                     buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#EA4335] hover:bg-[#D33B2C] transition-colors"
                     icon={<XMarkIcon className="text-black" strokeWidth={2.5} />}
+                    onClick={handleRechazar}
                   />
                 </motion.div>
               </motion.div>
 
               <motion.div variants={itemVariants} className="mt-5 pb-5">
                 <p className="font-adlam text-[#7C7C7C] text-sm sm:text-lg">
-                  Enviado 7 de Abril de 2025
+                  {testimonio.fecha
+                    ? (() => {
+                        const fechaFormateada = new Date(testimonio.fecha).toLocaleDateString("es-ES", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric"
+                        });
+                        // Capitaliza la primera letra del mes
+                        return `Enviado ${fechaFormateada.replace(
+                          / de ([a-z])/,
+                          (match, p1) => " de " + p1.toUpperCase()
+                        )}`;
+                      })()
+                    : "Sin fecha"}
                 </p>
               </motion.div>
             </motion.div>

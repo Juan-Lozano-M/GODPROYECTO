@@ -13,8 +13,11 @@ const FeedbackCard = ({
   status, 
   imageUrl, 
   comment, 
-  onView // <-- nuevo: callback para abrir modal
+  onView
 }) => {
+
+  const inicial = name ? name.charAt(0).toUpperCase() : "?";
+  
   return (
     <div className="relative bg-black/7 rounded-3xl shadow-md p-4 w-full min-[520px]:w-[46%] sm:w-[full] md:w-[45%] lg:w-[45%] xl:w-[30%] 2xl:w-[28%] flex flex-col justify-between gap-2 sm:gap-4 transition-transform duration-200 ease-in-out hover:scale-105">
       <div className='bg-white absolute h-10 w-10 sm:h-10 sm:w-10 md:h-10 md:w-10 lg:w-15 lg:h-15 top-3 right-2 -translate-y-1/2 translate-x-1/2 rounded-full'>
@@ -23,11 +26,13 @@ const FeedbackCard = ({
 
       <div className="flex items-center gap-3"
       >
-        <img 
-          src={imageUrl} 
-          alt={name} 
-          className="h-15 w-15 sm:h-15 sm:w-15 md:h-15 md:w-15 xl:w-20 xl:h-20 rounded-full object-cover"
-        />
+        {imageUrl ? (
+        <img src={imageUrl} alt={name} className="h-15 w-15 sm:h-15 sm:w-15 md:h-15 md:w-15 xl:w-20 xl:h-20 rounded-full object-cover" />
+      ) : (
+        <div className="flex items-center justify-center rounded-full bg-gray-600 text-white font-bold text-2xl h-15 w-15 sm:h-15 sm:w-15 md:h-15 md:w-15 xl:w-20 xl:h-20">
+          {inicial}
+        </div>
+      )}
         <div className='w-40'>
           <h1 className="font-adlam text-lg sm:text-xl lg:text-2xl ml-2">{name}</h1>
         </div>

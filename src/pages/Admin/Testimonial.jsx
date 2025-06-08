@@ -1,122 +1,61 @@
-// Importaciones de React y hooks necesarios
 import React, { useState, useEffect, useRef } from "react";
-
-// Componentes personalizados
 import Sidebar from "../../components/Sidebar";
 import DataStat from "../../components/admin/DataStat";
 import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
-import FiltroModal from "../../components/admin/FiltroModal"; // <- Nuevo modal de filtros
-
-// Imágenes y recursos utilizados
-import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
-import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
-import imageTestimonial3 from "../../assets/images/imageTestimonial3.png";
-import imageTestimonial4 from "../../assets/images/imageTestimonial4.png";
-import imageTestimonial5 from "../../assets/images/imageTestimonial5.png";
-import imageTestimonial6 from "../../assets/images/imageTestimonial6.png";
-import imageTestimonial7 from "../../assets/images/imageTestimonial7.png";
+import FiltroModal from "../../components/admin/FiltroModal";
 import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
 
-// Componente principal
 function Testimonials() {
-
-  // Estados del componente
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
+  const [testimonios, setTestimonios] = useState([]);
 
-  // Lista de testimonios 
-  const [testimonios, setTestimonios] = useState([
-    // Testimonios de ejemplo con datos de usuarios
-/*     {
-      id: 1,
-      name: "Thompson Mark",
-      position: "Vicepresidente de tecnología.",
-      status: "Aprobado",
-      statusColor: "Green",
-      imageUrl: imageTestimonial1,
-      titulo: 'Buena experiencia tecnica.',
-      comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
-    }, */
-    {
-      id: 2,
-      name: "James Kim",
-      position: "Jefe de ingeniería en DataPro.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial2,
-      titulo: 'Potencial con margen de mejora.',
-      comment: 'El soporte técnico ha sido útil, pero algunas características aún no están totalmente maduras. Con un par de mejoras clave, podría convertirse en una herramienta esencial para nuestro equipo de ingeniería.',
-    },
-    {
-      id: 3,
-      name: "Emily Watson",
-      position: "Responsable de producto.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial3,
-      titulo: 'Necesita más flexibilidad.',
-      comment: "Esta solución ha contribuido a mejorar nuestros procesos internos. Sin embargo, esperamos una mayor flexibilidad para integraciones con otras plataformas antes de una adopción completa.",
-    },
-    {
-      id: 4,
-      name: "Lisa Elena",
-      position: "Técnico de InnovateSphere.",
-      status: "Anulado",
-      statusColor: "Red",
-      imageUrl: imageTestimonial4,
-      titulo: 'Diseño amigable, pero insuficiente.',
-      comment: "Aunque el diseño es intuitivo, encontramos dificultades en funciones clave para nuestro flujo de trabajo. La experiencia fue limitada y no se alinea con los estándares que manejamos en InnovateSphere.",
-    },
-    {
-      id: 5,
-      name: "Jose Rodriguez",
-      position: "CTO en InnovateSphere.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial5,
-      titulo: 'Limitada en métricas avanzadas.',
-      comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
-    },
-/*     {
-      id: 6,
-      name: "Michael Jaramillo",
-      position: "Tecnologo ADSO.",
-      status: "Aprobado",
-      statusColor: "Green",
-      imageUrl: imageTestimonial6,
-      titulo: 'Satisfacción total desde el inicio.',
-      comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
-    }, */
-    {
-      id: 7,
-      name: "Martin Motta",
-      position: "Tecnologo ADSO.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial7,
-      titulo: 'Gran diseño, necesita interacción',
-      comment: "El mejor diseño es el del portal de noticias, sin duda. Aun así, sentimos que hay espacio para ofrecer más funciones interactivas que mejoren la experiencia del usuario final.",
-    },
-    {
-      id: 8,
-      name: "Camilo Giraldo",
-      position: "Diseñador grafico 4 semestre.",
-      status: "Anulado",
-      statusColor: "Red",
-      imageUrl: imageTestimonial1,
-      titulo: 'Gran diseño, necesita interacción',
-      comment: "Mi mejor amigo es el coste… y este sistema no fue competitivo en ese aspecto. El diseño visual cumple, pero las funciones disponibles no justifican la inversión para un proyecto académico.",
-    },
-  ]);
+  // Función para obtener testimonios (puedes llamarla cuando quieras refrescar)
+  const fetchTestimonios = () => {
+    fetch("http://localhost:5000/api/testimonios")
+      .then((res) => res.json())
+      .then((data) => {
+        const testimoniosAdaptados = data.map((t) => ({
+          id: t.id_test,
+          name: t.nombre_usuario,
+          position: t.cargo_test,
+          status: t.estado === "aprobado" ? "Aprobado" : t.estado === "anulado" ? "Anulado" : "En espera",
+          statusColor:
+            t.estado === "aprobado"
+              ? "Green"
+              : t.estado === "anulado"
+              ? "Red"
+              : "Yellow",
+          imageUrl: "",
+          titulo: t.titulo_test,
+          comment: t.contenido_test,
+          fecha: t.fecha_creacion_test,
+        }));
+        setTestimonios(testimoniosAdaptados);
 
-  // Traducción de filtros para usarlos con los estados de los testimonios
+      })
+      .catch((error) => {
+        console.error("Error al obtener testimonios:", error);
+      });
+  };
+
+  const handleStatusChange = async () => {
+    await fetchTestimonios();
+    setSelectedTestimonio(null); // Cierra el modal después de actualizar
+  };
+  
+  // Llama a fetchTestimonios al montar el componente
+  useEffect(() => {
+    fetchTestimonios();
+  }, []);
+
   const filtroTraducido = {
     Aprobados: "Aprobado",
     Anulados: "Anulado",
@@ -124,47 +63,39 @@ function Testimonials() {
     Todos: "Todos",
   };
 
-  const filters = ["Aprobados", "Anulados", "En espera"]; // Filtros disponibles
+  const filters = ["Aprobados", "Anulados", "En espera"];
 
-  // Filtrado de testimonios basado en el filtro activo
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
     if (filtro === "Todos") return true;
     return t.status === filtro;
   });
-  
-  // Función para contar cuántos testimonios hay por estado
+
   const countByStatus = (status) =>
     testimonios.filter((t) => t.status === status).length;
 
-  // Conteo por estado
   const totalAprobados = countByStatus("Aprobado");
   const totalAnulados = countByStatus("Anulado");
   const totalEnEspera = countByStatus("En espera");
 
-  // Referencia para guardar valores anteriores y detectar cambios
   const prevCounts = useRef({
     Aprobado: totalAprobados,
     Anulado: totalAnulados,
     "En espera": totalEnEspera,
   });
 
-  // Estado para mostrar cambio en las estadísticas
   const [cambios, setCambios] = useState({
     Aprobado: 0,
     Anulado: 0,
     "En espera": 0,
   });
 
-  // useEffect que actualiza los cambios cuando se modifica la lista de testimonios
   useEffect(() => {
     setCambios({
       Aprobado: totalAprobados - prevCounts.current.Aprobado,
       Anulado: totalAnulados - prevCounts.current.Anulado,
       "En espera": totalEnEspera - prevCounts.current["En espera"],
     });
-
-    // Actualiza los valores previos
     prevCounts.current = {
       Aprobado: totalAprobados,
       Anulado: totalAnulados,
@@ -172,35 +103,25 @@ function Testimonials() {
     };
   }, [testimonios]);
 
-  // Devuelve el ícono de cambio
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
 
-  // Maneja la apertura del modal
   const handleOpenModal = (testimonio) => {
     setSelectedTestimonio(testimonio);
   };
 
-  // Maneja el cierre del modal
   const handleCloseModal = () => {
     setSelectedTestimonio(null);
   };
 
   return (
-
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
-
-      {/* Barra de búsqueda */}
       <div className="flex w-full items-center">
         <Search />
       </div>
-
-      {/* Título */}
       <div>
         <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
-
-      {/* Estadísticas generales */}
       <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <DataStat
           value={totalAprobados}
@@ -224,16 +145,11 @@ function Testimonials() {
           bgColor="#FFBE00"
         />
       </div>
-
-      {/* Filtros para testimonios */}
       <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
         <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
           <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
           <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
-
-          {/* Filtros (adaptados a pantalla grande o móvil) */}
           <div className="flex items-center gap-4">
-            {/* Desktop: mostrar todos los filtros */}
             <div className="hidden lg:flex gap-4">
               <FilterButton
                 label="Todos"
@@ -249,14 +165,12 @@ function Testimonials() {
                 />
               ))}
             </div>
-
-            {/* Mobile: solo botón Filtro y Todos */}
             <div className="flex lg:hidden gap-4">
               <FilterButton
                 label="Filtro"
                 isActive={false}
                 onClick={() => setIsFiltroModalOpen(true)}
-                iconSrc={filtroTestimonial} // Añade esta línea
+                iconSrc={filtroTestimonial}
               />
               <FilterButton
                 label="Todos"
@@ -267,62 +181,55 @@ function Testimonials() {
           </div>
         </div>
       </div>
-      
-      {/* Si no hay resultados */}
       {testimoniosFiltrados.length === 0 ? (
-      <div className="w-full flex justify-center items-center mt-10">
-        <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
-          <div>
-            <img src={iconNotResult} className="h-40 w-50 sm:h-60 sm:w-80 mx-auto" alt="Imagen de no resultados" />
-          </div>
-          <div className="font-bold font-adlam text-2xl sm:text-4xl">
-            Oops,
-          </div>
-          <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
-            No hay testimonios disponibles en esta categoría por el momento.
+        <div className="w-full flex justify-center items-center mt-10">
+          <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
+            <div>
+              <img src={iconNotResult} className="h-40 w-50 sm:h-60 sm:w-80 mx-auto" alt="Imagen de no resultados" />
+            </div>
+            <div className="font-bold font-adlam text-2xl sm:text-4xl">
+              Oops,
+            </div>
+            <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
+              No hay testimonios disponibles en esta categoría por el momento.
+            </div>
           </div>
         </div>
-      </div>
-    ) : (
-      <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
-        {testimoniosFiltrados.map((t) => (
-          <FeedbackCard
-            key={t.id}
-            name={t.name}
-            position={t.position}
-            status={t.status}
-            statusColor={t.statusColor}
-            imageUrl={t.imageUrl}
-            comment={t.comment}
-            onView={() => handleOpenModal(t)}
-          />
-        ))}
-      </div>
-    )}
-
-      {/* Modal con detalles del testimonio */}
+      ) : (
+        <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
+          {testimoniosFiltrados.map((t) => (
+            <FeedbackCard
+              key={t.id}
+              name={t.name}
+              position={t.position}
+              status={t.status}
+              statusColor={t.statusColor}
+              imageUrl={t.imageUrl}
+              comment={t.comment}
+              onView={() => handleOpenModal(t)}
+            />
+          ))}
+        </div>
+      )}
       {selectedTestimonio && (
         <TestimonialModal
           isOpen={!!selectedTestimonio}
           onClose={handleCloseModal}
           testimonio={selectedTestimonio}
+          onStatusChange={handleStatusChange}
         />
       )}
-
-      {/* Modal de filtros mobile */}
       {isFiltroModalOpen && (
         <FiltroModal
           filters={filters}
           activeFilter={activeFilter}
-          onFilterChange={(filter) => {           
-            setActiveFilter(filter);              
-            setIsFiltroModalOpen(false);          
-          }}                                      
+          onFilterChange={(filter) => {
+            setActiveFilter(filter);
+            setIsFiltroModalOpen(false);
+          }}
           onClose={() => setIsFiltroModalOpen(false)}
         />
       )}
-
-      {/* Sidebar de navegación */}
       <Sidebar />
     </div>
   );
