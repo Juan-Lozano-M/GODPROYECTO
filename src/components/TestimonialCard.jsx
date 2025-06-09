@@ -11,8 +11,8 @@ const TestimonialCard = ({ imageUrl, name, position, onView }) => {
       )}
       <div className="flex justify-between items-center w-full h-full">
         <div className="ml-5 sm:ml-10">
-          <h1 className="text-[15px] sm:text-[20px] xl:text-[18px] 2xl:text-[21px] font-bold">{name}</h1>
-          <p className="text-[11px] sm:text-[15px] xl:text-[12px] 2xl:text-[15px] font-bold mr-2 text-[#3E3E3E]">{position}</p>
+          <h1 className="text-[15px] sm:text-[20px] xl:text-[18px] 2xl:text-[21px] font-adlam">{name}</h1>
+          <p className="text-[11px] sm:text-[15px] xl:text-[12px] 2xl:text-[15px] font-adlam mr-2 text-[#3E3E3E]">{position}</p>
         </div>
         <button
           onClick={onView}
