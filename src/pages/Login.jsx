@@ -195,12 +195,6 @@ const Login = () => {
           animate={{ y: [0, -12, 0], rotate: [-2, 2, -2] }} 
           transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }} 
         />
-
-
-
-
-
-       
       </div>
     
       { /* 📌 Botones de inicio de sesión y registro */ }
