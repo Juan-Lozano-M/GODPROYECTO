@@ -1,6 +1,6 @@
 // Importamos motion para animaciones, hooks de React, y Link para navegación entre rutas
 import { motion } from "framer-motion";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Add this import
 
 // Importando los componentes necesarios
@@ -10,6 +10,7 @@ import TestimonialStatic from "../../components/admin/StaticsTestimonial";
 import Sidebar from "../../components/Sidebar";
 import StatCard from "../../components/StatCard";
 import TestimonialCard from "../../components/TestimonialCard";
+import TestimonialModal from "../../components/admin/TestimonialModal";
 
 // Importando los assets necesarios
 import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
@@ -21,34 +22,44 @@ import imagePerfil from "../../assets/images/imagePerfil.png";
 // Componente principal de la página de inicio del administrador
 const Home = () => {
 
-  // Estado para controlar qué pestaña está activa: "nuevos" o "pendientes"
   const [activeTab, setActiveTab] = useState("nuevos");
+  const [tabRefs, setTabRefs] = useState({ nuevos: null, pendientes: null });
+  const [testimonios, setTestimonios] = useState([]);
+  const [selectedTestimonio, setSelectedTestimonio] = useState(null);
 
-  // Refs de los botones de las pestañas para animar el subrayado dinámico
-  const [tabRefs, setTabRefs] = useState({
-    nuevos: null,
-    pendientes: null
-  })
+  useEffect(() => {
+    fetchTestimonios();
+  }, []);
 
-  // Lista de testimonios nuevos 
-  const testimoniosNuevos = [
-    { image: "/src/assets/images/imageTestimonial1.png", name: "Thompson Mark", title: "Vicepresidente de Tecnología." },
-    { image: "/src/assets/images/imageTestimonial2.png", name: "James Kim", title: "Jefe de ingeniería en DataPro." },
-    { image: "/src/assets/images/imageTestimonial3.png", name: "Emily Watson", title: "Responsable de producto." }
-  ];
+  const fetchTestimonios = async () => {
+    const res = await fetch("http://localhost:5000/api/testimonios");
+    const data = await res.json();
+    const testimoniosAdaptados = data.map((t) => ({
+      id: t.id_test,
+      name: t.nombre_usuario,
+      position: t.cargo_test,
+      status: t.estado === "aprobado" ? "Aprobado" : t.estado === "anulado" ? "Anulado" : "En espera",
+      imageUrl: t.imagen_url || "",
+      titulo: t.titulo_test,
+      comment: t.contenido_test,
+      fecha: t.fecha_creacion_test,
+    }));
+    setTestimonios(testimoniosAdaptados);
+  };
 
-  // Lista de testimonios pendientes 
-  const testimoniosPendientes = [
-    { image: "/src/assets/images/imageTestimonial4.png", name: "Sarah Johnson", title: "Gerente de marketing." },
-    { image: "/src/assets/images/imageTestimonial5.png", name: "Richard White", title: "Director de operaciones." },
-  ];
+  const testimoniosRecientes = testimonios
+    .filter(t => t.status === "Aprobado" || t.status === "Anulado")
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    .slice(0, 3); 
 
-  // Elegir la lista de testimonios según la pestaña activa
-  const testimonios = activeTab === "nuevos" ? testimoniosNuevos : testimoniosPendientes;
+  const testimoniosPendientes = testimonios
+    .filter(t => t.status === "En espera")
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    .slice(0, 3);
 
-  // Funcion para establecer las referencias de los botones
+  const testimoniosMostrados = activeTab === "nuevos" ? testimoniosRecientes : testimoniosPendientes;
+
   const setTabRef = (tab, element) => {
-    
     if (element && tabRefs[tab] !== element) {
       setTabRefs(prev => ({
         ...prev,
@@ -57,9 +68,7 @@ const Home = () => {
     }
   };
 
-  // Calculo de la pocision y ancho del indicador
-  const getIndicatorStyles = useMemo (() => {
-    
+  const getIndicatorStyles = useMemo(() => {
     if (!tabRefs[activeTab]) return {};
     const activeTabElement = tabRefs[activeTab];
     return {
@@ -152,8 +161,16 @@ const Home = () => {
             </div>
   
             <div className="flex flex-col mt-4 gap-3">
-              {testimonios.map((testimonio, index) => (
-                <TestimonialCard key={index} {...testimonio} />
+              {testimoniosMostrados.map((testimonio) => (
+                <TestimonialCard
+                  key={testimonio.id}
+                  name={testimonio.name}
+                  position={testimonio.position}
+                  imageUrl={testimonio.imageUrl}
+                  comment={testimonio.comment}
+                  status={testimonio.status}
+                  onView={() => setSelectedTestimonio(testimonio)}
+                />
               ))}
             </div>
           </div>
@@ -198,7 +215,19 @@ const Home = () => {
           </div>
         </div>
       </div>
-  
+      
+      {/* Modal para ver testimonio */}
+      {selectedTestimonio && (
+        <TestimonialModal
+          isOpen={!!selectedTestimonio}
+          onClose={() => setSelectedTestimonio(null)}
+          testimonio={selectedTestimonio}
+          onStatusChange={async () => {
+            await fetchTestimonios();
+            setSelectedTestimonio(null);
+          }}
+        />
+      )}
       {/* Sección de la barra lateral */}
       <Sidebar />
     </div>
