@@ -53,7 +53,7 @@ const Login = () => {
 
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {
         correo_usu: email.trim().toLowerCase(),
-        token: idToken
+        token: idToken  
       });
 
       if (response.data.status === "success") {
