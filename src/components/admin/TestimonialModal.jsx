@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import GameButton from "../buttons/GameButton";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange }) {
+function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange, onCambiarEstado }) {
 
   const inicial = testimonio?.name ? testimonio.name.charAt(0).toUpperCase() : "?";
   const imageUrl = testimonio?.imageUrl;
@@ -46,15 +47,50 @@ function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange }) {
   }, [isOpen, onClose]);
 
 const handleAprobar = async () => {
-  await fetch(`http://localhost:5000/api/testimonios/${testimonio.id}/aprobar`, { method: "PUT" });
-  if (onStatusChange) await onStatusChange();
+  try {
+    // Usar la función proporcionada por el componente padre
+    if (onCambiarEstado) {
+      const success = await onCambiarEstado(testimonio.id, "aprobado");
+      if (success && onStatusChange) {
+        await onStatusChange();
+      }
+    } else {
+      // Fallback al método anterior (corrigiendo la URL y parámetro)
+      await axios.put(`http://localhost:5000/api/testimonials/${testimonio.id}/status`, {
+        estado: "aprobado"  // Cambiado de 'status' a 'estado'
+      });
+      if (onStatusChange) await onStatusChange();
+    }
+    
+    // Cerrar el modal automáticamente después de aprobar
+    onClose();
+  } catch (error) {
+    console.error("Error al aprobar:", error.response?.data || error.message);
+  }
 };
 
 const handleRechazar = async () => {
-  await fetch(`http://localhost:5000/api/testimonios/${testimonio.id}/anular`, { method: "PUT" });
-  if (onStatusChange) await onStatusChange();
+  try {
+    // Usar la función proporcionada por el componente padre
+    if (onCambiarEstado) {
+      const success = await onCambiarEstado(testimonio.id, "anulado");
+      if (success && onStatusChange) {
+        await onStatusChange();
+      }
+    } else {
+      // Fallback al método anterior (corrigiendo la URL y parámetro)
+      await axios.put(`http://localhost:5000/api/testimonials/${testimonio.id}/status`, {
+        estado: "anulado"  // Cambiado de 'status' a 'estado'
+      });
+      if (onStatusChange) await onStatusChange();
+    }
+    
+    // Cerrar el modal automáticamente después de rechazar
+    onClose();
+  } catch (error) {
+    console.error("Error al rechazar:", error.response?.data || error.message);
+  }
 };
-
 
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -311,4 +347,4 @@ const handleRechazar = async () => {
   );
 }
 
-export default TestimonialModal;
+export default TestimonialModal;1

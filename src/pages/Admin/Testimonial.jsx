@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import DataStat from "../../components/admin/DataStat";
-import Search from "../../components/admin/Search";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
@@ -16,45 +16,158 @@ function Testimonials() {
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [testimonios, setTestimonios] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Función para obtener testimonios (puedes llamarla cuando quieras refrescar)
-  const fetchTestimonios = () => {
-    fetch("http://localhost:5000/api/testimonios")
-      .then((res) => res.json())
-      .then((data) => {
-        const testimoniosAdaptados = data.map((t) => ({
-          id: t.id_test,
-          name: t.nombre_usuario,
-          position: t.cargo_test,
-          status: t.estado === "aprobado" ? "Aprobado" : t.estado === "anulado" ? "Anulado" : "En espera",
-          statusColor:
-            t.estado === "aprobado"
-              ? "Green"
-              : t.estado === "anulado"
-              ? "Red"
-              : "Yellow",
-          imageUrl: "",
-          titulo: t.titulo_test,
-          comment: t.contenido_test,
-          fecha: t.fecha_creacion_test,
-        }));
-        setTestimonios(testimoniosAdaptados);
+  // Estados para tracking de cambios durante la sesión
+  const [contadoresIniciales, setContadoresIniciales] = useState({
+    Aprobado: 0,
+    Anulado: 0,
+    "En espera": 0,
+  });
 
-      })
-      .catch((error) => {
-        console.error("Error al obtener testimonios:", error);
-      });
+  const [cambiosSesion, setCambiosSesion] = useState({
+    Aprobado: 0,
+    Anulado: 0,
+    "En espera": 0,
+  });
+
+  // Flag para saber si es la primera carga
+  const isFirstLoad = useRef(true);
+
+  // Función para obtener testimonios
+  const fetchTestimonios = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Fetching testimonios...');
+      const response = await axios.get("http://localhost:5000/api/testimonials");
+      const data = response.data;
+      
+      const testimoniosAdaptados = data.map((t) => ({
+        id: t.id_tes,                    
+        name: t.nombre_usuario,          
+        position: t.cargo_tes,           
+        status: t.estado_tes === "aprobado" ? "Aprobado" : 
+                t.estado_tes === "anulado" ? "Anulado" : "En espera", 
+        statusColor:
+          t.estado_tes === "aprobado"    
+            ? "Green"
+            : t.estado_tes === "anulado" 
+            ? "Red"
+            : "Yellow",
+        imageUrl: "",
+        titulo: t.titulo_tes,            
+        comment: t.contenido_tes,        
+        fecha: t.fecha_publicacion_tes,  
+      }));
+      
+      console.log('Testimonios adaptados:', testimoniosAdaptados);
+      setTestimonios(testimoniosAdaptados);
+
+      // Si es la primera carga, establecer contadores iniciales
+      if (isFirstLoad.current) {
+        const contadoresActuales = {
+          Aprobado: testimoniosAdaptados.filter(t => t.status === "Aprobado").length,
+          Anulado: testimoniosAdaptados.filter(t => t.status === "Anulado").length,
+          "En espera": testimoniosAdaptados.filter(t => t.status === "En espera").length,
+        };
+        
+        console.log('Estableciendo contadores iniciales:', contadoresActuales);
+        setContadoresIniciales(contadoresActuales);
+        isFirstLoad.current = false;
+      }
+      
+    } catch (error) {
+      console.error("Error al obtener testimonios:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleStatusChange = async () => {
-    await fetchTestimonios();
-    setSelectedTestimonio(null); // Cierra el modal después de actualizar
+  // Función para cambiar el estado del testimonio
+  const cambiarEstadoTestimonio = async (testimonioId, nuevoEstado) => {
+    try {
+      console.log(`Cambiando estado del testimonio ${testimonioId} a ${nuevoEstado}`);
+      
+      // Encontrar el testimonio actual para saber su estado anterior
+      const testimonioActual = testimonios.find(t => t.id === testimonioId);
+      const estadoAnterior = testimonioActual?.status;
+      
+      console.log(`Estado anterior: ${estadoAnterior}, Nuevo estado: ${nuevoEstado}`);
+      
+      const response = await axios.put(
+        `http://localhost:5000/api/testimonials/${testimonioId}/status`,
+        { estado: nuevoEstado }
+      );
+      
+      if (response.status === 200) {
+        console.log('Estado cambiado exitosamente en backend');
+        
+        // Actualizar los cambios de la sesión ANTES de actualizar testimonios
+        if (estadoAnterior && estadoAnterior !== nuevoEstado) {
+          setCambiosSesion(prevCambios => {
+            const nuevosCambios = { ...prevCambios };
+            
+            // Restar del estado anterior
+            if (estadoAnterior === "Aprobado") nuevosCambios.Aprobado -= 1;
+            else if (estadoAnterior === "Anulado") nuevosCambios.Anulado -= 1;
+            else if (estadoAnterior === "En espera") nuevosCambios["En espera"] -= 1;
+            
+            // Sumar al nuevo estado
+            if (nuevoEstado === "aprobado") nuevosCambios.Aprobado += 1;
+            else if (nuevoEstado === "anulado") nuevosCambios.Anulado += 1;
+            else if (nuevoEstado === "en espera") nuevosCambios["En espera"] += 1;
+            
+            console.log('Cambios actualizados:', {
+              anterior: prevCambios,
+              nuevo: nuevosCambios,
+              transicion: `${estadoAnterior} -> ${nuevoEstado}`
+            });
+            
+            return nuevosCambios;
+          });
+        }
+        
+        // Actualizar la lista de testimonios
+        await fetchTestimonios();
+        return true;
+      }
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
+      return false;
+    }
+  };
+
+  // Función mejorada para manejar cambios de estado
+  const handleStatusChange = async (testimonioId, nuevoEstado) => {
+    try {
+      setIsLoading(true);
+      const success = await cambiarEstadoTestimonio(testimonioId, nuevoEstado);
+      
+      if (success) {
+        setSelectedTestimonio(null);
+        console.log('Estado actualizado y modal cerrado');
+      } else {
+        console.error('Error al actualizar el estado');
+      }
+    } catch (error) {
+      console.error('Error en handleStatusChange:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  // Llama a fetchTestimonios al montar el componente
+  // Cargar datos al montar el componente
   useEffect(() => {
     fetchTestimonios();
   }, []);
+
+  // Cálculo de estadísticas actuales
+  const countByStatus = (status) =>
+    testimonios.filter((t) => t.status === status).length;
+
+  const totalAprobados = countByStatus("Aprobado");
+  const totalAnulados = countByStatus("Anulado");
+  const totalEnEspera = countByStatus("En espera");
 
   const filtroTraducido = {
     Aprobados: "Aprobado",
@@ -71,40 +184,16 @@ function Testimonials() {
     return t.status === filtro;
   });
 
-  const countByStatus = (status) =>
-    testimonios.filter((t) => t.status === status).length;
+  // Función modificada para mostrar solo indicadores positivos
+  const getIcon = (cambio) => {
+    // Solo mostrar flecha hacia arriba si hay cambios positivos
+    return cambio > 0 ? flechaTestimonialArriba : flechaTestimonialArriba;
+  };
 
-  const totalAprobados = countByStatus("Aprobado");
-  const totalAnulados = countByStatus("Anulado");
-  const totalEnEspera = countByStatus("En espera");
-
-  const prevCounts = useRef({
-    Aprobado: totalAprobados,
-    Anulado: totalAnulados,
-    "En espera": totalEnEspera,
-  });
-
-  const [cambios, setCambios] = useState({
-    Aprobado: 0,
-    Anulado: 0,
-    "En espera": 0,
-  });
-
-  useEffect(() => {
-    setCambios({
-      Aprobado: totalAprobados - prevCounts.current.Aprobado,
-      Anulado: totalAnulados - prevCounts.current.Anulado,
-      "En espera": totalEnEspera - prevCounts.current["En espera"],
-    });
-    prevCounts.current = {
-      Aprobado: totalAprobados,
-      Anulado: totalAnulados,
-      "En espera": totalEnEspera,
-    };
-  }, [testimonios]);
-
-  const getIcon = (cambio) =>
-    cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
+  // Función para obtener el indicador (solo mostrar si es positivo)
+  const getIndicator = (cambio) => {
+    return cambio > 0 ? cambio : 0;
+  };
 
   const handleOpenModal = (testimonio) => {
     setSelectedTestimonio(testimonio);
@@ -116,35 +205,41 @@ function Testimonials() {
 
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
-      <div className="flex w-full items-center">
-        <Search />
-      </div>
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
       </div>
+      
+      {/* Indicador de carga */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-4">
+          <div className="text-blue-500">Actualizando...</div>
+        </div>
+      )}
+
       <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
         <DataStat
           value={totalAprobados}
-          indicator={cambios.Aprobado}
+          indicator={getIndicator(cambiosSesion.Aprobado)}
           label="Aprobados"
-          iconSrc={getIcon(cambios.Aprobado)}
+          iconSrc={getIcon(cambiosSesion.Aprobado)}
           bgColor="#9CE840"
         />
         <DataStat
           value={totalAnulados}
-          indicator={cambios.Anulado}
+          indicator={getIndicator(cambiosSesion.Anulado)}
           label="Anulados"
-          iconSrc={getIcon(cambios.Anulado)}
+          iconSrc={getIcon(cambiosSesion.Anulado)}
           bgColor="#EA4335"
         />
         <DataStat
           value={totalEnEspera}
-          indicator={cambios["En espera"]}
+          indicator={getIndicator(cambiosSesion["En espera"])}
           label="En espera"
-          iconSrc={getIcon(cambios["En espera"])}
+          iconSrc={getIcon(cambiosSesion["En espera"])}
           bgColor="#FFBE00"
         />
       </div>
+
       <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
         <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
           <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
@@ -181,6 +276,7 @@ function Testimonials() {
           </div>
         </div>
       </div>
+
       {testimoniosFiltrados.length === 0 ? (
         <div className="w-full flex justify-center items-center mt-10">
           <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
@@ -211,14 +307,17 @@ function Testimonials() {
           ))}
         </div>
       )}
+
       {selectedTestimonio && (
         <TestimonialModal
           isOpen={!!selectedTestimonio}
           onClose={handleCloseModal}
           testimonio={selectedTestimonio}
-          onStatusChange={handleStatusChange}
+          onStatusChange={(nuevoEstado) => handleStatusChange(selectedTestimonio.id, nuevoEstado)}
+          onCambiarEstado={cambiarEstadoTestimonio}
         />
       )}
+
       {isFiltroModalOpen && (
         <FiltroModal
           filters={filters}

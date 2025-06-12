@@ -1,6 +1,5 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
-import Search from "../../components/admin/Search";
 import EstadisticasDashboard from "../../components/admin/EstadisticasDashboard";
 
 export default function Statics() {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-import Search from "../../components/admin/Search";
 import DataStat from "../../components/admin/DataStat";
 import Sidebar from "../../components/Sidebar";
 import CartoonButton from "../../components/buttons/CartoonButton";
