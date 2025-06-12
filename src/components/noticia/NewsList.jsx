@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import NewsCard from "./NewsCard";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import NewsCard from "./NewsCard";
 
 const NewsList = () => {
   // Estados para manejar las noticias y la paginación
@@ -24,7 +24,7 @@ const NewsList = () => {
       });
   }, []);
 
-  // Cálculos para la paginación
+  // Cálculos para la paginación (usar todas las noticias recibidas)
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   const currentNews = news.slice(indexOfFirstNews, indexOfLastNews);

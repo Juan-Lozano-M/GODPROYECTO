@@ -1,17 +1,16 @@
+import { EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, verifyBeforeUpdateEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { auth } from "../firebaseConfig";
-import { onAuthStateChanged, getAuth, verifyBeforeUpdateEmail, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import axios from "../config/axiosConfig";
+import { Link, useNavigate } from "react-router-dom";
 import ImagenDashboard from "../assets/images/imagenDashboard.png";
-import Checkboxmore from "../components/checkbox/Checkboxmore";
-import LogoutButton from "../components/buttons/LogoutButton";
-import CareerPathPuzzle from '../components/dashboard/CareerPathPuzzle';
-import ProfileImageUpload from '../components/profile/ProfileImageUpload';
 import Toast from '../components/alertas/Toast';
+import Checkboxmore from "../components/checkbox/Checkboxmore";
+import Navbar from "../components/index/Navbar";
 import InputEditable from '../components/inputs/InputEditable';
-import ReauthModal from '../components/ReauthModal';
 import InstitutionSelector from "../components/inputs/InstitutionSelector";
+import ProfileImageUpload from '../components/profile/ProfileImageUpload';
+import ReauthModal from '../components/ReauthModal';
+import axios from "../config/axiosConfig";
+import { auth } from "../firebaseConfig";
 
 const Dashboard = () => {
   // TODOS LOS HOOKS DEBEN IR AL INICIO - ANTES DE CUALQUIER RETURN CONDICIONAL
@@ -30,10 +29,12 @@ const Dashboard = () => {
   const [toastMessage, setToastMessage] = useState({ title: '', message: '' });
   const [currentPassword, setCurrentPassword] = useState("");
   const [isReauthenticating, setIsReauthenticating] = useState(false);
-  const [isReauthModalOpen, setIsReauthModalOpen] = useState(false); // MOVIDO AQUÍ
+  const [isReauthModalOpen, setIsReauthModalOpen] = useState(false);
   const [oldEmail, setOldEmail] = useState("");
   const [userBirthdate, setUserBirthdate] = useState("");
   const [userInstitution, setUserInstitution] = useState("");
+  // Nuevo estado para controlar qué acción se está reautenticando
+  const [reauthAction, setReauthAction] = useState(""); // "email" o "password"
   
   const navigate = useNavigate();
 
@@ -176,14 +177,22 @@ const Dashboard = () => {
       const [year, month, day] = dateString.split('-');
       return `${day}/${month}/${year}`;
     };
+
   // FUNCIONES PARA MANEJAR EL CAMBIO DE EMAIL
   const handleEmailUpdate = async (email) => {
     setOldEmail(userEmail); // Guardar email actual antes del cambio
     setNewEmail(email);
+    setReauthAction("email"); // Especificar que la reautenticación es para email
     setIsReauthModalOpen(true);
   };
 
-  // Reemplaza tu función handleReauthentication actual con esta versión
+  // NUEVA FUNCIÓN PARA MANEJAR EL CAMBIO DE CONTRASEÑA
+  const handlePasswordReset = () => {
+    setReauthAction("password"); // Especificar que la reautenticación es para contraseña
+    setIsReauthModalOpen(true);
+  };
+
+  // Función de reautenticación modificada para manejar ambas acciones
   const handleReauthentication = async () => {
     try {
       const currentUser = auth.currentUser;
@@ -195,29 +204,42 @@ const Dashboard = () => {
       // Reautenticar al usuario
       const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
       await reauthenticateWithCredential(currentUser, credential);
-  
-      // Guardar el email actual ANTES de la verificación
-      setOldEmail(currentUser.email);
-      
-      console.log(`Iniciando proceso de cambio de email de ${currentUser.email} a ${newEmail}`);
-      
-      // Enviar email de verificación
-      await verifyBeforeUpdateEmail(currentUser, newEmail);
-  
+
+      // Ejecutar la acción correspondiente después de la reautenticación
+      if (reauthAction === "email") {
+        // Lógica para cambio de email
+        setOldEmail(currentUser.email);
+        
+        console.log(`Iniciando proceso de cambio de email de ${currentUser.email} a ${newEmail}`);
+        
+        await verifyBeforeUpdateEmail(currentUser, newEmail);
+        
+        setToastMessage({
+          title: '¡Verificación enviada!',
+          message: 'Se ha enviado un enlace de verificación al nuevo correo. Una vez que hagas clic en el enlace, tu email se actualizará automáticamente.'
+        });
+        setShowToast(true);
+
+      } else if (reauthAction === "password") {
+        // Lógica para cambio de contraseña
+        await sendPasswordResetEmail(auth, currentUser.email);
+        
+        setToastMessage({
+          title: '¡Correo enviado!',
+          message: 'Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico.'
+        });
+        setShowToast(true);
+      }
+
       // Limpiar estados del modal
       setIsReauthModalOpen(false);
       setCurrentPassword("");
       setNewEmail("");
-  
-      setToastMessage({
-        title: '¡Verificación enviada!',
-        message: 'Se ha enviado un enlace de verificación al nuevo correo. Una vez que hagas clic en el enlace, tu email se actualizará automáticamente.'
-      });
-      setShowToast(true);
-  
+      setReauthAction("");
+
     } catch (error) {
-      console.error('Error updating email:', error);
-      let errorMessage = 'No se pudo procesar el cambio de correo electrónico';
+      console.error('Error in reauth process:', error);
+      let errorMessage = 'No se pudo procesar la solicitud';
       
       if (error.code === 'auth/wrong-password') {
         errorMessage = 'Contraseña incorrecta';
@@ -228,12 +250,13 @@ const Dashboard = () => {
       } else if (error.code === 'auth/requires-recent-login') {
         errorMessage = 'Es necesario volver a iniciar sesión para realizar esta acción';
       }
-  
+
       // Limpiar estados en caso de error
       setOldEmail("");
       setCurrentPassword("");
       setNewEmail("");
-  
+      setReauthAction("");
+
       setToastMessage({
         title: 'Error',
         message: errorMessage
@@ -359,36 +382,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#F1F1F1]">
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-[#87C232]">GOD Dashboard</h1>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center">
-                {profileImage ? (
-                  <img 
-                    src={profileImage}
-                    alt="Profile" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 bg-[#87C232] text-white rounded-full flex items-center justify-center text-xl font-semibold">
-                    {userName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="ml-3 font-medium text-gray-700">{userName}</span>
-              </div>
-              <div onClick={handleLogout}>
-                <LogoutButton />
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-black rounded-lg shadow-lg p-6 mb-6 relative overflow-hidden">
           <div className="flex justify-between items-start">
@@ -516,13 +510,21 @@ const Dashboard = () => {
                 </div>
               
                 <div>
-                  <label className="block text-gray-600 mb-2">Contraseña:</label>
-                  <InputEditable
-                    value="••••••"
-                    type="password"
-                    disabled={true}
-                    placeholder="Nueva contraseña"
-                  />
+                <label className="block text-gray-600 mb-2">Contraseña:</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed">
+                      ••••••
+                    </div>
+                    <button
+                      onClick={handlePasswordReset}
+                      className="ml-2 bg-white p-2 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black]  hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[0px_0px_0px_0px_black] active:translate-x-[3px] active:translate-y-[3px] transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0px_0px_black] disabled:hover:translate-x-0 disabled:hover:translate-y-0t"
+                      title="Cambiar contraseña"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-black" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    </button>
+                  </div>
                 </div>
               
                 <div>
@@ -652,7 +654,12 @@ const Dashboard = () => {
     {/* Add the ReauthModal component */}
     <ReauthModal
       isOpen={isReauthModalOpen}
-      onClose={() => setIsReauthModalOpen(false)}
+      onClose={() => {
+        setIsReauthModalOpen(false);
+        setCurrentPassword("");
+        setNewEmail("");
+        setReauthAction("");
+      }}
       onReauthenticate={handleReauthentication}
       currentPassword={currentPassword}
       setCurrentPassword={setCurrentPassword}

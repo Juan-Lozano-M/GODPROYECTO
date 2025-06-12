@@ -1,0 +1,88 @@
+/* Custom OverlayScrollbars theme for Notices */
+.os-theme-notices .os-scrollbar {
+  --os-size: 10px;
+  --os-padding-perpendicular: 0px;
+  --os-padding-axis: 0px;
+  --os-track-border-radius: 8px;
+  --os-track-bg: rgba(75, 85, 99, 0.3);
+  --os-track-bg-hover: rgba(75, 85, 99, 0.4);
+  --os-track-bg-active: rgba(75, 85, 99, 0.5);
+  --os-handle-border-radius: 8px;
+  --os-handle-bg: rgba(75, 85, 99, 0.8);
+  --os-handle-bg-hover: rgba(75, 85, 99, 0.9);
+  --os-handle-bg-active: rgba(75, 85, 99, 1);
+  --os-handle-min-size: 30px;
+  --os-handle-max-size: none;
+  --os-handle-perpendicular-size: 100%;
+  --os-handle-perpendicular-size-hover: 100%;
+  --os-handle-perpendicular-size-active: 100%;
+  --os-handle-interactive-area-offset: 0px;
+}
+
+.os-theme-notices .os-scrollbar-vertical {
+  inset-inline-end: 2px;
+  inset-block: var(--os-padding-axis);
+  width: var(--os-size);
+}
+
+.os-theme-notices .os-scrollbar-horizontal {
+  inset-inline: var(--os-padding-axis);
+  inset-block-end: var(--os-padding-perpendicular);
+  height: var(--os-size);
+}
+
+.os-theme-notices .os-scrollbar-track {
+  border-radius: var(--os-track-border-radius);
+  background: var(--os-track-bg);
+  transition: background 0.3s ease;
+}
+
+.os-theme-notices .os-scrollbar-track:hover {
+  background: var(--os-track-bg-hover);
+}
+
+.os-theme-notices .os-scrollbar-track:active {
+  background: var(--os-track-bg-active);
+}
+
+.os-theme-notices .os-scrollbar-handle {
+  border-radius: var(--os-handle-border-radius);
+  background: var(--os-handle-bg);
+  transition: background 0.3s ease, opacity 0.3s ease;
+  min-block-size: var(--os-handle-min-size);
+  max-block-size: var(--os-handle-max-size);
+}
+
+.os-theme-notices .os-scrollbar-handle:hover {
+  background: var(--os-handle-bg-hover);
+}
+
+.os-theme-notices .os-scrollbar-handle:active {
+  background: var(--os-handle-bg-active);
+}
+
+.os-theme-notices .os-scrollbar-vertical .os-scrollbar-handle {
+  inset-inline: var(--os-handle-interactive-area-offset);
+  min-inline-size: var(--os-handle-perpendicular-size);
+}
+
+.os-theme-notices .os-scrollbar-horizontal .os-scrollbar-handle {
+  inset-block: var(--os-handle-interactive-area-offset);
+  min-block-size: var(--os-handle-perpendicular-size);
+}
+
+/* Auto-hide behavior - make scrollbar more visible */
+.os-theme-notices .os-scrollbar {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.os-theme-notices:hover .os-scrollbar,
+.os-theme-notices .os-scrollbar-visible {
+  opacity: 1;
+}
+
+/* Smooth scrolling */
+.os-theme-notices .os-viewport {
+  scroll-behavior: smooth;
+}

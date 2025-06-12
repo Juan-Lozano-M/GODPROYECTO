@@ -110,7 +110,7 @@ const InputEditable = ({
           {/* Botón de Editar - Estilo Tecla B&N */}
           <button 
             onClick={handleEdit}
-            className="ml-2 bg-white p-2 rounded-xl border-2 border-black  hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[0px_0px_0px_0px_black] active:translate-x-[3px] active:translate-y-[3px] transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0px_0px_black] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+            className="ml-2 bg-white p-2 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black]  hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[0px_0px_0px_0px_black] active:translate-x-[3px] active:translate-y-[3px] transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[3px_3px_0px_0px_black] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
             disabled={disabled}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-black" viewBox="0 0 20 20" fill="currentColor">

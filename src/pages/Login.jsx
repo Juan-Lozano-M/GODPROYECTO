@@ -155,8 +155,7 @@ const Login = () => {
   };
 
   return (
-  <div className="flex min-h-screen w-full bg-[#9CE840] cursor-none flex-grow  ">
-    <Cursor/>
+  <div className="flex min-h-screen w-full bg-[#9CE840] cursor-none flex-grow cursor-guante  ">
     <div className="flex items-end justify-between w-full h-45 absolute ">
       <div className="flex justify-between items-center ml-5 sm:ml-20 mb-15 ">
         <div className="flex items-center gap-0.4  xl:scale-80 2xl:scale-100">

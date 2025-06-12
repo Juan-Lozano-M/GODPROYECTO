@@ -1,103 +1,86 @@
-import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import Search from "../../components/admin/Search";
 import DataStat from "../../components/admin/DataStat";
-import Sidebar from "../../components/Sidebar";
-import CartoonButton from "../../components/buttons/CartoonButton";
 import FilterButton from "../../components/admin/FilterButton";
-import NoticeCard from "../../components/NoticeCard";
 import FiltroModal from "../../components/admin/FiltroModal";
+import Search from "../../components/admin/Search";
+import CartoonButton from "../../components/buttons/CartoonButton";
+import NoticeCard from "../../components/NoticeCard";
+import Sidebar from "../../components/Sidebar";
 
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
-import imageNotice from "../../assets/images/imagenNotice.png";
-import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
-import imageNotice1 from "../../assets/images/imageNotice1.png";
-import imageNotice2 from "../../assets/images/imageNotice2.png";
-import imageNotice3 from "../../assets/images/imageNotice3.png";
-import imageNotice4 from "../../assets/images/imageNotice4.png";
+import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import iconNotResult from "../../assets/icons/iconNotResult.png";
 
-
 function Notices() {
-  const [noticias, setNoticias] = useState([
-    {
-      id: 1,
-      status: "Publicadas",
-      image: imageNotice1,
-      title: "Semana del emprendimiento 2025",
-      author: "Gloria Valero",
-      date: "25/04/2025",
-      summary:
-        "Un evento pensado para motivar a los estudiantes a crear sus propios negocios, con charlas, talleres y actividades dinámicas.",
-    },
-    {
-      id: 2,
-      status: "Eliminadas",
-      image: imageNotice2,
-      title: "Reunión de líderes estudiantiles",
-      author: "Carlos Peña",
-      date: "24/04/2025",
-      summary:
-        "Espacio donde se discutieron nuevas ideas y propuestas para mejorar la vida académica y la convivencia escolar.",
-    },
-/*     {
-      id: 3,
-      status: "Archivadas",
-      image: imageNotice3,
-      title: "Feria de ciencias 2025",
-      author: "Laura Rodríguez",
-      date: "23/04/2025",
-      summary:
-        "Los estudiantes presentaron sus proyectos científicos con gran creatividad, abordando temas de medio ambiente y tecnología.",
-    }, */
-    {
-      id: 4,
-      status: "Publicadas",
-      image: imageNotice4,
-      title: "Campaña de reciclaje en el campus",
-      author: "Ana Torres",
-      date: "22/04/2025",
-      summary:
-        "Se promovieron hábitos sostenibles mediante actividades de reciclaje y educación ambiental para toda la comunidad escolar.",
-    },
-  ]);
-
-  const filters = ["Publicadas", "Eliminadas", "Archivadas"];
+  const [noticias, setNoticias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const filters = ["Publicada", "Eliminada", "Archivada"];
   const [activeFilter, setActiveFilter] = useState("Todas");
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
+  const [selectedNoticeId, setSelectedNoticeId] = useState(null);
 
-  const countByStatus = (status) => noticias.filter((n) => n.status === status).length;
-  const totalPublicadas = countByStatus("Publicadas");
-  const totalEliminadas = countByStatus("Eliminadas");
-  const totalArchivadas = countByStatus("Archivadas");
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("http://localhost:5000/api/news/get-all-admin")
+      .then((response) => {
+        if (response.data.status === "success") {
+          setNoticias(response.data.news);
+        } else {
+          setNoticias([]);
+        }
+      })
+      .catch(() => setNoticias([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const countByStatus = (status) => noticias.filter((n) => n.es_publicada === status).length;
+  const totalPublicadas = countByStatus("publicada");
+  const totalEliminadas = countByStatus("eliminada");
+  const totalArchivadas = countByStatus("archivada");
 
   const prevCounts = useRef({
-    Publicadas: totalPublicadas,
-    Eliminadas: totalEliminadas,
-    Archivadas: totalArchivadas,
+    Publicada: totalPublicadas,
+    Eliminada: totalEliminadas,
+    Archivada: totalArchivadas,
   });
 
   const [cambios, setCambios] = useState({
-    Publicadas: 0,
-    Eliminadas: 0,
-    Archivadas: 0,
+    Publicada: 0,
+    Eliminada: 0,
+    Archivada: 0,
   });
 
   useEffect(() => {
     setCambios({
-      Publicadas: totalPublicadas - prevCounts.current.Publicadas,
-      Eliminadas: totalEliminadas - prevCounts.current.Eliminadas,
-      Archivadas: totalArchivadas - prevCounts.current.Archivadas,
+      Publicada: totalPublicadas - prevCounts.current.Publicada,
+      Eliminada: totalEliminadas - prevCounts.current.Eliminada,
+      Archivada: totalArchivadas - prevCounts.current.Archivada,
     });
-
     prevCounts.current = {
-      Publicadas: totalPublicadas,
-      Eliminadas: totalEliminadas,
-      Archivadas: totalArchivadas,
+      Publicada: totalPublicadas,
+      Eliminada: totalEliminadas,
+      Archivada: totalArchivadas,
     };
   }, [noticias]);
+
+  // Reinicia los indicadores a 0 después de 5 segundos
+  useEffect(() => {
+    if (
+      cambios.Publicada !== 0 ||
+      cambios.Eliminada !== 0 ||
+      cambios.Archivada !== 0
+    ) {
+      const timeout = setTimeout(() => {
+        setCambios({ Publicada: 0, Eliminada: 0, Archivada: 0 });
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [cambios]);
 
   const getIcon = (cambio) =>
     cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
@@ -106,7 +89,33 @@ function Notices() {
   const noticiasFiltradas =
     activeFilter === "Todas"
       ? noticias
-      : noticias.filter((n) => n.status === activeFilter);
+      : noticias.filter((n) => n.es_publicada === activeFilter.toLowerCase());
+
+  // Cambiar estado de la noticia seleccionada
+  const handleStatusChange = async (nuevoEstado) => {
+    if (!selectedNoticeId) return;
+    setLoading(true);
+    try {
+      console.log("Estado enviado:", nuevoEstado);
+      await axios.patch(`http://localhost:5000/api/news/update-news/${selectedNoticeId}`, {
+        es_publicada: nuevoEstado,
+      });
+      setNoticias((prev) =>
+        prev.map((n) =>
+          n.id_noticia === selectedNoticeId ? { ...n, es_publicada: nuevoEstado } : n
+        )
+      );
+      setSelectedNoticeId(null);
+    } catch (err) {
+      alert('Error al actualizar el estado de la noticia.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = () => handleStatusChange('eliminada');
+  const handlePublish = () => handleStatusChange('publicada');
+  const handleArchive = () => handleStatusChange('archivada');
 
   return (
     <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15 pt-10">
@@ -115,49 +124,45 @@ function Notices() {
         <div className="flex w-full items-center">
           <Search />
         </div>
-        <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl font-adlam">
+        <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl xl:mt-1 xl:text-[42px] 2xl:text-5xl font-adlam">
           NOTICIAS
         </h1>
-
-        <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+        <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 xl:mt-4 xl:gap-12 2xl:gap-20 h-auto">
           <DataStat
             value={totalPublicadas}
-            indicator={cambios.Publicadas}
+            indicator={cambios.Publicada}
             label="Publicadas"
-            iconSrc={getIcon(cambios.Publicadas)}
+            iconSrc={getIcon(cambios.Publicada)}
             bgColor="#9CE840"
           />
           <DataStat
             value={totalEliminadas}
-            indicator={cambios.Eliminadas}
+            indicator={cambios.Eliminada}
             label="Eliminadas"
-            iconSrc={getIcon(cambios.Eliminadas)}
+            iconSrc={getIcon(cambios.Eliminada)}
             bgColor="#EA4335"
           />
           <DataStat
             value={totalArchivadas}
-            indicator={cambios.Archivadas}
+            indicator={cambios.Archivada}
             label="Archivadas"
-            iconSrc={getIcon(cambios.Archivadas)}
+            iconSrc={getIcon(cambios.Archivada)}
             bgColor="#FFBE00"
           />
         </div>
-
         {/* Botón de creación */}
-        <div className="mt-10 w-full lg:w-200">
+        <div className="mt-10 xl:mt-8 2xl:mt-10 w-full lg:w-200 xl:w-160 2xl:w-200">
           <Link to="/home/newscreate">
             <CartoonButton />
           </Link>
         </div>
-
         {/* Filtros */}
-        <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full">
-          <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
-            <p className="text-lg sm:text-3xl xl:text-4xl font-adlam">
+        <div className="flex items-center justify-between mt-5 md:mt-10 xl:mt-8 2xl:mt-10 py-2 w-full">
+          <div className="flex items-center gap-4 sm:gap-7 xl:gap-8 2xl:gap-10">
+            <p className="text-lg sm:text-3xl xl:text-3xl 2xl:text-4xl font-adlam">
               Últimas noticias
             </p>
-            <div className="h-7 w-0.5 sm:h-10 bg-gray-300"></div>
-
+            <div className="h-7 w-0.5 sm:h-10 xl:h-9 2xl:h-10 bg-gray-300"></div>
             <div className="flex items-center gap-4">
               {/* Filtros grandes: mostramos Todas + filtros */}
               <div className="hidden lg:flex gap-4">
@@ -175,7 +180,6 @@ function Notices() {
                   />
                 ))}
               </div>
-
               {/* Filtros móviles: botón que abre modal con solo los filtros (sin "Todas") + botón "Todas" fuera */}
               <div className="flex lg:hidden gap-4">
                 <FilterButton
@@ -194,21 +198,58 @@ function Notices() {
           </div>
         </div>
       </div>
-
+      {/* Acciones sobre la noticia seleccionada */}
+      {selectedNoticeId && (
+        <div className="flex gap-4 mt-4 mb-2">
+          <button
+            className="bg-[#EA4335] text-white px-4 py-2 rounded font-bold hover:bg-red-700 transition"
+            onClick={handleDelete}
+            disabled={loading}
+          >
+            Eliminar
+          </button>
+          <button
+            className="bg-[#9CE840] text-black px-4 py-2 rounded font-bold hover:bg-lime-500 transition"
+            onClick={handlePublish}
+            disabled={loading}
+          >
+            Publicar
+          </button>
+          <button
+            className="bg-[#FFBE00] text-black px-4 py-2 rounded font-bold hover:bg-yellow-400 transition"
+            onClick={handleArchive}
+            disabled={loading}
+          >
+            Archivar
+          </button>
+        </div>
+      )}
       {/* Lista de noticias y panel lateral */}
-      <div className="flex-grow flex gap-8 sm:mt-5 overflow-hidden">
+      <div className="flex-grow flex gap-8 sm:mt-5 xl:mt-4 2xl:mt-5 overflow-hidden">
         <div className="w-full 2xl:w-[90%] overflow-y-auto pr-4 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-          <div className="flex flex-col gap-6">
-            {noticiasFiltradas.length > 0 ? (
+          <div className="flex flex-col gap-6 xl:gap-4 2xl:gap-6">
+            {loading ? (
+              <div className="text-center py-20 text-gray-400">Cargando noticias...</div>
+            ) : noticiasFiltradas.length > 0 ? (
               noticiasFiltradas.map((noticia) => (
                 <NoticeCard
-                  key={noticia.id}
-                  image={noticia.image}
-                  title={noticia.title}
-                  author={noticia.author}
-                  date={noticia.date}
-                  summary={noticia.summary}
-                  status={noticia.status.slice(0, -1)}
+                  key={noticia.id_noticia}
+                  image={noticia.imagen_url}
+                  title={noticia.titulo}
+                  author={noticia.autor?.nombre || noticia.author || "Autor desconocido"}
+                  date={noticia.fecha_creacion?.split("T")[0] || noticia.date}
+                  summary={noticia.descripcion}
+                  status={
+                    noticia.es_publicada === "publicada"
+                      ? "Publicada"
+                      : noticia.es_publicada === "eliminada"
+                      ? "Eliminada"
+                      : noticia.es_publicada === "archivada"
+                      ? "Archivada"
+                      : ""
+                  }
+                  isSelected={selectedNoticeId === noticia.id_noticia}
+                  onSelect={() => setSelectedNoticeId(noticia.id_noticia)}
                 />
               ))
             ) : (
@@ -229,7 +270,6 @@ function Notices() {
           </div>
         </div>
       </div>
-
       {/* Modal de filtros para móviles */}
       {isFiltroModalOpen && (
         <FiltroModal
@@ -242,7 +282,6 @@ function Notices() {
           onClose={() => setIsFiltroModalOpen(false)}
         />
       )}
-
       {/* Sidebar */}
       <Sidebar />
     </div>
