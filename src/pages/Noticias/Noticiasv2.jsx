@@ -1,11 +1,9 @@
-import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
-import SearchModal from "../../components/noticia/SearchModal"; // Importa el modal de búsqueda
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
-import Cursor from "../../components/Cursor"; // Importa el componente de cursor personalizado
-import Chatbot from "../../components/chatbot/ChatBot" // Importa el componente de chatbot
-
+import Chatbot from "../../components/chatbot/ChatBot"; // Importa el componente de chatbot
+import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
+import SearchModal from "../../components/noticia/SearchModal"; // Importa el modal de búsqueda
 // Componente funcional Noticiasv2 que renderiza la sección de noticias
 function Noticiasv2() {
   const [isHovered, setIsHovered] = useState(false);

@@ -1,12 +1,10 @@
-import React from 'react';
 
 const CartoonButton = () => {
   return (
-    <div className="w-full">
-      <button 
+    <div className="w-full">      <button 
         className="
           relative w-full cursor-pointer border-none rounded-xl bg-black
-          text-lg font-bold overflow-hidden
+          text-lg xl:text-base 2xl:text-lg font-bold overflow-hidden
           transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]
           hover:shadow-[4px_4px_0_rgba(0,0,0,0.5)]
           hover:translate-x-[-4px] hover:translate-y-[-4px]
@@ -17,11 +15,10 @@ const CartoonButton = () => {
           focus:shadow-[0_0_0_2px_black,inset_0_0_0_2px_#e8e8e8]
           group
         "
-      >
-        <span 
+      ><span 
           className="
             block box-border border-[5px] border-black rounded-xl
-            px-2 py-3 sm:px-4 text-adlam sm:py-4 sm:text-[22px] bg-[#e8e8e8] text-black
+            px-2 py-3 sm:px-4 text-adlam sm:py-4 sm:text-[22px] xl:px-3 xl:py-3 xl:text-[20px] 2xl:px-4 2xl:py-4 2xl:text-[22px] bg-[#e8e8e8] text-black
             transform translate-y-[-0.2em]
             transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]
             group-hover:translate-y-[-0.33em]

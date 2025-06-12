@@ -19,6 +19,7 @@ import NewDetails from "./pages/Noticias/NewDetail";
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/Auth/VerifyEmail.jsx";
+import ActionRedirector from "./pages/Auth/ActionRedirector.jsx";
 
 
 const router = createBrowserRouter([
@@ -81,6 +82,11 @@ const router = createBrowserRouter([
         <VerifyEmail />
       </ProtectedResetRoute>
   ),
+  },
+  {
+    path: "/action",
+    element: <ActionRedirector />,
+    errorElement: <Navigate to="/" />,
   },
   {
     path: "/dashboard",
