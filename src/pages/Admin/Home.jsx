@@ -56,6 +56,36 @@ const Home = () => {
         return "En espera";
     }
   };
+
+  // ← FUNCIÓN CORREGIDA PARA CONSTRUIR URL DE IMAGEN
+  const construirUrlImagen = (testimonio) => {
+    // ✅ CORRECCIÓN: Usar profile_image que es el campo que realmente existe
+    const valorImagen = testimonio.profile_image;
+
+    if (!valorImagen || valorImagen.trim() === "") {
+      console.log("No se encontró imagen para el testimonio:", testimonio.id_tes || testimonio.id);
+      return ""; // Sin imagen
+    }
+
+    // Si ya es una URL completa, devolverla tal como está
+    if (valorImagen.startsWith('http://') || valorImagen.startsWith('https://')) {
+      return valorImagen;
+    }
+
+    // Si es solo el nombre del archivo, construir la URL completa
+    const baseUrl = "http://localhost:5000";
+    
+    // Diferentes rutas posibles donde podrían estar las imágenes
+    const rutasPosibles = [
+      `/uploads/${valorImagen}`,
+      `/images/${valorImagen}`,
+      `/assets/images/${valorImagen}`,
+      `/${valorImagen}`
+    ];
+
+    // Por defecto, usar la ruta de uploads
+    return `${baseUrl}${rutasPosibles[0]}`;
+  };
   
   const fetchTestimonios = async () => {
     try {
@@ -74,20 +104,34 @@ const Home = () => {
       const testimoniosAdaptados = response.data
         .filter(t => t && typeof t === 'object') // Filtrar elementos válidos
         .map((t) => {
+          // ← LOGGING DETALLADO PARA DEBUG
+          console.log("=== PROCESANDO TESTIMONIO ===");
+          console.log("Testimonio original completo:", t);
+          console.log("Campos disponibles:", Object.keys(t));
+          
+          // MOSTRAR TODOS LOS CAMPOS Y SUS VALORES
+          Object.keys(t).forEach(key => {
+            console.log(`${key}:`, t[key]);
+          });
+          
+          // Solo mostrar el campo que realmente existe
+          console.log("profile_image:", t.profile_image);
+
           // CORRECCIÓN: Usar los nombres de campo que envía el backend
           const testimonioAdaptado = {
-            id: t.id_tes || Math.random().toString(36), // ← CORREGIDO: usar 'id_tes'
-            name: t.nombre_usuario || "Usuario sin nombre", // ✓ Ya estaba bien
-            position: t.cargo_tes || "Sin cargo", // ← CORREGIDO: usar 'cargo_tes'
-            status: mapearEstado(t.estado_tes), // ← CORREGIDO: usar 'estado_tes'
-            imageUrl: t.imagen_url || t.imagen || "",
-            titulo: t.titulo_tes || "", // ← CORREGIDO: usar 'titulo_tes'
-            comment: t.contenido_tes || "", // ← CORREGIDO: usar 'contenido_tes'
-            fecha: t.fecha_publicacion_tes || new Date().toISOString(), // ← CORREGIDO: usar 'fecha_publicacion_tes'
+            id: t.id_tes || Math.random().toString(36), 
+            name: t.nombre_usuario || "Usuario sin nombre",
+            position: t.cargo_tes || "Sin cargo", 
+            status: mapearEstado(t.estado_tes), 
+            imageUrl: construirUrlImagen(t), 
+            titulo: t.titulo_tes || "", 
+            comment: t.contenido_tes || "", 
+            fecha: t.fecha_publicacion_tes || new Date().toISOString(),
           };
           
-          console.log("Testimonio original:", t);
           console.log("Testimonio adaptado:", testimonioAdaptado);
+          console.log("URL final de imagen:", testimonioAdaptado.imageUrl);
+          console.log("=== FIN PROCESAMIENTO ===");
           
           return testimonioAdaptado;
         });
@@ -100,6 +144,7 @@ const Home = () => {
       
     } catch (error) {
       console.error("Error al obtener testimonios:", error);
+      console.error("Detalles del error:", error.response?.data);
       // En caso de error, establecer array vacío para evitar crashes
       setTestimonios([]);
     } finally {
@@ -209,7 +254,7 @@ const Home = () => {
               label="Testimonios anulados" 
             />
             <StatCard 
-              value="10" 
+              value={statsLoading ? "..." : stats.noticias_publicadas.toString()} 
               label="Noticias publicadas" 
             />
           </div>
@@ -321,7 +366,7 @@ const Home = () => {
                 label="Testimonios anulados" 
               />
               <StatCard 
-                value="10" 
+                value={statsLoading ? "..." : stats.noticias_publicadas.toString()} 
                 label="Noticias publicadas" 
               />
             </div>

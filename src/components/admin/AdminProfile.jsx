@@ -112,12 +112,12 @@ const AdminProfile = () => {
           <img
             src={userPhoto}
             alt="Admin Profile"
-            className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg object-cover border-2"
+            className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg object-cover"
             onError={handleImageError}
             onLoad={() => console.log('Admin image loaded successfully:', userPhoto)}
           />
         ) : (
-          <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg bg-black flex items-center justify-center">
+          <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg flex items-center justify-center">
             <span className="text-white font-adlam text-sm sm:text-base">
               {getInitials(userName)}
             </span>
