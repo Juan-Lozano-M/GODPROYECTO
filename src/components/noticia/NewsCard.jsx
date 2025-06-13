@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import uno from "../../assets/Animation.json";
 
@@ -59,11 +58,10 @@ function NewsCard({
 
       {/* Contenedor principal de la tarjeta con efecto hover */}
       <div className="flex flex-col md:flex-row relative transition-all duration-300 group-hover:bg-gray-200 p-4">
-        
-        {/* Sección izquierda */}
+          {/* Sección izquierda */}
         <div className="relative md:w-2/5 overflow-visible">
-          {/* Fondo punteado que se mueve */}
-          <div className="absolute -left-2 inset-y-0 top-5 transition-all duration-300 transform group-hover:translate-x-8 w-[95%] h-[76%] bg-[#f0f0f0] bg-dotted">
+          {/* Fondo punteado que se mueve - altura fija */}
+          <div className="absolute -left-2 top-5 transition-all duration-300 transform group-hover:translate-x-8 w-[95%] h-[200px] bg-[#f0f0f0] bg-dotted">
             <div className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 bg-[#87C232]"></div>
           </div>
 

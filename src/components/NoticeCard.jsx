@@ -5,7 +5,18 @@ const statusColors = {
   Eliminada: 'bg-[#EA4335]',
 };
 
-const NoticeCard = ({ image, title, author, date, summary, status, isSelected, onSelect }) => {
+const NoticeCard = ({ image, title, author, date, summary, status, isSelected, onSelect, slug, newsId }) => {
+  
+  const handleViewNews = (e) => {
+    e.stopPropagation(); // Evitar que se active onSelect cuando se hace clic en "Ver noticia"
+    
+    // Crear la URL usando el slug o ID como fallback
+    const newsUrl = slug ? `/noticiasv/${slug}` : `/noticiasv/${newsId}`;
+    
+    // Abrir en una nueva pestaña
+    window.open(newsUrl, '_blank');
+  };
+
   return (
     <div
       className={`flex items-center w-full h-20 sm:h-30 lg:h-40 xl:h-36 2xl:h-40 bg-black/7 rounded-r-lg rounded-l-3xl cursor-pointer border-2 transition-all ${isSelected ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
@@ -33,11 +44,13 @@ const NoticeCard = ({ image, title, author, date, summary, status, isSelected, o
               className={`w-fit px-1 py-1 sm:px-2 sm:py-1 text-[8px] sm:text-[13px] lg:text-sm xl:text-[15px] 2xl:text-[17px] font-adlam rounded-full ${statusColors[status]}`}
             >
               {status}
-            </span>
-          )}
+            </span>          )}
           
           {/* Botón "Ver noticia" con ancho fijo */}
-          <div className="w-10 sm:w-13 bg-black sm:py-1 lg:px-2 lg:py-2 xl:px-2 xl:py-1 2xl:px-2 2xl:py-2 rounded-lg sm:w-16 lg:w-24 xl:w-22 2xl:w-24 text-center flex-shrink-0">
+          <div
+            className="w-10 sm:w-16 bg-black sm:py-1 lg:px-2 lg:py-2 xl:px-2 xl:py-1 2xl:px-2 2xl:py-2 rounded-lg lg:w-24 xl:w-22 2xl:w-24 text-center flex-shrink-0 cursor-pointer hover:bg-gray-800 transition-colors"
+            onClick={handleViewNews}
+          >
             <h1 className="text-white font-adlam text-[10px] sm:text-[13px] lg:text-[15px] xl:text-[14px] 2xl:text-[15px] whitespace-nowrap">
               <span className="block lg:block xl:hidden 2xl:hidden sm:mx-2">Ver</span>
               <span className="hidden lg:hidden xl:block 2xl:block">Ver noticia</span>
