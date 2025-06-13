@@ -230,8 +230,7 @@ function Notices() {
           <div className="flex flex-col gap-6 xl:gap-4 2xl:gap-6">
             {loading ? (
               <div className="text-center py-20 text-gray-400">Cargando noticias...</div>
-            ) : noticiasFiltradas.length > 0 ? (
-              noticiasFiltradas.map((noticia) => (
+            ) : noticiasFiltradas.length > 0 ? (              noticiasFiltradas.map((noticia) => (
                 <NoticeCard
                   key={noticia.id_noticia}
                   image={noticia.imagen_url}
@@ -250,6 +249,8 @@ function Notices() {
                   }
                   isSelected={selectedNoticeId === noticia.id_noticia}
                   onSelect={() => setSelectedNoticeId(noticia.id_noticia)}
+                  slug={noticia.slug}
+                  newsId={noticia.id_noticia}
                 />
               ))
             ) : (
