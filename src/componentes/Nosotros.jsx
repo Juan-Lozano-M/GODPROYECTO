@@ -74,7 +74,7 @@ const Nosotros = () => {
           Conoce de <span className="text-[#9CE840] mt-2 sm:mt-0 block sm:inline">Nosotros</span>
         </h1>
         <p className="nosotros-subtext text-black/50 mt-4 text-lg md:text-xl">
-          Descubre quiénes somos, nuestra misión y cómo te ayudamos a encontrar tu propósito.
+          Descubre quiénes somos, nuestra misión y nuestra filosofia.
         </p>
       </div>
 

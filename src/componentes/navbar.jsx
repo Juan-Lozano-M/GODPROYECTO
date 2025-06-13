@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import godLogo from '../assets/png_God 1.png';
 
@@ -12,28 +12,9 @@ const menuItems = [
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [logoHovered, setLogoHovered] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Establecer el estado de carga después de que el componente se monte
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Reset de animaciones cuando cambia la ruta
-  useEffect(() => {
-    setIsLoaded(false);
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -68,17 +49,29 @@ function Navbar() {
     <>
       <nav className="flex justify-between items-center px-6 md:px-16 py-6 relative bg-white z-40">
         {/* Logo (escritorio) */}
-        <div className="relative ml-4 group w-[40px] h-[40px] hidden md:block">
-          <div className="absolute inset-0 bg-[#9CE840] rounded-full flex items-center justify-center transform transition-all duration-700 ease-in-out group-hover:-translate-x-6 group-hover:-rotate-[50deg] z-20">
+        <div 
+          className="relative ml-4 group w-[40px] h-[40px] hidden md:block"
+          onMouseEnter={() => setLogoHovered(true)}
+          onMouseLeave={() => setLogoHovered(false)}
+        >
+          <div className={`absolute inset-0 bg-[#9CE840] rounded-full flex items-center justify-center transform transition-all duration-700 ease-in-out z-20 ${
+            logoHovered ? '-translate-x-6 -rotate-[50deg]' : ''
+          }`}>
             <img
               src={godLogo}
               alt="GOD Logo"
-              className="w-6 h-6 transform transition-transform duration-700 ease-in-out group-hover:-rotate-[60deg]"
+              className={`w-6 h-6 transform transition-transform duration-700 ease-in-out ${
+                logoHovered ? '-rotate-[60deg]' : ''
+              }`}
             />
           </div>
-          <div className="absolute inset-0 bg-black rounded-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-2 font-extrabold text-md whitespace-nowrap z-10 group-hover:z-30 transition-[z-index] duration-0">
-            <span className="text-black opacity-0 cartoon-slide pointer-events-none group-hover:pointer-events-auto">
+          <div className={`absolute inset-0 bg-black rounded-full z-10 transition-opacity duration-700 ${
+            logoHovered ? 'opacity-100' : 'opacity-0'
+          }`} />
+          <div className="absolute inset-y-0 left-0 flex items-center pl-2 font-extrabold text-md whitespace-nowrap z-10 transition-[z-index] duration-0" style={{zIndex: logoHovered ? 30 : 10}}>
+            <span className={`text-black pointer-events-none cartoon-slide ${
+              logoHovered ? 'show-text' : ''
+            }`}>
               game of dreams
             </span>
           </div>
@@ -186,24 +179,10 @@ function Navbar() {
           transition: opacity 0.2s ease;
         }
 
-        .group:hover .cartoon-slide {
+        .cartoon-slide.show-text {
           animation: slideInBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           animation-delay: 0.35s;
           pointer-events: auto;
-        }
-
-        .group:not(:hover) .cartoon-slide {
-          animation: slideOutHide 0.2s ease forwards;
-          pointer-events: none;
-        }
-
-        /* Prevenir animaciones durante la carga */
-        .group:not(.loaded) .cartoon-slide {
-          animation: none !important;
-        }
-
-        .group:not(.loaded):hover .cartoon-slide {
-          animation: none !important;
         }
 
         @keyframes slideInBounce {
@@ -211,11 +190,6 @@ function Navbar() {
           60% { opacity: 1; transform: translateX(45px); }
           80% { transform: translateX(35px); }
           100% { opacity: 1; transform: translateX(40px); }
-        }
-
-        @keyframes slideOutHide {
-          0% { opacity: 1; transform: translateX(40px); }
-          100% { opacity: 0; transform: translateX(-20px); }
         }
 
         .hover-effect {
