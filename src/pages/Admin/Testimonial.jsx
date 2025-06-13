@@ -6,10 +6,12 @@ import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import FiltroModal from "../../components/admin/FiltroModal";
+import AdminProfile from "../../components/admin/AdminProfile";
+
 import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
-import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
+
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
@@ -34,31 +36,61 @@ function Testimonials() {
   // Flag para saber si es la primera carga
   const isFirstLoad = useRef(true);
 
-  // Función para obtener testimonios
+  // Función para validar y procesar la URL de la imagen
+  const processImageUrl = (imageUrl) => {
+    if (!imageUrl || imageUrl.trim() === '') {
+      return null;
+    }
+    
+    // Si la URL ya es completa, devolverla tal como está
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Si es una URL relativa, construir la URL completa
+    // Ajusta esto según tu configuración de servidor
+    return imageUrl;
+  };
+
+  // Función para obtener testimonios con información del usuario
   const fetchTestimonios = async () => {
     setIsLoading(true);
     try {
       console.log('Fetching testimonios...');
-      const response = await axios.get("http://localhost:5000/api/testimonials");
+      
+      // Primero intentar con el endpoint que incluye información del usuario
+      const response = await axios.get("http://localhost:5000/api/testimonials/with-user");
       const data = response.data;
       
-      const testimoniosAdaptados = data.map((t) => ({
-        id: t.id_tes,                    
-        name: t.nombre_usuario,          
-        position: t.cargo_tes,           
-        status: t.estado_tes === "aprobado" ? "Aprobado" : 
-                t.estado_tes === "anulado" ? "Anulado" : "En espera", 
-        statusColor:
-          t.estado_tes === "aprobado"    
-            ? "Green"
-            : t.estado_tes === "anulado" 
-            ? "Red"
-            : "Yellow",
-        imageUrl: "",
-        titulo: t.titulo_tes,            
-        comment: t.contenido_tes,        
-        fecha: t.fecha_publicacion_tes,  
-      }));
+      console.log('Raw data from API:', data);
+      
+      const testimoniosAdaptados = data.map((t) => {
+        const processedImageUrl = processImageUrl(t.profile_image);
+        
+        console.log(`Testimonio ${t.id_tes}:`, {
+          nombre: t.nombre_usuario,
+          profile_image_original: t.profile_image,
+          profile_image_processed: processedImageUrl
+        });
+        
+        return {
+          id: t.id_tes,                    
+          name: t.nombre_usuario,          
+          position: t.cargo_tes,           
+          status: t.estado_tes === "aprobado" ? "Aprobado" : 
+                  t.estado_tes === "anulado" ? "Anulado" : "En espera", 
+          statusColor:
+            t.estado_tes === "aprobado"    
+              ? "Green"
+              : t.estado_tes === "anulado" 
+              ? "Red"
+              : "Yellow",
+          imageUrl: processedImageUrl,
+          titulo: t.titulo_tes,            
+          comment: t.contenido_tes,        
+          fecha: t.fecha_publicacion_tes,  
+        };
+      });
       
       console.log('Testimonios adaptados:', testimoniosAdaptados);
       setTestimonios(testimoniosAdaptados);
@@ -78,6 +110,56 @@ function Testimonials() {
       
     } catch (error) {
       console.error("Error al obtener testimonios:", error);
+      
+      // Si falla el endpoint principal, intentar con el endpoint de fallback
+      try {
+        console.log('Intentando con endpoint de fallback...');
+        const fallbackResponse = await axios.get("http://localhost:5000/api/testimonials");
+        const fallbackData = fallbackResponse.data;
+        
+        console.log('Fallback data:', fallbackData);
+        
+        const testimoniosAdaptados = fallbackData.map((t) => {
+          const processedImageUrl = processImageUrl(t.profile_image);
+          
+          return {
+            id: t.id_tes,                    
+            name: t.nombre_usuario,          
+            position: t.cargo_tes,           
+            status: t.estado_tes === "aprobado" ? "Aprobado" : 
+                    t.estado_tes === "anulado" ? "Anulado" : "En espera", 
+            statusColor:
+              t.estado_tes === "aprobado"    
+                ? "Green"
+                : t.estado_tes === "anulado" 
+                ? "Red"
+                : "Yellow",
+            imageUrl: processedImageUrl,
+            titulo: t.titulo_tes,            
+            comment: t.contenido_tes,        
+            fecha: t.fecha_publicacion_tes,  
+          };
+        });
+        
+        setTestimonios(testimoniosAdaptados);
+        
+        // Establecer contadores iniciales si es la primera carga
+        if (isFirstLoad.current) {
+          const contadoresActuales = {
+            Aprobado: testimoniosAdaptados.filter(t => t.status === "Aprobado").length,
+            Anulado: testimoniosAdaptados.filter(t => t.status === "Anulado").length,
+            "En espera": testimoniosAdaptados.filter(t => t.status === "En espera").length,
+          };
+          
+          setContadoresIniciales(contadoresActuales);
+          isFirstLoad.current = false;
+        }
+        
+      } catch (fallbackError) {
+        console.error("Error en fallback:", fallbackError);
+        // Podrías mostrar un mensaje de error al usuario aquí
+        alert("Error al cargar los testimonios. Por favor, intenta de nuevo.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -205,10 +287,12 @@ function Testimonials() {
 
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
-      <div className="flex items-center justify-between">
-        <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
+      {/* Header con título y AdminProfile en esquinas opuestas */}
+      <div className="flex items-center justify-between mt-6 2xl:mt-0">
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">TESTIMONIOS</h1>
+        <AdminProfile />
       </div>
-      
+
       {/* Indicador de carga */}
       {isLoading && (
         <div className="flex justify-center items-center py-4">
@@ -293,18 +377,20 @@ function Testimonials() {
         </div>
       ) : (
         <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
-          {testimoniosFiltrados.map((t) => (
-            <FeedbackCard
-              key={t.id}
-              name={t.name}
-              position={t.position}
-              status={t.status}
-              statusColor={t.statusColor}
-              imageUrl={t.imageUrl}
-              comment={t.comment}
-              onView={() => handleOpenModal(t)}
-            />
-          ))}
+          {testimoniosFiltrados.map((t) => {
+            return (
+              <FeedbackCard
+                key={t.id}
+                name={t.name}
+                position={t.position}
+                status={t.status}
+                statusColor={t.statusColor}
+                imageUrl={t.imageUrl}
+                comment={t.comment}
+                onView={() => handleOpenModal(t)}
+              />
+            );
+          })}
         </div>
       )}
 

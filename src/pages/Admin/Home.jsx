@@ -17,9 +17,7 @@ import TestimonialModal from "../../components/admin/TestimonialModal";
 import useTestimonialStats from "../../components/admin/useTestimonialStats";
 
 // Importando los assets necesarios
-import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";
-import imagePerfil from "../../assets/images/imagePerfil.png";
 
 // Componente principal de la página de inicio del administrador
 const Home = () => {
@@ -58,6 +56,7 @@ const Home = () => {
         return "En espera";
     }
   };
+  
   const fetchTestimonios = async () => {
     try {
       setLoading(true);
@@ -107,6 +106,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+
 // Función auxiliar para ordenar por fecha de forma segura
   const ordenarPorFecha = (a, b) => {
     try {
@@ -176,148 +176,30 @@ const Home = () => {
     setSelectedTestimonio(null);
   };
 
- return (
-    <div className="relative h-full m-7 sm:mt-10 md:ml-55 md:mr-15 cursor-guante">
+   return (
+    <>
+      <div className="relative h-full m-7 sm:mt-10 md:ml-55 md:mr-15 cursor-guante">
       
-      {/* AdminProfile - Siempre en la parte superior derecha */}
-      <div className="absolute top-0 right-0 z-50">
-        <AdminProfile />
-      </div>
+        {/* AdminProfile para pantallas pequeñas - Ahora dentro del contenedor principal */}
+        <div className="xl:hidden flex justify-end mb-4">
+          <AdminProfile />
+        </div>
       
-      {/* En pantallas pequeñas, primero mostrar buscador, saludo y stats */}
-      <div className="xl:hidden">
-        
-        {/* Buscador - REMOVIDO AdminProfile de aquí */}
-        <div className="flex w-full items-center pt-16">
-          {/* AdminProfile ahora está posicionado absolutamente arriba */}
-        </div>
-
-        {/* Saludo */}
-        <div className="flex items-center justify-center rounded-lg w-full mt-10 sm:mt-15 h-40 sm:h-51 bg-black/7">
-          <div className="ml-8 sm:ml-0 ">
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold basis-[10px] sm:text-3xl shrink-0">Hola Gloria!</h1>
-            <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[15px]">Es bueno verte de nuevo.</p>
-          </div>
-          <div>
-            <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain mb-8 sm:flex sm:w-65 " alt="Imagen bienvenida" />
-          </div>
-        </div>
-  
-        {/* Stats - ← USAR ESTADÍSTICAS DINÁMICAS */}
-        <div className="flex flex-row gap-4">
-          <StatCard 
-            value={statsLoading ? "..." : stats.testimonios_aprobados.toString()} 
-            label="Testimonios aprobados" 
-          />
-          <StatCard 
-            value={statsLoading ? "..." : stats.testimonios_rechazados.toString()} 
-            label="Testimonios anulados" 
-          />
-          <StatCard 
-            value="10" 
-            label="Noticias publicadas" 
-          />
-        </div>
-      </div>
-      
-      {/* Contenedor principal que se divide en xl */}
-      <div className="xl:flex xl:gap-17 xl:pt-16">
-        
-        {/* Columna izquierda en xl */}
-        <div className="xl:w-1/2">
-          {/* Columna izquierda: Saludo - visible solo en xl+ */}
-          <div className="hidden xl:flex items-center justify-center rounded-lg w-full h-51 bg-black/7">
-            <div className="ml-15">
-              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold xl:text-[23px] 2xl:text-[25px]">Hola Gloria!</h1>
-              <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium xl:text-[17px] 2xl:text-[20px]">Es bueno verte de nuevo.</p>
+        {/* En pantallas pequeñas, mostrar saludo y stats */}
+        <div className="xl:hidden">
+          {/* Saludo */}
+          <div className="flex items-center justify-center rounded-lg w-full h-40 sm:h-51 bg-black/7">
+            <div className="ml-8 sm:ml-0 ">
+              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold basis-[10px] sm:text-3xl shrink-0">Hola Gloria!</h1>
+              <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium text-[15px]">Es bueno verte de nuevo.</p>
             </div>
             <div>
-              <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain flex 2xl:gap-10 w-65 mb-8" alt="Imagen bienvenida" />
+              <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain mb-8 sm:flex sm:w-65 " alt="Imagen bienvenida" />
             </div>
           </div>
-
- 
-          {/* Sección de agregar noticia */}
-          <div className="mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 gap-2">
-            <Link to={"/home/newscreate"}>
-              <CartoonButton />
-            </Link>
-          </div>
-  
-          {/* Sección de testimonios */}
-          <div className="w-full h-auto mt-10 sm:mt-15 xl:mt-17">  
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-xl sm:text-2xl">Testimonios</h1>
-            <div className="relative flex gap-7 mt-4 sm:mt-8 font-bold">
-              <button 
-                ref={(el) => setTabRef("nuevos", el)}
-                onClick={() => setActiveTab("nuevos")} 
-                style={{ fontFamily: "'Mint Sans', sans-serif" }}
-                className={` sm:text-lg ${activeTab === "pendientes" ? "text-[#0000004D]" : "text-black"}`}
-              >
-                Recientes 
-              </button>
-              <button 
-                ref={(el) => setTabRef("pendientes", el)}
-                onClick={() => setActiveTab("pendientes")} 
-                style={{ fontFamily: "'Mint Sans', sans-serif" }}
-                className={` sm:text-lg ${activeTab === "nuevos" ? "text-[#0000004D]" : "text-black"}`}
-              >
-                Pendientes de revisión 
-              </button>
-              
-              {/* Indicador animado */}
-              <motion.div
-                className="absolute bottom-0 h-0.5 bg-[#9CE840]"
-                initial={false}
-                animate={getIndicatorStyles}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-            </div>
-  
-            {/* Contenido de testimonios */}
-            <div className="flex flex-col mt-4 gap-3">
-              {loading ? (
-                <div className="flex justify-center items-center h-32">
-                  <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-gray-500">
-                    Cargando testimonios...
-                  </p>
-                </div>
-              ) : testimoniosMostrados.length > 0 ? (
-                testimoniosMostrados.map((testimonio) => (
-                  <TestimonialCard
-                    key={testimonio.id}
-                    name={testimonio.name}
-                    position={testimonio.position}
-                    imageUrl={testimonio.imageUrl}
-                    comment={testimonio.comment}
-                    status={testimonio.status}
-                    onView={() => setSelectedTestimonio(testimonio)}
-                  />
-                ))
-              ) : (
-                <div className="flex justify-center items-center h-32 bg-black/7 rounded-lg">
-                  <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-gray-500">
-                    {activeTab === "nuevos" 
-                      ? "No hay testimonios recientes" 
-                      : "No hay testimonios pendientes de revisión"
-                    }
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-  
-   {/* Columna derecha en xl */}
-        <div className="xl:w-1/2">
-          
-          {/* Barra de búsqueda - solo visible en xl+ - REMOVIDO código duplicado */}
-          <div className="hidden xl:flex items-center justify-between gap-2">
-            {/* AdminProfile ahora está posicionado absolutamente, no aquí */}
-          </div>
-  
-          {/* Cuadros de stats - solo visibles en xl+ - ← USAR ESTADÍSTICAS DINÁMICAS */}
-          <div className="hidden xl:flex xl:flex-row gap-7 mt-4">
+    
+          {/* Stats para pantallas pequeñas */}
+          <div className="flex flex-row gap-4 mt-5">
             <StatCard 
               value={statsLoading ? "..." : stats.testimonios_aprobados.toString()} 
               label="Testimonios aprobados" 
@@ -331,28 +213,142 @@ const Home = () => {
               label="Noticias publicadas" 
             />
           </div>
-  
-          {/* Estadísticas - Solo visible en xl */}
-          <div className="hidden xl:flex xl:flex-col mt-17">
-            <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadisticas </h1>
-            <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobacion de testimonios </h1>
-            <TestimonialStatic/>
-          </div>
         </div>
+        
+        {/* Contenedor principal que se divide en xl */}
+        <div className="xl:flex xl:gap-17"> 
+          
+          {/* Columna izquierda en xl */}
+          <div className="xl:w-1/2">
+            {/* Columna izquierda: Saludo - visible solo en xl+ */}
+            <div className="hidden xl:flex items-center justify-center rounded-lg w-full h-51 bg-black/7">
+              <div className="ml-15">
+                <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold xl:text-[23px] 2xl:text-[25px]">Hola Gloria!</h1>
+                <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="font-medium xl:text-[17px] 2xl:text-[20px]">Es bueno verte de nuevo.</p>
+              </div>
+              <div>
+                <img src={imagenBienvenida} className="max-w-[212px] sm:max-w-[257px] shrink-0 grow-0 object-contain flex 2xl:gap-10 w-65 mb-8" alt="Imagen bienvenida" />
+              </div>
+            </div>
+
+            {/* Sección de agregar noticia */}
+            <div className="mt-10 sm:mt-15 xl:mt-17 w-full h-14 sm:h-18 gap-2">
+              <Link to={"/home/newscreate"}>
+                <CartoonButton />
+              </Link>
+            </div>
+    
+            {/* Sección de testimonios */}
+            <div className="w-full h-auto mt-10 sm:mt-15 xl:mt-17">  
+              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-xl sm:text-2xl">Testimonios</h1>
+              <div className="relative flex gap-7 mt-4 sm:mt-8 font-bold">
+                <button 
+                  ref={(el) => setTabRef("nuevos", el)}
+                  onClick={() => setActiveTab("nuevos")} 
+                  style={{ fontFamily: "'Mint Sans', sans-serif" }}
+                  className={` sm:text-lg ${activeTab === "pendientes" ? "text-[#0000004D]" : "text-black"}`}
+                >
+                  Recientes 
+                </button>
+                <button 
+                  ref={(el) => setTabRef("pendientes", el)}
+                  onClick={() => setActiveTab("pendientes")} 
+                  style={{ fontFamily: "'Mint Sans', sans-serif" }}
+                  className={` sm:text-lg ${activeTab === "nuevos" ? "text-[#0000004D]" : "text-black"}`}
+                >
+                  Pendientes de revisión 
+                </button>
+                
+                {/* Indicador animado */}
+                <motion.div
+                  className="absolute bottom-0 h-0.5 bg-[#9CE840]"
+                  initial={false}
+                  animate={getIndicatorStyles}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              </div>
+    
+              {/* Contenido de testimonios */}
+              <div className="flex flex-col mt-4 gap-3">
+                {loading ? (
+                  <div className="flex justify-center items-center h-32">
+                    <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-gray-500">
+                      Cargando testimonios...
+                    </p>
+                  </div>
+                ) : testimoniosMostrados.length > 0 ? (
+                  testimoniosMostrados.map((testimonio) => (
+                    <TestimonialCard
+                      key={testimonio.id}
+                      name={testimonio.name}
+                      position={testimonio.position}
+                      imageUrl={testimonio.imageUrl}
+                      comment={testimonio.comment}
+                      status={testimonio.status}
+                      onView={() => setSelectedTestimonio(testimonio)}
+                    />
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center h-32 bg-black/7 rounded-lg">
+                    <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-gray-500">
+                      {activeTab === "nuevos" 
+                        ? "No hay testimonios recientes" 
+                        : "No hay testimonios pendientes de revisión"
+                      }
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+    
+          {/* Columna derecha en xl */}
+          <div className="xl:w-1/2">
+
+            {/* AdminProfile para pantallas grandes - Posición normal dentro del flujo */}
+            <div className="hidden xl:flex xl:justify-end mb-4">
+              <AdminProfile />
+            </div>
+
+            {/* Cuadros de stats - solo visibles en xl+ - ← USAR ESTADÍSTICAS DINÁMICAS */}
+            <div className="hidden xl:flex xl:flex-row gap-7">
+              <StatCard 
+                value={statsLoading ? "..." : stats.testimonios_aprobados.toString()} 
+                label="Testimonios aprobados" 
+              />
+              <StatCard 
+                value={statsLoading ? "..." : stats.testimonios_rechazados.toString()} 
+                label="Testimonios anulados" 
+              />
+              <StatCard 
+                value="10" 
+                label="Noticias publicadas" 
+              />
+            </div>
+    
+            {/* Estadísticas - Solo visible en xl */}
+            <div className="hidden xl:flex xl:flex-col mt-17">
+              <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadísticas </h1>
+              <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobación de testimonios </h1>
+              <TestimonialStatic/>
+            </div>
+          </div>
+        </div>                                                        
+        
+        {/* Modal para ver testimonio */}
+        {selectedTestimonio && (                                                                                                                                                          
+          <TestimonialModal
+            isOpen={!!selectedTestimonio}
+            onClose={() => setSelectedTestimonio(null)}
+            testimonio={selectedTestimonio}
+            onStatusChange={handleTestimonialStatusChange}
+          />
+        )}
+        
+        {/* Sección de la barra lateral */}
+        <Sidebar />
       </div>
-      
-      {/* Modal para ver testimonio - ← USAR NUEVA FUNCIÓN PARA MANEJAR CAMBIOS */}
-      {selectedTestimonio && (
-        <TestimonialModal
-          isOpen={!!selectedTestimonio}
-          onClose={() => setSelectedTestimonio(null)}
-          testimonio={selectedTestimonio}
-          onStatusChange={handleTestimonialStatusChange}
-        />
-      )}
-      {/* Sección de la barra lateral */}
-      <Sidebar />
-    </div>
+    </>
   );  
 }  
 
