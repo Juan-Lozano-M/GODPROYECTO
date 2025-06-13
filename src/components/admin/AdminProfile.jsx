@@ -14,7 +14,7 @@ const AdminProfile = () => {
         
         <img
           src={iconAnguloAbajo}
-          className="h-2 sm:h-3 ml-1"
+          className="h-2 sm:h-3 ml-2"
           alt="Icono de menú"
         />
       </div>

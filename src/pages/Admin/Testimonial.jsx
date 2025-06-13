@@ -6,10 +6,12 @@ import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import FiltroModal from "../../components/admin/FiltroModal";
+import AdminProfile from "../../components/admin/AdminProfile";
+
 import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
-import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
+
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
@@ -205,10 +207,12 @@ function Testimonials() {
 
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
-      <div className="flex items-center justify-between">
-        <h1 className="mt-6 2xl:mt-0 text-3xl md:text-4xl xl:text-5xl font-adlam"> TESTIMONIOS </h1>
+      {/* Header con título y AdminProfile en esquinas opuestas */}
+      <div className="flex items-center justify-between mt-6 2xl:mt-0">
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">TESTIMONIOS</h1>
+        <AdminProfile />
       </div>
-      
+
       {/* Indicador de carga */}
       {isLoading && (
         <div className="flex justify-center items-center py-4">
