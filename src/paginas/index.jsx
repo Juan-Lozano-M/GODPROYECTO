@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { ChevronRight, Target, Users, BookOpen, Star, Play, Palette, UserPlus, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Nav from '../componentes/navbar';
@@ -38,7 +38,10 @@ function AnimatedWord({ word }) {
 }
 
 export default function GameOfDreams() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  
+  const [setCurrentTestimonial] = useState(0);
+
+  
 
   const testimonials = [
     {
@@ -347,7 +350,9 @@ export default function GameOfDreams() {
         </div>
       </section>
 
-      <Test></Test>
+      <div id="testimonios">
+        <Test></Test>
+      </div>
 
       
 
@@ -362,8 +367,11 @@ export default function GameOfDreams() {
           </p>
         </div>
       </section>
+
+      <div id ="nosotros">
+        <Nosotros></Nosotros>
+      </div>
       
-      <Nosotros></Nosotros>
       <Final></Final>
       
 
