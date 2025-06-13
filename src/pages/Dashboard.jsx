@@ -378,10 +378,16 @@ const Dashboard = () => {
       console.error("Error saving interests:", error);
       setInterestError("Error al guardar los intereses");
     }
-  };  // Función para generar mensaje personalizado basado en intereses
+  };  // Utilidad para obtener el "rol" base para los mensajes
+  const getBaseRole = () => {
+    return 'Soñador';
+  };
+
+  // Función para generar mensaje personalizado basado en intereses
   const getPersonalizedMessage = () => {
+    const baseRole = getBaseRole();
     if (selectedInterests.length === 0) {
-      return "Estudiante con ganas de descubrir nuevas pasiones y cambiar el mundo. ¡Selecciona tus intereses para personalizar tu experiencia!";
+      return `${baseRole} con ganas de descubrir nuevas pasiones y cambiar el mundo. ¡Selecciona tus intereses para personalizar tu experiencia!`;
     }
     
     const firstInterest = selectedInterests[0];
@@ -389,7 +395,7 @@ const Dashboard = () => {
     
     const messages = {
       "Investigación": {
-        base: "Estudiante investigador con pasión por descubrir nuevos conocimientos",
+        base: `${baseRole} investigador con pasión por descubrir nuevos conocimientos`,
         combinations: {
           "Deporte": "y mejorar el rendimiento atlético a través de la ciencia",
           "Música": "y explorar la ciencia detrás de la música y el sonido",
@@ -403,7 +409,7 @@ const Dashboard = () => {
         }
       },
       "Deporte": {
-        base: "Estudiante atlético con pasión por el movimiento y la superación personal",
+        base: `${baseRole} atlético con pasión por el movimiento y la superación personal`,
         combinations: {
           "Investigación": "y el análisis científico del rendimiento deportivo",
           "Música": "y la sincronización perfecta entre ritmo y ejercicio",
@@ -417,7 +423,7 @@ const Dashboard = () => {
         }
       },
       "Música": {
-        base: "Estudiante melómano con pasión por los sonidos y la armonía",
+        base: `${baseRole} melómano con pasión por los sonidos y la armonía`,
         combinations: {
           "Investigación": "y el estudio de la acústica y musicología",
           "Deporte": "y la motivación a través de ritmos energéticos",
@@ -431,7 +437,7 @@ const Dashboard = () => {
         }
       },
       "Arte": {
-        base: "Estudiante artístico con pasión por la creatividad y la expresión",
+        base: `${baseRole} artístico con pasión por la creatividad y la expresión`,
         combinations: {
           "Investigación": "y el análisis de movimientos artísticos",
           "Deporte": "y la belleza del movimiento corporal",
@@ -445,7 +451,7 @@ const Dashboard = () => {
         }
       },
       "Tecnología": {
-        base: "Estudiante tecnológico con pasión por la innovación digital",
+        base: `${baseRole} tecnológico con pasión por la innovación digital`,
         combinations: {
           "Investigación": "y el desarrollo de soluciones innovadoras",
           "Deporte": "y las aplicaciones tecnológicas en el fitness",
@@ -459,7 +465,7 @@ const Dashboard = () => {
         }
       },
       "Medio Ambiente": {
-        base: "Estudiante ecologista con pasión por proteger nuestro planeta",
+        base: `${baseRole} ecologista con pasión por proteger nuestro planeta`,
         combinations: {
           "Investigación": "y el desarrollo de soluciones sostenibles",
           "Deporte": "y los deportes ecológicos al aire libre",
@@ -473,7 +479,7 @@ const Dashboard = () => {
         }
       },
       "Lectura": {
-        base: "Estudiante lector con pasión por el conocimiento y las historias",
+        base: `${baseRole} lector con pasión por el conocimiento y las historias`,
         combinations: {
           "Investigación": "y la búsqueda de información en fuentes literarias",
           "Deporte": "y las biografías de grandes atletas",
@@ -487,7 +493,7 @@ const Dashboard = () => {
         }
       },
       "Fotografía": {
-        base: "Estudiante visual con pasión por capturar momentos únicos",
+        base: `${baseRole} visual con pasión por capturar momentos únicos`,
         combinations: {
           "Investigación": "y documentar descubrimientos científicos",
           "Deporte": "y la fotografía deportiva de alta velocidad",
@@ -501,7 +507,7 @@ const Dashboard = () => {
         }
       },
       "Viajes": {
-        base: "Estudiante aventurero con pasión por explorar el mundo",
+        base: `${baseRole} aventurero con pasión por explorar el mundo`,
         combinations: {
           "Investigación": "y estudiar culturas de diferentes países",
           "Deporte": "y practicar deportes extremos en cada destino",
@@ -515,7 +521,7 @@ const Dashboard = () => {
         }
       },
       "Cocina": {
-        base: "Estudiante gastronómico con pasión por los sabores y la cultura culinaria",
+        base: `${baseRole} gastronómico con pasión por los sabores y la cultura culinaria`,
         combinations: {
           "Investigación": "y el estudio de la gastronomía molecular",
           "Deporte": "y la nutrición para el rendimiento atlético",
@@ -538,7 +544,7 @@ const Dashboard = () => {
       return `${baseMessage}. ¡Futuro agente de cambio!`;
     }
     
-    return "Estudiante con intereses únicos y ganas de cambiar el mundo. ¡Futuro defensor de tus pasiones!";
+    return `${baseRole} con intereses únicos y ganas de cambiar el mundo. ¡Futuro defensor de tus pasiones!`;
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import iconAnguloAbajo from "../../assets/icons/iconAnguloAbajo.png";
 
@@ -112,7 +112,7 @@ const AdminProfile = () => {
           <img
             src={userPhoto}
             alt="Admin Profile"
-            className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg object-cover border-2"
+            className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg object-cover "
             onError={handleImageError}
             onLoad={() => console.log('Admin image loaded successfully:', userPhoto)}
           />
