@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ActionRedirector = () => {
   const [searchParams] = useSearchParams();
@@ -11,11 +11,9 @@ const ActionRedirector = () => {
     if (!mode || !oobCode) {
       navigate('/');
       return;
-    }
-
-    // Redirige según el tipo de acción
-    if (mode === 'verifyEmail') {
-      navigate(`/verify-email?oobCode=${oobCode}`);
+    }    // Redirige según el tipo de acción
+    if (mode === 'verifyEmail' || mode === 'verifyAndChangeEmail') {
+      navigate(`/verify-email?oobCode=${oobCode}&mode=${mode}`);
     } else if (mode === 'resetPassword') {
       navigate(`/login/resetpassword?oobCode=${oobCode}`);
     } else {

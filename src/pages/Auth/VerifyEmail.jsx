@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { auth } from '../../firebaseConfig';
-import { checkActionCode, applyActionCode } from 'firebase/auth';
 import axios from 'axios';
-import { Check, X, Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { applyActionCode, checkActionCode } from 'firebase/auth';
+import { ArrowRight, Check, Loader2, X } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { auth } from '../../firebaseConfig';
 
 const VerifyEmail = () => {
-  const [message, setMessage] = useState("Verificando email...");
-  const [loading, setLoading] = useState(true);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams(); 
   const navigate = useNavigate();
   const oobCode = searchParams.get('oobCode');
-
+  const mode = searchParams.get('mode') || 'verifyEmail'; // Detectar el modo
+  const isEmailChange = mode === 'verifyAndChangeEmail';
+  
+  const [message, setMessage] = useState(() => 
+    mode === 'verifyAndChangeEmail' ? "Verificando cambio de email..." : "Verificando email..."
+  );
+  const [loading, setLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
   useEffect(() => {
     const verifyEmail = async () => {
       if (!oobCode) {
@@ -21,10 +25,44 @@ const VerifyEmail = () => {
         return;
       }
 
-      try {
-        const info = await checkActionCode(auth, oobCode);
+      // Validar formato básico del código
+      if (oobCode.length < 10) {
+        setMessage("El código de verificación parece estar incompleto.");
+        setLoading(false);
+        return;
+      }      try {
+        console.log('Iniciando verificación con código:', oobCode);
+        console.log('Modo:', mode);
+        
+        // Primero verificar si el código es válido
+        let info;
+        try {
+          info = await checkActionCode(auth, oobCode);
+          console.log('Información del código:', info);
+        } catch (checkError) {
+          console.error('Error en checkActionCode:', checkError);
+          throw checkError; // Re-lanzar el error para manejarlo en el catch principal
+        }
+        
         const newEmail = info.data.email;
-        await applyActionCode(auth, oobCode);
+        console.log('Email a verificar:', newEmail);
+        
+        // Solo aplicar el código si la verificación inicial fue exitosa
+        try {
+          await applyActionCode(auth, oobCode);
+          console.log('Código aplicado exitosamente');
+        } catch (applyError) {
+          console.error('Error en applyActionCode:', applyError);
+          // Si el error es que el código ya fue usado, pero checkActionCode pasó,
+          // puede ser que el código ya se aplicó anteriormente
+          if (applyError.code === 'auth/invalid-action-code') {
+            console.log('El código puede haber sido usado anteriormente, pero el email parece válido');
+            // Continúar con el flujo como si fuera exitoso
+          } else {
+            throw applyError;
+          }
+        }
+        
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         let currentUser = auth.currentUser;
@@ -32,9 +70,8 @@ const VerifyEmail = () => {
           await auth.authStateReady();
           currentUser = auth.currentUser;
         }
-        
-        if (!currentUser) {
-          setMessage("Email verificado exitosamente");
+          if (!currentUser) {
+          setMessage(isEmailChange ? "Cambio de email verificado exitosamente" : "Email verificado exitosamente");
           setIsSuccess(true);
           setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
@@ -48,35 +85,44 @@ const VerifyEmail = () => {
           });
 
           if (response.data.status === 'success') {
-            setMessage("Email verificado exitosamente");
+            setMessage(isEmailChange ? "Cambio de email completado exitosamente" : "Email verificado exitosamente");
             setIsSuccess(true);
           } else {
             setMessage("Verificación completada con advertencias");
           }
         } catch (dbError) {
           console.error('Error updating database:', dbError);
-          setMessage("Email verificado exitosamente");
+          setMessage(isEmailChange ? "Cambio de email completado exitosamente" : "Email verificado exitosamente");
           setIsSuccess(true);
-        }
-
-      } catch (error) {
+        }      } catch (error) {
         console.error('Error verifying email:', error);
-        if (error.code === 'auth/expired-action-code') {
-          setMessage("El enlace ha expirado");
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = "Error en la verificación";
+          if (error.code === 'auth/expired-action-code') {
+          errorMessage = isEmailChange 
+            ? "El enlace de cambio de email ha expirado. Solicita un nuevo cambio desde tu perfil." 
+            : "El enlace de verificación ha expirado. Solicita un nuevo enlace.";
         } else if (error.code === 'auth/invalid-action-code') {
-          setMessage("Enlace inválido");
+          errorMessage = isEmailChange
+            ? "El enlace de cambio de email es inválido o ya fue usado. Ve a tu perfil y solicita un nuevo cambio de email."
+            : "El enlace de verificación es inválido o ya fue usado. Revisa tu email o regístrate nuevamente si es necesario.";
         } else if (error.code === 'auth/user-disabled') {
-          setMessage("Cuenta deshabilitada");
+          errorMessage = "Esta cuenta ha sido deshabilitada. Contacta al soporte.";
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = "No se encontró la cuenta asociada a este enlace.";
         } else {
-          setMessage("Error en la verificación");
+          errorMessage = `Error inesperado: ${error.message}`;
         }
+        
+        setMessage(errorMessage);
+        setIsSuccess(false);
       } finally {
         setLoading(false);
       }
-    };
-
-    verifyEmail();
-  }, [oobCode, navigate]);
+    };    verifyEmail();
+  }, [oobCode, navigate, isEmailChange, mode]);
 
   return (
     <div className="min-h-screen bg-[#9CE840] flex items-center justify-center p-4">
@@ -100,17 +146,15 @@ const VerifyEmail = () => {
                 <X className="w-6 h-6 text-red-500" />
               </div>
             )}
-          </div>
-
-          {/* Content */}
+          </div>          {/* Content */}
           <div className="text-center space-y-4 mb-8">
             <h1 className="text-xl font-semibold text-gray-900">
-              {loading ? "Verificando..." : message}
+              {loading ? (isEmailChange ? "Verificando cambio..." : "Verificando...") : message}
             </h1>
             
             {!loading && (isSuccess || message.includes('exitosamente')) && (
               <p className="text-sm text-gray-500">
-                Tu cuenta ha sido verificada correctamente
+                {isEmailChange ? "Tu cambio de email ha sido procesado correctamente" : "Tu cuenta ha sido verificada correctamente"}
               </p>
             )}
             
@@ -119,25 +163,63 @@ const VerifyEmail = () => {
                 Por favor espera un momento
               </p>
             )}
-          </div>
-
-          {/* Actions */}
+          </div>          {/* Actions */}
           {!loading && (
             <div className="space-y-3">
-              <button 
-                onClick={() => navigate('/dashboard')}
-                className="w-full bg-black text-white py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 group"
-              >
-                Continuar
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-              
-              <button 
-                onClick={() => navigate('/login')}
-                className="w-full bg-transparent text-gray-700 py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 border border-gray-200"
-              >
-                Iniciar Sesión
-              </button>
+              {(isSuccess || message.includes('exitosamente')) ? (
+                <>
+                  <button 
+                    onClick={() => navigate('/dashboard')}
+                    className="w-full bg-black text-white py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 group"
+                  >
+                    Continuar
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                  
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="w-full bg-transparent text-gray-700 py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 border border-gray-200"
+                  >
+                    Iniciar Sesión
+                  </button>
+                </>              ) : (
+                <>
+                  {message.includes('inválido') || message.includes('expirado') ? (
+                    isEmailChange ? (
+                      <button 
+                        onClick={() => navigate('/dashboard')}
+                        className="w-full bg-[#87C232] text-white py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-[#9CE840] transition-all duration-200 flex items-center justify-center gap-2 group"
+                      >
+                        Ir al Perfil para Nuevo Enlace
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => navigate('/register')}
+                        className="w-full bg-[#87C232] text-white py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-[#9CE840] transition-all duration-200 flex items-center justify-center gap-2 group"
+                      >
+                        Registrarse Nuevamente
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    )
+                  ) : (
+                    <button 
+                      onClick={() => navigate('/dashboard')}
+                      className="w-full bg-black text-white py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 group"
+                    >
+                      Ir al Dashboard
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  )}
+                  
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="w-full bg-transparent text-gray-700 py-3.5 px-4 rounded-2xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 border border-gray-200"
+                  >
+                    Volver al Login
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>

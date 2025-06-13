@@ -1,14 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
+import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  linkWithCredential,
   EmailAuthProvider,
-  fetchSignInMethodsForEmail
+  fetchSignInMethodsForEmail,
+  getAuth,
+  GoogleAuthProvider,
+  linkWithCredential,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
 } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -35,15 +36,10 @@ googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 
-export { 
-  auth, 
-  googleProvider, 
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  linkWithCredential,
-  EmailAuthProvider,
+export {
+  auth, createUserWithEmailAndPassword, EmailAuthProvider,
   fetchSignInMethodsForEmail,
-  GoogleAuthProvider
+  GoogleAuthProvider, googleProvider, linkWithCredential, signInWithEmailAndPassword, signInWithPopup,
+  signOut
 };
 

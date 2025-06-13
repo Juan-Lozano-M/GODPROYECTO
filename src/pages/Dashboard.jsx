@@ -124,13 +124,20 @@ const Dashboard = () => {
             validateStatus: (status) => {
               return status >= 200 && status < 300;
             }
-          });
-    
-          if (response.data.status === 'success') {
+          });          if (response.data.status === 'success') {
             const userData = response.data.user;
             setUserName(userData.nombre_usu);
             setUserEmail(userData.correo_usu);
-            setProfileImage(userData.profile_image || user.photoURL || "");
+            
+            // Establecer la imagen de perfil y guardarla en localStorage
+            const profileImageUrl = userData.profile_image || user.photoURL || "";
+            setProfileImage(profileImageUrl);
+            
+            // Guardar en localStorage para que el Navbar pueda acceder
+            if (profileImageUrl) {
+              localStorage.setItem('userPhoto', profileImageUrl);
+              localStorage.setItem('profileImage', profileImageUrl);
+            }
             
             // Agregar esta línea para cargar la fecha de nacimiento
             setUserBirthdate(userData.fecha_nacimiento || "");
@@ -371,13 +378,167 @@ const Dashboard = () => {
       console.error("Error saving interests:", error);
       setInterestError("Error al guardar los intereses");
     }
-  };
-
-  const handleEditProfileInterests = () => {
-    if (isEditingProfileInterests) {
-      handleSaveInterests();
+  };  // Función para generar mensaje personalizado basado en intereses
+  const getPersonalizedMessage = () => {
+    if (selectedInterests.length === 0) {
+      return "Estudiante con ganas de descubrir nuevas pasiones y cambiar el mundo. ¡Selecciona tus intereses para personalizar tu experiencia!";
     }
-    setIsEditingProfileInterests(!isEditingProfileInterests);
+    
+    const firstInterest = selectedInterests[0];
+    const secondInterest = selectedInterests[1];
+    
+    const messages = {
+      "Investigación": {
+        base: "Estudiante investigador con pasión por descubrir nuevos conocimientos",
+        combinations: {
+          "Deporte": "y mejorar el rendimiento atlético a través de la ciencia",
+          "Música": "y explorar la ciencia detrás de la música y el sonido",
+          "Arte": "y analizar las conexiones entre arte y ciencia",
+          "Tecnología": "y desarrollar innovaciones tecnológicas",
+          "Medio Ambiente": "y encontrar soluciones sostenibles para el planeta",
+          "Lectura": "y profundizar en el conocimiento a través de la literatura académica",
+          "Fotografía": "y capturar la ciencia a través de imágenes",
+          "Viajes": "y explorar diferentes culturas y métodos de investigación",
+          "Cocina": "y estudiar la gastronomía molecular"
+        }
+      },
+      "Deporte": {
+        base: "Estudiante atlético con pasión por el movimiento y la superación personal",
+        combinations: {
+          "Investigación": "y el análisis científico del rendimiento deportivo",
+          "Música": "y la sincronización perfecta entre ritmo y ejercicio",
+          "Arte": "y la expresión artística a través del movimiento",
+          "Tecnología": "y las innovaciones en el entrenamiento deportivo",
+          "Medio Ambiente": "y los deportes al aire libre sostenibles",
+          "Lectura": "y el estudio de la psicología deportiva",
+          "Fotografía": "y capturar la emoción del deporte",
+          "Viajes": "y explorar deportes tradicionales de diferentes culturas",
+          "Cocina": "y la nutrición deportiva óptima"
+        }
+      },
+      "Música": {
+        base: "Estudiante melómano con pasión por los sonidos y la armonía",
+        combinations: {
+          "Investigación": "y el estudio de la acústica y musicología",
+          "Deporte": "y la motivación a través de ritmos energéticos",
+          "Arte": "y la fusión de expresiones artísticas",
+          "Tecnología": "y la producción musical digital",
+          "Medio Ambiente": "y los sonidos de la naturaleza",
+          "Lectura": "y la literatura musical y biografías de artistas",
+          "Fotografía": "y capturar la esencia visual de la música",
+          "Viajes": "y descubrir la música tradicional del mundo",
+          "Cocina": "y crear mientras suena la melodía perfecta"
+        }
+      },
+      "Arte": {
+        base: "Estudiante artístico con pasión por la creatividad y la expresión",
+        combinations: {
+          "Investigación": "y el análisis de movimientos artísticos",
+          "Deporte": "y la belleza del movimiento corporal",
+          "Música": "y la sinestesia entre sonido y color",
+          "Tecnología": "y el arte digital innovador",
+          "Medio Ambiente": "y el arte ecológico sostenible",
+          "Lectura": "y la literatura como forma de arte",
+          "Fotografía": "y capturar la belleza en cada momento",
+          "Viajes": "y descubrir el arte en cada cultura",
+          "Cocina": "y la gastronomía como expresión artística"
+        }
+      },
+      "Tecnología": {
+        base: "Estudiante tecnológico con pasión por la innovación digital",
+        combinations: {
+          "Investigación": "y el desarrollo de soluciones innovadoras",
+          "Deporte": "y las aplicaciones tecnológicas en el fitness",
+          "Música": "y la creación de experiencias sonoras digitales",
+          "Arte": "y el arte generativo por computadora",
+          "Medio Ambiente": "y las tecnologías verdes del futuro",
+          "Lectura": "y la literatura de ciencia ficción",
+          "Fotografía": "y la fotografía computacional avanzada",
+          "Viajes": "y las aplicaciones de viaje inteligentes",
+          "Cocina": "y la gastronomía molecular tecnológica"
+        }
+      },
+      "Medio Ambiente": {
+        base: "Estudiante ecologista con pasión por proteger nuestro planeta",
+        combinations: {
+          "Investigación": "y el desarrollo de soluciones sostenibles",
+          "Deporte": "y los deportes ecológicos al aire libre",
+          "Música": "y los sonidos naturales del ecosistema",
+          "Arte": "y el arte con materiales reciclados",
+          "Tecnología": "y las innovaciones verdes del futuro",
+          "Lectura": "y la literatura ambiental inspiradora",
+          "Fotografía": "y documentar la belleza natural",
+          "Viajes": "y el turismo sostenible responsable",
+          "Cocina": "y la gastronomía orgánica local"
+        }
+      },
+      "Lectura": {
+        base: "Estudiante lector con pasión por el conocimiento y las historias",
+        combinations: {
+          "Investigación": "y la búsqueda de información en fuentes literarias",
+          "Deporte": "y las biografías de grandes atletas",
+          "Música": "y las letras que tocan el alma",
+          "Arte": "y la literatura como forma de arte",
+          "Tecnología": "y los libros digitales del futuro",
+          "Medio Ambiente": "y las obras sobre conservación",
+          "Fotografía": "y los fotolibros que cuentan historias",
+          "Viajes": "y las guías de lugares extraordinarios",
+          "Cocina": "y los libros de recetas tradicionales"
+        }
+      },
+      "Fotografía": {
+        base: "Estudiante visual con pasión por capturar momentos únicos",
+        combinations: {
+          "Investigación": "y documentar descubrimientos científicos",
+          "Deporte": "y la fotografía deportiva de alta velocidad",
+          "Música": "y capturar la emoción de los conciertos",
+          "Arte": "y la fotografía como expresión artística",
+          "Tecnología": "y las técnicas de fotografía digital",
+          "Medio Ambiente": "y la fotografía de naturaleza salvaje",
+          "Lectura": "y los fotolibros narrativos",
+          "Viajes": "y capturar la esencia de cada destino",
+          "Cocina": "y la fotografía gastronómica apetitosa"
+        }
+      },
+      "Viajes": {
+        base: "Estudiante aventurero con pasión por explorar el mundo",
+        combinations: {
+          "Investigación": "y estudiar culturas de diferentes países",
+          "Deporte": "y practicar deportes extremos en cada destino",
+          "Música": "y descubrir la música tradicional mundial",
+          "Arte": "y explorar el arte en museos internacionales",
+          "Tecnología": "y usar apps innovadoras de viaje",
+          "Medio Ambiente": "y practicar turismo sostenible",
+          "Lectura": "y leer sobre cada lugar que visita",
+          "Fotografía": "y capturar la esencia de cada cultura",
+          "Cocina": "y probar la gastronomía auténtica local"
+        }
+      },
+      "Cocina": {
+        base: "Estudiante gastronómico con pasión por los sabores y la cultura culinaria",
+        combinations: {
+          "Investigación": "y el estudio de la gastronomía molecular",
+          "Deporte": "y la nutrición para el rendimiento atlético",
+          "Música": "y cocinar al ritmo de buena música",
+          "Arte": "y la presentación artística de platos",
+          "Tecnología": "y las innovaciones en cocina moderna",
+          "Medio Ambiente": "y la cocina sostenible con ingredientes locales",
+          "Lectura": "y los libros de recetas tradicionales",
+          "Fotografía": "y la fotografía gastronómica profesional",
+          "Viajes": "y descubrir sabores auténticos del mundo"
+        }
+      }
+    };
+    
+    if (messages[firstInterest]) {
+      const baseMessage = messages[firstInterest].base;
+      if (secondInterest && messages[firstInterest].combinations[secondInterest]) {
+        return `${baseMessage} ${messages[firstInterest].combinations[secondInterest]}. ¡Futuro agente de cambio!`;
+      }
+      return `${baseMessage}. ¡Futuro agente de cambio!`;
+    }
+    
+    return "Estudiante con intereses únicos y ganas de cambiar el mundo. ¡Futuro defensor de tus pasiones!";
   };
 
   return (
@@ -389,9 +550,8 @@ const Dashboard = () => {
             <div className="z-10">
               <h2 className="text-3xl font-semibold text-[#9CE840] mb-5">
                 Bienvenido {userName}
-              </h2>
-              <p className="text-gray-300 text-sm max-w-md">
-                Estudiante de último año con pasión por el medio ambiente y ganas de cambiar el mundo. ¡Futuro defensor del planeta!
+              </h2>              <p className="text-gray-300 text-sm max-w-md">
+                {getPersonalizedMessage()}
               </p>
               <div className="flex gap-4 mt-4">
 

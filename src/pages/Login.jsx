@@ -10,12 +10,10 @@ import instagramLogo from "../assets/logos/logoInstagram.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import Cursor from "../components/Cursor";
 import InputField from "../components/InputField";
 import {
   auth,
-  fetchSignInMethodsForEmail,
-  googleProvider,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup
 } from "../firebaseConfig";
@@ -94,11 +92,29 @@ const Login = () => {
           setMensaje("Error en el inicio de sesión. Por favor, verifique sus credenciales.");
       }
     }
-  };
-
-  const handleGoogleLogin = async () => {
+  };  const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      // 1. Limpiar completamente cualquier sesión anterior
+      await auth.signOut();
+      
+      // 2. Limpiar localStorage para eliminar cualquier token almacenado
+      localStorage.clear();
+        // 3. Crear un nuevo provider con configuraciones específicas
+      const freshGoogleProvider = new GoogleAuthProvider();
+      freshGoogleProvider.setCustomParameters({
+        prompt: 'select_account',
+        access_type: 'offline',
+        include_granted_scopes: 'true'
+      });
+      
+      // 4. Agregar scopes específicos para forzar re-autenticación
+      freshGoogleProvider.addScope('email');
+      freshGoogleProvider.addScope('profile');
+      
+      // 5. Esperar un momento para que se complete el logout
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const result = await signInWithPopup(auth, freshGoogleProvider);
       const user = result.user;
       const idToken = await user.getIdToken();
 
@@ -126,6 +142,13 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Google login error:", error);
+      
+      // Si el usuario cancela el login, no mostrar error
+      if (error.code === 'auth/popup-closed-by-user' || 
+          error.code === 'auth/cancelled-popup-request') {
+        return;
+      }
+      
       setMensaje("Error al iniciar sesión con Google. Por favor, intente nuevamente.");
     }
   };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { auth } from '../../firebaseConfig';
 import axios from '../../config/axiosConfig';
+import { auth } from '../../firebaseConfig';
 import Toast from '../alertas/Toast';
 
 const ProfileImageUpload = ({ onImageUpdate }) => {
@@ -58,11 +58,18 @@ const ProfileImageUpload = ({ onImageUpdate }) => {
           { 
             headers: { 'Authorization': `Bearer ${idToken}` }
           }
-        );
-
-        if (updateResponse.data.status === 'success') {
+        );        if (updateResponse.data.status === 'success') {
+          // Actualizar localStorage para que el Navbar se sincronice
+          localStorage.setItem('userPhoto', uploadResponse.data.url);
+          localStorage.setItem('profileImage', uploadResponse.data.url);
+          
           onImageUpdate(uploadResponse.data.url);
           handleShowToast('¡Éxito!', 'Foto de perfil actualizada con éxito');
+          
+          // Disparar evento personalizado para notificar al Navbar
+          window.dispatchEvent(new CustomEvent('profileImageUpdated', {
+            detail: { imageUrl: uploadResponse.data.url }
+          }));
         } else {
           setError('Failed to update profile');
         }

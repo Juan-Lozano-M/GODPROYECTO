@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import DataStat from "../../components/admin/DataStat";
 import FilterButton from "../../components/admin/FilterButton";
 import FiltroModal from "../../components/admin/FiltroModal";
-import Search from "../../components/admin/Search";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import NoticeCard from "../../components/NoticeCard";
 import Sidebar from "../../components/Sidebar";
@@ -15,7 +14,7 @@ import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.pn
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
 import iconNotResult from "../../assets/icons/iconNotResult.png";
 
-function Notices() {
+function Notices() {  
   const [noticias, setNoticias] = useState([]);
   const [loading, setLoading] = useState(true);
   const filters = ["Publicada", "Eliminada", "Archivada"];
@@ -122,7 +121,7 @@ function Notices() {
       {/* Header con buscador y estadísticas */}
       <div className="flex-none mb-2">
         <div className="flex w-full items-center">
-          <Search />
+       
         </div>
         <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl xl:mt-1 xl:text-[42px] 2xl:text-5xl font-adlam">
           NOTICIAS
