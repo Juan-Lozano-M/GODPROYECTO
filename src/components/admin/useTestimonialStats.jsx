@@ -5,7 +5,7 @@ const useTestimonialStats = () => {
   const [stats, setStats] = useState({
     testimonios_aprobados: 0,
     testimonios_rechazados: 0,
-    noticias_publicadas: 0, // ← NUEVA ESTADÍSTICA
+    noticias_publicadas: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,8 +15,11 @@ const useTestimonialStats = () => {
       setLoading(true);
       setError(null);
 
-      // Solo obtener testimonios por ahora
-      const testimoniosResponse = await axios.get("http://localhost:5000/api/testimonials");
+      // Obtener testimonios y noticias en paralelo
+      const [testimoniosResponse, noticiasResponse] = await Promise.all([
+        axios.get("http://localhost:5000/api/testimonials"),
+        axios.get("http://localhost:5000/api/news/get-news") // ← NUEVA LLAMADA PARA NOTICIAS
+      ]);
 
       // Procesar estadísticas de testimonios
       const testimonios = testimoniosResponse.data || [];
@@ -30,8 +33,10 @@ const useTestimonialStats = () => {
         return estado === 'anulado' || estado === 'rechazado' || estado === 'rejected';
       }).length;
 
-      // ← TEMPORAL: Valor fijo para noticias hasta tener el endpoint correcto
-      const noticiasPublicadas = 10; // Cambia esto cuando tengas el endpoint correcto
+      // Procesar estadísticas de noticias
+      // La respuesta tiene el formato: { status: 'success', news: [...] }
+      const noticias = noticiasResponse.data?.news || [];
+      const noticiasPublicadas = noticias.length; // Todas las noticias de esta ruta están publicadas
 
       setStats({
         testimonios_aprobados: testimoniosAprobados,

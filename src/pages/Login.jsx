@@ -60,6 +60,19 @@ const Login = () => {
         localStorage.setItem("firebaseUID", firebaseUser.uid);
         localStorage.setItem("userRole", response.data.user.role); // Store the role
 
+        localStorage.setItem("profileImage", response.data.user.profile_image || "");
+        localStorage.setItem("userPhoto", response.data.user.profile_image || "");
+
+        const event = new CustomEvent('profileImageUpdated', {
+          detail: { imageUrl: response.data.user.profile_image }
+        });
+        window.dispatchEvent(event);
+          if (response.data.user.role === "Admin") {
+            navigate("/home");
+          } else {
+            navigate("/dashboard");
+          }
+
         localStorage.setItem("authToken", idToken);
 
         // Check the user's role from the database response
