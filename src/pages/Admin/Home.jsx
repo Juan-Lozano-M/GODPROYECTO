@@ -7,7 +7,7 @@ import axios from "axios"; // Importamos axios
 // Importando los componentes necesarios
 import AdminProfile from "../../components/admin/AdminProfile";
 import CartoonButton from "../../components/buttons/CartoonButton";
-import TestimonialStatic from "../../components/admin/StaticsTestimonial";
+import TestimonialStaticHome from "../../components/admin/TestimonialStaticsHome";
 import Sidebar from "../../components/Sidebar";
 import StatCard from "../../components/StatCard";
 import TestimonialCard from "../../components/TestimonialCard";
@@ -375,7 +375,7 @@ const Home = () => {
             <div className="hidden xl:flex xl:flex-col mt-17">
               <h1 style={{ fontFamily: "'Mint Sans', sans-serif" }} className="font-bold text-2xl mb-5"> Estadísticas </h1>
               <h1 style={{ fontFamily: "'Quicksand', sans-serif" }} className=" text-lg mb-5"> Tasa de aprobación de testimonios </h1>
-              <TestimonialStatic/>
+              <TestimonialStaticHome/>
             </div>
           </div>
         </div>                                                        

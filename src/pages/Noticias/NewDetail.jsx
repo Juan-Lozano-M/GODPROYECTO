@@ -211,7 +211,7 @@ export default function NewDetail() {
               {/* Share Section */}
               <CartoonCard title="Compartir">
                 <div className="flex space-x-4">
-                  <ShareButton/>
+                  <ShareButton newsId={news.id_noticia} />
                 </div>
               </CartoonCard>
 

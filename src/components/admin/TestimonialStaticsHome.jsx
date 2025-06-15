@@ -11,7 +11,7 @@ import {
     { name: 'Jun', aprobados: 36, total: 50 },
   ];
   
-  export default function TestimonialStatics() {
+  export default function TestimonialStaticsHome() {
     return (
       <div className="bg-black/3 p-6 rounded-2xl shadow-md w-full max-w-xl">
 
