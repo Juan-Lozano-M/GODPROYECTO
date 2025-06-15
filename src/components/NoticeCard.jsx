@@ -17,13 +17,11 @@ const NoticeCard = ({ image, title, author, date, summary, status, isSelected, o
     window.open(newsUrl, '_blank');
   };
 
-  return (
-    <div
-      className={`flex items-center w-full h-20 sm:h-30 lg:h-40 xl:h-36 2xl:h-40 bg-black/7 rounded-r-lg rounded-l-3xl cursor-pointer border-2 transition-all ${isSelected ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
-      onClick={onSelect}
-    >
+  return (    <div
+      className={`flex items-center w-full h-20 sm:h-30 lg:h-40 xl:h-36 2xl:h-40 bg-black/7 rounded-r-lg rounded-l-2xl cursor-pointer border-2 transition-all ${isSelected ? 'border-[#87C232] shadow-lg' : 'border-transparent'}`}
+      onClick={onSelect}    >
       {/* Imagen de la noticia */}
-      <img src={image} alt="Noticia imagen" className="h-20 w-20 sm:w-30 sm:h-30 lg:w-50 lg:h-full xl:w-44 xl:h-full 2xl:w-50 2xl:h-full rounded-lg" />
+      <img src={image} alt="Noticia imagen" className="h-20 w-20 sm:w-30 sm:h-30 lg:w-50 lg:h-full xl:w-44 xl:h-full 2xl:w-50 2xl:h-full rounded-l-2xl" />
       
       {/* Contenido general */}
       <div className="flex justify-between items-center w-full h-full">
@@ -31,7 +29,7 @@ const NoticeCard = ({ image, title, author, date, summary, status, isSelected, o
           <h1 className="text-[13px] sm:text-xl lg:text-2xl xl:text-xl 2xl:text-[27px] font-adlam">
             {title}
           </h1>
-          <p className="text-[7px] sm:text-[12px] xl:text-[16px] lg:text-lg xl:text-[15px] 2xl:text-[16px] font-adlam text-[#3E3E3E]">
+          <p className="text-[7px] sm:text-[12px] xl:text-[16px] lg:text-lg  2xl:text-[16px] font-adlam text-[#3E3E3E]">
             Redactado por: {author} - {date}
           </p>
           <p className="line-clamp-1 text-[8px] sm:text-sm lg:text-lg xl:text-base 2xl:text-lg font-adlam mt-2 sm:mt-3 lg:mt-5 xl:mt-3 2xl:mt-5">{summary}</p>
