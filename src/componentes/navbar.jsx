@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import godLogo from '../assets/png_God 1.png';
 
@@ -18,6 +18,24 @@ function Navbar() {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  // Prevenir scroll del body cuando el menú móvil está abierto
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [menuOpen]);
+
+  // Cerrar menú al cambiar de ruta
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -32,11 +50,9 @@ function Navbar() {
     setMenuOpen(false);
     
     if (item.isScroll) {
-      // Si estamos en la página principal, hacer scroll
       if (location.pathname === '/' || location.pathname === '') {
         scrollToSection(item.scrollId);
       } else {
-        // Si estamos en otra página, navegar al inicio y luego hacer scroll
         navigate('/');
         setTimeout(() => {
           scrollToSection(item.scrollId);
@@ -49,8 +65,9 @@ function Navbar() {
     <>
       <nav className="flex justify-between items-center px-6 md:px-16 py-6 relative bg-white z-40">
         {/* Logo (escritorio) */}
-        <div 
-          className="relative ml-4 group w-[40px] h-[40px] hidden md:block"
+        <Link
+          to="/"
+          className="relative ml-4 group w-[40px] h-[40px] hidden md:block cursor-pointer"
           onMouseEnter={() => setLogoHovered(true)}
           onMouseLeave={() => setLogoHovered(false)}
         >
@@ -75,7 +92,19 @@ function Navbar() {
               game of dreams
             </span>
           </div>
-        </div>
+        </Link>
+
+        {/* Logo móvil */}
+        <Link to="/" className="flex items-center md:hidden cursor-pointer">
+          <div className="w-10 h-10 bg-[#9CE840] rounded-full flex items-center justify-center">
+            <img
+              src={godLogo}
+              alt="GOD Logo"
+              className="w-5 h-5"
+            />
+          </div>
+          <span className="ml-3 font-bold text-[#2E1E68] text-lg">GOD</span>
+        </Link>
 
         {/* Menú de escritorio */}
         <ul className="hidden md:flex space-x-6 text-[#2E1E68] font-medium mr-10">
@@ -103,72 +132,97 @@ function Navbar() {
             </li>
           ))}
         </ul>
+      </nav>
 
-        {/* Menú móvil */}
-        <div
-          className={`fixed top-0 left-0 w-2/3 h-full bg-white shadow-lg border-r border-black transition-transform duration-500 z-50 ${
-            menuOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+      {/* Botón hamburguesa sticky solo en móvil */}
+      <div className="md:hidden fixed top-6 right-6 z-[60]">
+        <button
+          onClick={toggleMenu}
+          className="w-12 h-12 bg-[#9CE840] border-1 border-black flex flex-col items-center justify-center rounded transition-all duration-300 shadow-lg"
         >
-          <ul className="flex flex-col items-start p-8 text-[#2E1E68] space-y-6 font-semibold text-lg">
-            {menuItems.map((item) => (
-              <li key={item.name} className="cursor-pointer w-full">
+          <span
+            className={`block w-6 h-[2px] bg-white mb-1 transition-all duration-300 ${
+              menuOpen ? 'rotate-45 translate-y-[5px]' : ''
+            }`}
+          ></span>
+          <span
+            className={`block w-6 h-[2px] bg-white transition-all duration-300 ${
+              menuOpen ? 'opacity-0' : ''
+            }`}
+          ></span>
+          <span
+            className={`block w-6 h-[2px] bg-white mt-1 transition-all duration-300 ${
+              menuOpen ? '-rotate-45 -translate-y-[5px]' : ''
+            }`}
+          ></span>
+        </button>
+      </div>
+
+      {/* Overlay */}
+      {menuOpen && (
+        <div
+          onClick={toggleMenu}
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300"
+        />
+      )}
+
+      {/* Menú móvil rediseñado */}
+      <div
+        className={`fixed top-0 right-0 w-full max-w-sm h-full bg-white shadow-2xl transition-transform duration-300 z-50 md:hidden ${
+          menuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Header del menú móvil */}
+        <div className="flex items-center justify-between p-8 ">
+          
+         
+        </div>
+
+        {/* Lista de navegación móvil */}
+        <nav className="px-6 py-4">
+          <ul className="space-y-2">
+            {menuItems.map((item, index) => (
+              <li key={item.name}>
                 {item.isScroll ? (
                   <button
                     onClick={() => handleNavClick(item)}
-                    className={`mobile-nav-button w-full text-left ${
-                      location.pathname === item.path ? "text-[#9CE840]" : ""
+                    className={`mobile-nav-item ${
+                      location.pathname === item.path ? "active" : ""
                     }`}
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    {item.name}
+                    <span className="mobile-nav-text">{item.name}</span>
+                    <svg className="mobile-nav-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </button>
                 ) : (
                   <Link
                     to={item.path}
                     onClick={() => setMenuOpen(false)}
-                    className={`mobile-nav-link block w-full ${
-                      location.pathname === item.path ? "text-[#9CE840]" : ""
+                    className={`mobile-nav-item ${
+                      location.pathname === item.path ? "active" : ""
                     }`}
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    {item.name}
+                    <span className="mobile-nav-text">{item.name}</span>
+                    <svg className="mobile-nav-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </Link>
                 )}
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
-        {/* Botón hamburguesa */}
-        <div className="md:hidden z-[60]">
-          <button
-            onClick={toggleMenu}
-            className="w-10 h-10 bg-[#9CE840] border-1 border-black flex flex-col items-center justify-center rounded transition-all duration-300"
-          >
-            <span
-              className={`block w-6 h-[2px] bg-white mb-1 transition-all duration-300 ${
-                menuOpen ? 'rotate-45 translate-y-[5px]' : ''
-              }`}
-            ></span>
-            <span
-              className={`block w-6 h-[2px] bg-white transition-all duration-300 ${
-                menuOpen ? 'opacity-0' : ''
-              }`}
-            ></span>
-            <span
-              className={`block w-6 h-[2px] bg-white mt-1 transition-all duration-300 ${
-                menuOpen ? '-rotate-45 -translate-y-[5px]' : ''
-              }`}
-            ></span>
-          </button>
+        {/* Footer del menú móvil */}
+        <div className="absolute bottom-6 left-6 right-6">
+          <div className="text-center text-sm text-gray-500">
+            © 2025 Game of Dreams
+          </div>
         </div>
-
-        {menuOpen && (
-          <div
-            onClick={toggleMenu}
-            className="fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300"
-          />
-        )}
-      </nav>
+      </div>
 
       {/* Estilos CSS mejorados */}
       <style>{`
@@ -219,7 +273,6 @@ function Navbar() {
           width: 100%;
         }
 
-        /* Animaciones para botones de navegación */
         .nav-button, .nav-link {
           transition: all 0.3s ease;
         }
@@ -228,16 +281,96 @@ function Navbar() {
           transform: scale(1.05);
         }
 
-        /* Animaciones para móvil */
-        .mobile-nav-button, .mobile-nav-link {
+        /* Nuevos estilos para menú móvil */
+        .mobile-nav-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 16px 20px;
+          text-align: left;
+          color: #2E1E68;
+          font-weight: 500;
+          font-size: 16px;
+          border-radius: 12px;
           transition: all 0.3s ease;
-          padding: 8px 12px;
-          border-radius: 8px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          text-decoration: none;
+          opacity: 0;
+          transform: translateX(20px);
+          animation: slideInFromRight 0.4s ease forwards;
         }
 
-        .mobile-nav-button:hover, .mobile-nav-link:hover {
-          background-color: rgba(156, 232, 64, 0.1);
-          transform: translateX(8px);
+        .mobile-nav-item:hover {
+          background-color: rgba(156, 232, 64, 0.08);
+          transform: translateX(0) scale(1.02);
+          color: #9CE840;
+        }
+
+        .mobile-nav-item.active {
+          background-color: rgba(156, 232, 64, 0.15);
+          color: #9CE840;
+          font-weight: 600;
+        }
+
+        .mobile-nav-item.active .mobile-nav-arrow {
+          color: #9CE840;
+        }
+
+        .mobile-nav-text {
+          flex-grow: 1;
+        }
+
+        .mobile-nav-arrow {
+          width: 18px;
+          height: 18px;
+          color: #6B7280;
+          transition: all 0.3s ease;
+          transform: translateX(0);
+        }
+
+        .mobile-nav-item:hover .mobile-nav-arrow {
+          transform: translateX(4px);
+          color: #9CE840;
+        }
+
+        @keyframes slideInFromRight {
+          0% { 
+            opacity: 0; 
+            transform: translateX(20px); 
+          }
+          100% { 
+            opacity: 1; 
+            transform: translateX(0); 
+          }
+        }
+
+        /* Mejorar accesibilidad táctil */
+        @media (max-width: 768px) {
+          .mobile-nav-item {
+            min-height: 48px;
+          }
+        }
+
+        /* Animación suave para el overlay */
+        .overlay-enter {
+          opacity: 0;
+        }
+        
+        .overlay-enter-active {
+          opacity: 0.5;
+          transition: opacity 300ms;
+        }
+        
+        .overlay-exit {
+          opacity: 0.5;
+        }
+        
+        .overlay-exit-active {
+          opacity: 0;
+          transition: opacity 300ms;
         }
       `}</style>
     </>

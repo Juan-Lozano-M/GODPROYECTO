@@ -106,7 +106,7 @@ export default function TestimonialCarousel() {
   return (
     <div className="relative mt-4 sm:mt-8 mb-4 sm:mb-8 overflow-hidden w-full py-8 sm:py-12 lg:py-16 bg-white flex flex-col items-center">
       <div className="text-center mb-8 sm:mb-12 lg:mb-20 px-4">
-        <h2 className=" text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-4">
+        <h2 className=" text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-4">
           Historias inspiradoras
         </h2>
         <p className="text-base sm:text-lg lg:text-xl text-black/50 font-semibold mb-4 sm:mb-6 lg:mb-8">
