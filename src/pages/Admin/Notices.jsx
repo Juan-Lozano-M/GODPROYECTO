@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+import AdminProfile from "../../components/admin/AdminProfile";
 import DataStat from "../../components/admin/DataStat";
 import FilterButton from "../../components/admin/FilterButton";
 import FiltroModal from "../../components/admin/FiltroModal";
@@ -120,12 +121,12 @@ function Notices() {
     <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15 pt-10">
       {/* Header con buscador y estadísticas */}
       <div className="flex-none mb-2">
-        <div className="flex w-full items-center">
-       
-        </div>
-        <h1 className="mt-6 2xl:mt-0 text-3xl md:mt-5 md:text-4xl lg:text-5xl xl:mt-1 xl:text-[42px] 2xl:text-5xl font-adlam">
-          NOTICIAS
-        </h1>
+
+      <div className="flex items-center justify-between mt-6 2xl:mt-0">
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">NOTICIAS</h1>
+        <AdminProfile />
+      </div>
+
         <div className="flex flex-wrap mt-4 sm:mt-6 gap-5 sm:gap-10 lg:gap-20 xl:mt-4 xl:gap-12 2xl:gap-20 h-auto">
           <DataStat
             value={totalPublicadas}

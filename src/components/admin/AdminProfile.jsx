@@ -117,7 +117,7 @@ const AdminProfile = () => {
             onLoad={() => console.log('Admin image loaded successfully:', userPhoto)}
           />
         ) : (
-          <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg bg-black flex items-center justify-center">
+          <div className="h-10 w-10 sm:h-15 sm:w-15 rounded-lg flex items-center justify-center bg-[#9CE840]">
             <span className="text-white font-adlam text-sm sm:text-base">
               {getInitials(userName)}
             </span>

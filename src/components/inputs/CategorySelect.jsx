@@ -10,7 +10,7 @@ const CategorySelect = ({ className = "w-[200px]", onChange }) => {
       onChange(newValue);
     }
   };
-  
+
   return (
     <div className="relative mt-4">
       <div className={`relative group overflow-hidden rounded-lg ${className}`}>
@@ -28,15 +28,17 @@ const CategorySelect = ({ className = "w-[200px]", onChange }) => {
           <option value="tecnologia">Tecnología</option>
           <option value="ciencia">Ciencia</option>
           <option value="deportes">Deportes</option>
+          <option value="politica">Política</option>
+          <option value="salud">Salud</option>
+          <option value="economia">Economía</option>
+          <option value="educacion">Educación</option>
           <option value="cultura">Cultura</option>
         </select>
-        {/* Línea animada en la parte inferior del select */}
         <div className="absolute bottom-0 left-0 h-0.5 bg-[#8FDA32] 
           w-full scale-x-0 origin-left
           transition-transform duration-300 ease-in-out
           group-hover:scale-x-100 group-focus-within:scale-x-100" 
         />
-        {/* Ícono de flecha para indicar el desplegable */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
           <svg 
             className="w-4 h-4 fill-current" 

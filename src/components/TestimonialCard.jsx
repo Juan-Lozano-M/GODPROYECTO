@@ -31,7 +31,7 @@ const TestimonialCard = ({ imageUrl, name, position, status, comment, onView }) 
   return (
     <div className="flex items-center w-full h-20 sm:h-27 bg-black/7 rounded-sm">
       {imageUrl ? (
-        <div className="relative w-14 sm:w-19 h-14 sm:h-19 ml-4">
+        <div className="relative w-14 sm:w-21 h-14 sm:h-19 ml-4">
           <img 
             src={imageUrl} 
             className="w-full h-full rounded-lg object-cover" 
