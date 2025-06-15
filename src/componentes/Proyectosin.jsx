@@ -216,7 +216,7 @@ const InfiniteNews = () => {
       </div>
 
       {/* Estilos CSS personalizados */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes scroll-up {
           0% {
             transform: translateY(0);

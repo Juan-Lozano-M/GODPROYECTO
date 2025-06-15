@@ -45,7 +45,7 @@ function AnimatedWord({ word }) {
 
 export default function GameOfDreams() {
   
-  const [setCurrentTestimonial] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   
 
