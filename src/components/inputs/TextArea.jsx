@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const TextArea = ({ placeholder = "Ingresa texto", className = "w-[200px]" }) => {
+const TextArea = ({ placeholder = "Ingresa texto", className = "w-[200px]", onChange }) => {
+  const [value,setValue] = useState('');
+
+  const handledChange = (e) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
+  }
+
   return (
     // Contenedor principal con margen superior
     <div className="relative mt-2">
@@ -15,6 +25,8 @@ const TextArea = ({ placeholder = "Ingresa texto", className = "w-[200px]" }) =>
             focus:outline-none focus:bg-white focus:shadow-[0_4px_6px_rgba(0,0,0,0.1)]
             placeholder:text-gray-400"
           placeholder={placeholder}
+          value={value}
+          onChange={handledChange}
         />
         {/* Línea animada en la parte inferior */}
         <div className="absolute bottom-[4px] left-0 h-0.5 bg-[#8FDA32] 

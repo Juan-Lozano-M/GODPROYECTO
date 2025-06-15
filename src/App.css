@@ -16,3 +16,10 @@
   --font-adlam: ADLaM Display, "sans-serif";
 }
 
+.cursor-guante {
+  cursor: url("/public/assets/Cursors/glove.png"), auto;
+}
+
+.cursor-pointer {
+  cursor: url("/public/assets/Cursors/glove2.png"), pointer;
+}

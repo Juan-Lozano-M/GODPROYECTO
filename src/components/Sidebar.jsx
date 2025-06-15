@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation} from 'react-router-dom';
 
 // Componentes de iconos SVG en lugar de importar imágenes
-const HomeIcon = ({ isActive }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="50" height="50">
+const HomeIcon = ({ isActive, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className={`w-[50px] h-[50px] [@media(max-height:760px)]:w-11 [@media(max-height:760px)]:h-11 ${className}`}>
     <path 
         fill={isActive ? "#87C232" : "white"} 
         strokeWidth="1" 
@@ -24,8 +24,8 @@ const HomeIcon = ({ isActive }) => (
   </svg>
 );
 
-const TestimonialsIcon = ({ isActive }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="50" height="50">
+const TestimonialsIcon = ({ isActive, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={`w-[50px] h-[50px] [@media(max-height:760px)]:w-11 [@media(max-height:760px)]:h-11 ${className}`}>
     <path 
       fill={isActive ? "#87C232" : "white"} // Color de relleno cuando está activo
       stroke="black"                      // Borde blanco siempre para mantener el contraste
@@ -37,8 +37,8 @@ const TestimonialsIcon = ({ isActive }) => (
   </svg>
 );
 
-const NoticesIcon = ({ isActive }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="50" height="50">
+const NoticesIcon = ({ isActive, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className={`w-[50px] h-[50px] [@media(max-height:760px)]:w-10 [@media(max-height:760px)]:h-10 ${className}`}>
     <path
       fill={isActive ? "#87C232" : "white"} 
       strokeWidth="1" 
@@ -59,8 +59,8 @@ const NoticesIcon = ({ isActive }) => (
 
 );
 
-const StaticsIcon = ({ isActive }) => (
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="45" height="45">
+const StaticsIcon = ({ isActive, className = "" }) => (
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className={`w-[50px] h-[50px] [@media(max-height:760px)]:w-10 [@media(max-height:760px)]:h-10 ${className}`}>
   <path 
     fill={isActive ? "#87C232" : "white"} 
     strokeWidth="1" 
@@ -130,7 +130,7 @@ const Sidebar = () => {
 
     return (
       <>
-        {/* Overlay que agrega un efecto desvanecido cuando el menú está abierto */}
+        {/* Overlay oscuro cuando el menú está abierto en móviles */}
         {showMenu && (
           <div 
             className="fixed inset-0 bg-black/60 z-40 md:hidden"
@@ -139,19 +139,19 @@ const Sidebar = () => {
         )}
         
         <div className={`fixed ${showMenu ? "left-0" : "-left-full"} md:left-7 top-0 md:w-30 h-screen flex transition-all duration-300 ease-in-out z-50`}>
-          <nav className='md:my-10 rounded-r-3xl md:rounded-3xl w-60 md:w-40 flex flex-col justify-between bg-black items-center py-6'>
+          <nav className="md:my-10 rounded-r-2xl md:rounded-3xl w-60 md:w-30 flex flex-col bg-black items-center py-6">
             
             {/* Logo arriba */}
-            <div className='p-4 flex items-center gap-2'>
-              <img src={logoGod} className="h-13" alt="Logo de GOD" />
-              <h1 className='text-white font-extrabold text-2xl md:hidden'> GOD </h1>
+            <div className="p-4 flex items-center gap-6 shrink-0">
+              <img src={logoGod} className="h-10 md:h-13" alt="Logo de GOD" />
+              <h1 className="text-white font-extrabold text-lg font-adlam md:hidden">GOD</h1>
             </div>
     
             {/* Íconos en el centro */}
-            <div className='flex flex-col items-center gap-12 flex-grow justify-center md:gap-15 w-full'>
+            <div className="flex flex-col items-center flex-grow justify-center min-h-0 w-full gap-9 md:gap-15 [@media(max-height:760px)]:gap-10 [@media(max-height:600px)]:gap-6">
               <Link to="/home" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
-                <HomeIcon isActive={isActive('/home')} />
-                <span className={`ml-3 text-white text-lg md:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
+                <HomeIcon className="[@media(max-height:750px)]:w-6 [@media(max-height:750px)]:h-6" isActive={isActive('/home')} />
+                <span className={`font-adlam ml-4 text-white text-lg md:hidden ${isActive('/home') ? 'text-[#87C232]' : ''}`}>
                   Inicio
                 </span>
                 <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
@@ -161,7 +161,7 @@ const Sidebar = () => {
     
               <Link to="/testimonials" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
                 <TestimonialsIcon isActive={isActive('/testimonials')} />
-                <span className={`ml-3 text-white text-lg md:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
+                <span className={`font-adlam ml-4 text-white text-lg md:hidden ${isActive('/testimonials') ? 'text-[#87C232]' : ''}`}>
                   Testimonios
                 </span>
                 <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
@@ -171,7 +171,7 @@ const Sidebar = () => {
     
               <Link to="/notices" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
                 <NoticesIcon isActive={isActive('/notices')} />
-                <span className={`ml-3 text-white text-lg md:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
+                <span className={`font-adlam ml-4 text-white text-lg md:hidden ${isActive('/notices') ? 'text-[#87C232]' : ''}`}>
                   Noticias
                 </span>
                 <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
@@ -181,7 +181,7 @@ const Sidebar = () => {
     
               <Link to="/statics" className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center">
                 <StaticsIcon isActive={isActive('/statics')} />
-                <span className={`ml-3 text-white text-lg md:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
+                <span className={`font-adlam ml-4 text-white text-lg md:hidden ${isActive('/statics') ? 'text-[#87C232]' : ''}`}>
                   Estadísticas
                 </span>
                 <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
@@ -191,24 +191,22 @@ const Sidebar = () => {
             </div>
     
             {/* Botón de salida abajo */}
-            <Link to="/">
-            <div className="group relative flex items-center w-full pl-6 md:pl-0 md:justify-center mb-5 ">
-              <ExitIcon />
-              <span className={`ml-3 text-white text-lg md:hidden`}>
-                Salir
-              </span>
-              <span className="absolute font-adlam left-full ml-12 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
-                Salir
-              </span>
-            </div>
-            </Link>
+            <Link to="/" className="group relative flex items-center w-full py-4 pl-6 md:pl-0 md:justify-center">
+                <ExitIcon />
+                <span className={`font-adlam ml-4 text-white text-lg md:hidden `}>
+                  Salir
+                </span>
+                <span className="absolute font-adlam left-full ml-2 px-4 py-2 bg-[#87C232] text-white text-lg rounded-md invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 hidden md:block">
+                  Salir
+                </span>
+              </Link>
           </nav>
     
           {/* Botón de menú hamburguesa */}
           <div> 
             <button
               onClick={toggleMenu}
-              className='fixed right-4 bottom-4 bg-[#87C232] rounded-full p-1 md:hidden z-50'
+              className="fixed right-4 bottom-4 bg-[#87C232] rounded-full p-1 md:hidden z-50"
             >
               <Checkbox checked={showMenu} onChange={toggleMenu} />
             </button>
@@ -216,5 +214,5 @@ const Sidebar = () => {
         </div>
       </>
     );
-  }
+}
 export default Sidebar;

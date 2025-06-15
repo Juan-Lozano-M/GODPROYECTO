@@ -1,0 +1,38 @@
+[
+    {
+      "id": "730001",
+      "name": "Colegio San Simón",
+      "type": "OFICIAL",
+      "city": "IBAGUÉ",
+      "department": "TOLIMA"
+    },
+    {
+      "id": "730002",
+      "name": "Colegio Champagnat",
+      "type": "NO OFICIAL",
+      "city": "IBAGUÉ",
+      "department": "TOLIMA"
+    },
+    {
+      "id": "730003",
+      "name": "Instituto Técnico Industrial",
+      "type": "OFICIAL",
+      "city": "IBAGUÉ",
+      "department": "TOLIMA"
+    },
+    {
+      "id": "730004",
+      "name": "Colegio Tolimense",
+      "type": "NO OFICIAL",
+      "city": "IBAGUÉ",
+      "department": "TOLIMA"
+    },
+    {
+      "id": "730005",
+      "name": "Colegio Comfenalco",
+      "type": "NO OFICIAL",
+      "city": "IBAGUÉ",
+      "department": "TOLIMA"
+    }
+  ]
+  

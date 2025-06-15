@@ -1,109 +1,264 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import Sidebar from "../../components/Sidebar";
-import TestimonialStat from "../../components/admin/TestimonialStat";
-import Search from "../../components/admin/Search";
+import DataStat from "../../components/admin/DataStat";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import TestimonialModal from "../../components/admin/TestimonialModal";
+import FiltroModal from "../../components/admin/FiltroModal";
+import AdminProfile from "../../components/admin/AdminProfile";
 
-import imageTestimonial1 from "../../assets/images/imageTestimonial1.png";
-import imageTestimonial2 from "../../assets/images/imageTestimonial2.png";
-import imageTestimonial3 from "../../assets/images/imageTestimonial3.png";
-import imageTestimonial4 from "../../assets/images/imageTestimonial4.png";
-import imageTestimonial5 from "../../assets/images/imageTestimonial5.png";
-import imageTestimonial6 from "../../assets/images/imageTestimonial6.png";
-import imageTestimonial7 from "../../assets/images/imageTestimonial7.png";
-
+import iconNotResult from "../../assets/icons/iconNotResult.png";
+import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
-import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";
+
 
 function Testimonials() {
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
+  const [testimonios, setTestimonios] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [testimonios, setTestimonios] = useState([
-    {
-      id: 1,
-      name: "Thompson Mark",
-      position: "Vicepresidente de tecnología.",
-      status: "Aprobado",
-      statusColor: "Green",
-      imageUrl: imageTestimonial1,
-      comment: 'La escalabilidad y el rendimiento han cambiado las reglas del juego para nuestra organización. Altamente recomendado para cualquier negocio en crecimiento.'
-    },
-    {
-      id: 2,
-      name: "James Kim",
-      position: "Jefe de ingeniería en DataPro.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial2,
-      comment: 'El soporte técnico ha sido útil, pero algunas características aún no están totalmente maduras. Con un par de mejoras clave, podría convertirse en una herramienta esencial para nuestro equipo de ingeniería.',
-    },
-    {
-      id: 3,
-      name: "Emily Watson",
-      position: "Responsable de producto.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial3,
-      comment: "Esta solución ha contribuido a mejorar nuestros procesos internos. Sin embargo, esperamos una mayor flexibilidad para integraciones con otras plataformas antes de una adopción completa.",
-    },
-    {
-      id: 4,
-      name: "Lisa Elena",
-      position: "Técnico de InnovateSphere.",
-      status: "Rechazado",
-      statusColor: "Red",
-      imageUrl: imageTestimonial4,
-      comment: "Aunque el diseño es intuitivo, encontramos dificultades en funciones clave para nuestro flujo de trabajo. La experiencia fue limitada y no se alinea con los estándares que manejamos en InnovateSphere.",
-    },
-    {
-      id: 5,
-      name: "Jose Rodriguez",
-      position: "CTO en InnovateSphere.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial5,
-      comment: "La implementación fue sencilla y sin errores graves. No obstante, encontramos limitaciones en cuanto a personalización y métricas detalladas que son críticas para nosotros.",
-    },
-    {
-      id: 6,
-      name: "Michael Jaramillo",
-      position: "Tecnologo ADSO.",
-      status: "Aprobado",
-      statusColor: "Green",
-      imageUrl: imageTestimonial6,
-      comment: "Desde el primer día, ha demostrado ser una herramienta funcional y estable. La implementación fue rápida y la respuesta del equipo técnico ha sido excelente. Muy satisfechos con el resultado.",
-    },
-    {
-      id: 7,
-      name: "Martin Motta",
-      position: "Tecnologo ADSO.",
-      status: "En espera",
-      statusColor: "Yellow",
-      imageUrl: imageTestimonial7,
-      comment: "El mejor diseño es el del portal de noticias, sin duda. Aun así, sentimos que hay espacio para ofrecer más funciones interactivas que mejoren la experiencia del usuario final.",
-    },
-    {
-      id: 8,
-      name: "Camilo Giraldo",
-      position: "Diseñador grafico 4 semestre.",
-      status: "Rechazado",
-      statusColor: "Red",
-      imageUrl: imageTestimonial1,
-      comment: "Mi mejor amigo es el coste… y este sistema no fue competitivo en ese aspecto. El diseño visual cumple, pero las funciones disponibles no justifican la inversión para un proyecto académico.",
-    },
-  ]);
+  // Estados para tracking de cambios durante la sesión
+  const [contadoresIniciales, setContadoresIniciales] = useState({
+    Aprobado: 0,
+    Anulado: 0,
+    "En espera": 0,
+  });
+
+  const [cambiosSesion, setCambiosSesion] = useState({
+    Aprobado: 0,
+    Anulado: 0,
+    "En espera": 0,
+  });
+
+  // Flag para saber si es la primera carga
+  const isFirstLoad = useRef(true);
+
+  // Función para validar y procesar la URL de la imagen
+  const processImageUrl = (imageUrl) => {
+    if (!imageUrl || imageUrl.trim() === '') {
+      return null;
+    }
+    
+    // Si la URL ya es completa, devolverla tal como está
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Si es una URL relativa, construir la URL completa
+    // Ajusta esto según tu configuración de servidor
+    return imageUrl;
+  };
+
+  // Función para obtener testimonios con información del usuario
+  const fetchTestimonios = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Fetching testimonios...');
+      
+      // Primero intentar con el endpoint que incluye información del usuario
+      const response = await axios.get("http://localhost:5000/api/testimonials/with-user");
+      const data = response.data;
+      
+      console.log('Raw data from API:', data);
+      
+      const testimoniosAdaptados = data.map((t) => {
+        const processedImageUrl = processImageUrl(t.profile_image);
+        
+        console.log(`Testimonio ${t.id_tes}:`, {
+          nombre: t.nombre_usuario,
+          profile_image_original: t.profile_image,
+          profile_image_processed: processedImageUrl
+        });
+        
+        return {
+          id: t.id_tes,                    
+          name: t.nombre_usuario,          
+          position: t.cargo_tes,           
+          status: t.estado_tes === "aprobado" ? "Aprobado" : 
+                  t.estado_tes === "anulado" ? "Anulado" : "En espera", 
+          statusColor:
+            t.estado_tes === "aprobado"    
+              ? "Green"
+              : t.estado_tes === "anulado" 
+              ? "Red"
+              : "Yellow",
+          imageUrl: processedImageUrl,
+          titulo: t.titulo_tes,            
+          comment: t.contenido_tes,        
+          fecha: t.fecha_publicacion_tes,  
+        };
+      });
+      
+      console.log('Testimonios adaptados:', testimoniosAdaptados);
+      setTestimonios(testimoniosAdaptados);
+
+      // Si es la primera carga, establecer contadores iniciales
+      if (isFirstLoad.current) {
+        const contadoresActuales = {
+          Aprobado: testimoniosAdaptados.filter(t => t.status === "Aprobado").length,
+          Anulado: testimoniosAdaptados.filter(t => t.status === "Anulado").length,
+          "En espera": testimoniosAdaptados.filter(t => t.status === "En espera").length,
+        };
+        
+        console.log('Estableciendo contadores iniciales:', contadoresActuales);
+        setContadoresIniciales(contadoresActuales);
+        isFirstLoad.current = false;
+      }
+      
+    } catch (error) {
+      console.error("Error al obtener testimonios:", error);
+      
+      // Si falla el endpoint principal, intentar con el endpoint de fallback
+      try {
+        console.log('Intentando con endpoint de fallback...');
+        const fallbackResponse = await axios.get("http://localhost:5000/api/testimonials");
+        const fallbackData = fallbackResponse.data;
+        
+        console.log('Fallback data:', fallbackData);
+        
+        const testimoniosAdaptados = fallbackData.map((t) => {
+          const processedImageUrl = processImageUrl(t.profile_image);
+          
+          return {
+            id: t.id_tes,                    
+            name: t.nombre_usuario,          
+            position: t.cargo_tes,           
+            status: t.estado_tes === "aprobado" ? "Aprobado" : 
+                    t.estado_tes === "anulado" ? "Anulado" : "En espera", 
+            statusColor:
+              t.estado_tes === "aprobado"    
+                ? "Green"
+                : t.estado_tes === "anulado" 
+                ? "Red"
+                : "Yellow",
+            imageUrl: processedImageUrl,
+            titulo: t.titulo_tes,            
+            comment: t.contenido_tes,        
+            fecha: t.fecha_publicacion_tes,  
+          };
+        });
+        
+        setTestimonios(testimoniosAdaptados);
+        
+        // Establecer contadores iniciales si es la primera carga
+        if (isFirstLoad.current) {
+          const contadoresActuales = {
+            Aprobado: testimoniosAdaptados.filter(t => t.status === "Aprobado").length,
+            Anulado: testimoniosAdaptados.filter(t => t.status === "Anulado").length,
+            "En espera": testimoniosAdaptados.filter(t => t.status === "En espera").length,
+          };
+          
+          setContadoresIniciales(contadoresActuales);
+          isFirstLoad.current = false;
+        }
+        
+      } catch (fallbackError) {
+        console.error("Error en fallback:", fallbackError);
+        // Podrías mostrar un mensaje de error al usuario aquí
+        alert("Error al cargar los testimonios. Por favor, intenta de nuevo.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Función para cambiar el estado del testimonio
+  const cambiarEstadoTestimonio = async (testimonioId, nuevoEstado) => {
+    try {
+      console.log(`Cambiando estado del testimonio ${testimonioId} a ${nuevoEstado}`);
+      
+      // Encontrar el testimonio actual para saber su estado anterior
+      const testimonioActual = testimonios.find(t => t.id === testimonioId);
+      const estadoAnterior = testimonioActual?.status;
+      
+      console.log(`Estado anterior: ${estadoAnterior}, Nuevo estado: ${nuevoEstado}`);
+      
+      const response = await axios.put(
+        `http://localhost:5000/api/testimonials/${testimonioId}/status`,
+        { estado: nuevoEstado }
+      );
+      
+      if (response.status === 200) {
+        console.log('Estado cambiado exitosamente en backend');
+        
+        // Actualizar los cambios de la sesión ANTES de actualizar testimonios
+        if (estadoAnterior && estadoAnterior !== nuevoEstado) {
+          setCambiosSesion(prevCambios => {
+            const nuevosCambios = { ...prevCambios };
+            
+            // Restar del estado anterior
+            if (estadoAnterior === "Aprobado") nuevosCambios.Aprobado -= 1;
+            else if (estadoAnterior === "Anulado") nuevosCambios.Anulado -= 1;
+            else if (estadoAnterior === "En espera") nuevosCambios["En espera"] -= 1;
+            
+            // Sumar al nuevo estado
+            if (nuevoEstado === "aprobado") nuevosCambios.Aprobado += 1;
+            else if (nuevoEstado === "anulado") nuevosCambios.Anulado += 1;
+            else if (nuevoEstado === "en espera") nuevosCambios["En espera"] += 1;
+            
+            console.log('Cambios actualizados:', {
+              anterior: prevCambios,
+              nuevo: nuevosCambios,
+              transicion: `${estadoAnterior} -> ${nuevoEstado}`
+            });
+            
+            return nuevosCambios;
+          });
+        }
+        
+        // Actualizar la lista de testimonios
+        await fetchTestimonios();
+        return true;
+      }
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
+      return false;
+    }
+  };
+
+  // Función mejorada para manejar cambios de estado
+  const handleStatusChange = async (testimonioId, nuevoEstado) => {
+    try {
+      setIsLoading(true);
+      const success = await cambiarEstadoTestimonio(testimonioId, nuevoEstado);
+      
+      if (success) {
+        setSelectedTestimonio(null);
+        console.log('Estado actualizado y modal cerrado');
+      } else {
+        console.error('Error al actualizar el estado');
+      }
+    } catch (error) {
+      console.error('Error en handleStatusChange:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    fetchTestimonios();
+  }, []);
+
+  // Cálculo de estadísticas actuales
+  const countByStatus = (status) =>
+    testimonios.filter((t) => t.status === status).length;
+
+  const totalAprobados = countByStatus("Aprobado");
+  const totalAnulados = countByStatus("Anulado");
+  const totalEnEspera = countByStatus("En espera");
 
   const filtroTraducido = {
     Aprobados: "Aprobado",
-    Rechazados: "Rechazado",
+    Anulados: "Anulado",
     "En espera": "En espera",
     Todos: "Todos",
   };
 
-  const filters = ["Todos", "Aprobados", "Rechazados", "En espera"];
+  const filters = ["Aprobados", "Anulados", "En espera"];
 
   const testimoniosFiltrados = testimonios.filter((t) => {
     const filtro = filtroTraducido[activeFilter];
@@ -111,41 +266,16 @@ function Testimonials() {
     return t.status === filtro;
   });
 
-  const countByStatus = (status) =>
-    testimonios.filter((t) => t.status === status).length;
+  // Función modificada para mostrar solo indicadores positivos
+  const getIcon = (cambio) => {
+    // Solo mostrar flecha hacia arriba si hay cambios positivos
+    return cambio > 0 ? flechaTestimonialArriba : flechaTestimonialArriba;
+  };
 
-  const totalAprobados = countByStatus("Aprobado");
-  const totalRechazados = countByStatus("Rechazado");
-  const totalEnEspera = countByStatus("En espera");
-
-  const prevCounts = useRef({
-    Aprobado: totalAprobados,
-    Rechazado: totalRechazados,
-    "En espera": totalEnEspera,
-  });
-
-  const [cambios, setCambios] = useState({
-    Aprobado: 0,
-    Rechazado: 0,
-    "En espera": 0,
-  });
-
-  useEffect(() => {
-    setCambios({
-      Aprobado: totalAprobados - prevCounts.current.Aprobado,
-      Rechazado: totalRechazados - prevCounts.current.Rechazado,
-      "En espera": totalEnEspera - prevCounts.current["En espera"],
-    });
-
-    prevCounts.current = {
-      Aprobado: totalAprobados,
-      Rechazado: totalRechazados,
-      "En espera": totalEnEspera,
-    };
-  }, [testimonios]);
-
-  const getIcon = (cambio) =>
-    cambio >= 0 ? flechaTestimonialArriba : flechaTestimonialAbajo;
+  // Función para obtener el indicador (solo mostrar si es positivo)
+  const getIndicator = (cambio) => {
+    return cambio > 0 ? cambio : 0;
+  };
 
   const handleOpenModal = (testimonio) => {
     setSelectedTestimonio(testimonio);
@@ -156,84 +286,135 @@ function Testimonials() {
   };
 
   return (
-    <div className="h-full m-7 sm:mt-10 md:ml-55 md:mr-15">
-      <div className="2xl:ml-210">
-        <Search />
+    <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
+      {/* Header con título y AdminProfile en esquinas opuestas */}
+      <div className="flex items-center justify-between mt-6 2xl:mt-0">
+        <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">TESTIMONIOS</h1>
+        <AdminProfile />
       </div>
 
-      <div>
-        <h1 className="2xl:text-5xl font-adlam"> TESTIMONIOS </h1>
-      </div>
+      {/* Indicador de carga */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-4">
+          <div className="text-blue-500">Actualizando...</div>
+        </div>
+      )}
 
-      <div className="flex mt-10 gap-20 h-auto w-[59%]">
-        <TestimonialStat
+      <div className="flex flex-wrap sm:flex-row mt-6 gap-5 sm:gap-10 lg:gap-20 h-auto">
+        <DataStat
           value={totalAprobados}
-          indicator={cambios.Aprobado}
+          indicator={getIndicator(cambiosSesion.Aprobado)}
           label="Aprobados"
-          iconSrc={getIcon(cambios.Aprobado)}
+          iconSrc={getIcon(cambiosSesion.Aprobado)}
           bgColor="#9CE840"
         />
-        <TestimonialStat
-          value={totalRechazados}
-          indicator={cambios.Rechazado}
-          label="Rechazados"
-          iconSrc={getIcon(cambios.Rechazado)}
+        <DataStat
+          value={totalAnulados}
+          indicator={getIndicator(cambiosSesion.Anulado)}
+          label="Anulados"
+          iconSrc={getIcon(cambiosSesion.Anulado)}
           bgColor="#EA4335"
         />
-        <TestimonialStat
+        <DataStat
           value={totalEnEspera}
-          indicator={cambios["En espera"]}
+          indicator={getIndicator(cambiosSesion["En espera"])}
           label="En espera"
-          iconSrc={getIcon(cambios["En espera"])}
+          iconSrc={getIcon(cambiosSesion["En espera"])}
           bgColor="#FFBE00"
         />
       </div>
 
-      <div className="flex items-center justify-between mt-10 py-2 w-[57%] h-auto">
-        <p className="text-4xl font-adlam"> Nuevos testimonios </p>
-        <div className="h-10 w-0.5 bg-gray-300"></div>
-
-        <div className="flex gap-6">
-          {filters.map((filter) => (
-            <FilterButton
-              key={filter}
-              label={filter}
-              isActive={activeFilter === filter}
-              onClick={() => setActiveFilter(filter)}
-            />
-          ))}
+      <div className="flex items-center justify-between mt-5 md:mt-10 py-2 w-full h-auto">
+        <div className="flex items-center gap-4 sm:gap-7 xl:gap-10">
+          <p className="text-lg sm:text-3xl lg:text-2xl xl:text-4xl font-adlam"> Nuevos testimonios </p>
+          <div className="h-7 w-0.5 sm:h-10 sm:w-0.5 bg-gray-300"></div>
+          <div className="flex items-center gap-4">
+            <div className="hidden lg:flex gap-4">
+              <FilterButton
+                label="Todos"
+                isActive={activeFilter === "Todos"}
+                onClick={() => setActiveFilter("Todos")}
+              />
+              {filters.map((filter) => (
+                <FilterButton
+                  key={filter}
+                  label={filter}
+                  isActive={activeFilter === filter}
+                  onClick={() => setActiveFilter(filter)}
+                />
+              ))}
+            </div>
+            <div className="flex lg:hidden gap-4">
+              <FilterButton
+                label="Filtro"
+                isActive={false}
+                onClick={() => setIsFiltroModalOpen(true)}
+                iconSrc={filtroTestimonial}
+              />
+              <FilterButton
+                label="Todos"
+                isActive={activeFilter === "Todos"}
+                onClick={() => setActiveFilter("Todos")}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-10 justify-start mt-5">
-        {testimoniosFiltrados.length === 0 ? (
-          <p className="text-xl font-adlam text-gray-500 italic bg-yellow-100 p-4 rounded-lg shadow-md">
-            No hay testimonios disponibles para este filtro.
-          </p>
-        ) : (
-          testimoniosFiltrados.map((t) => (
-          <FeedbackCard
-            key={t.id}
-            name={t.name}
-            position={t.position}
-            status={t.status}
-            statusColor={t.statusColor}
-            imageUrl={t.imageUrl}
-            comment={t.comment}
-            onView={() => handleOpenModal(t)} // <--- usamos onView como prop
-          />
-          ))
-        )}
-      </div>
+      {testimoniosFiltrados.length === 0 ? (
+        <div className="w-full flex justify-center items-center mt-10">
+          <div className="flex flex-col gap-4 text-xl text-gray-500 p-4 text-center">
+            <div>
+              <img src={iconNotResult} className="h-40 w-50 sm:h-60 sm:w-80 mx-auto" alt="Imagen de no resultados" />
+            </div>
+            <div className="font-bold font-adlam text-2xl sm:text-4xl">
+              Oops,
+            </div>
+            <div className="w-70 sm:w-90 text-gray-400 font-light text-lg sm:text-xl font-quicksand">
+              No hay testimonios disponibles en esta categoría por el momento.
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap justify-start gap-6 sm:gap-7 lg:gap-10 w-full mt-5">
+          {testimoniosFiltrados.map((t) => {
+            return (
+              <FeedbackCard
+                key={t.id}
+                name={t.name}
+                position={t.position}
+                status={t.status}
+                statusColor={t.statusColor}
+                imageUrl={t.imageUrl}
+                comment={t.comment}
+                onView={() => handleOpenModal(t)}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {selectedTestimonio && (
         <TestimonialModal
           isOpen={!!selectedTestimonio}
           onClose={handleCloseModal}
           testimonio={selectedTestimonio}
+          onStatusChange={(nuevoEstado) => handleStatusChange(selectedTestimonio.id, nuevoEstado)}
+          onCambiarEstado={cambiarEstadoTestimonio}
         />
       )}
 
+      {isFiltroModalOpen && (
+        <FiltroModal
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={(filter) => {
+            setActiveFilter(filter);
+            setIsFiltroModalOpen(false);
+          }}
+          onClose={() => setIsFiltroModalOpen(false)}
+        />
+      )}
       <Sidebar />
     </div>
   );

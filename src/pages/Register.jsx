@@ -1,21 +1,27 @@
-
+import axios from 'axios'
+import { motion } from "framer-motion"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import xIcon from '../assets/icons/xIcon.png'
+import imagenRegister from '../assets/images/imagenRegister.png'
+import GODlogo from '../assets/logos/logoGOD.png'
 import googleLogo from '../assets/logos/logoGoogle.png'
 import instagramLogo from '../assets/logos/logoInstagram.png'
-import xIcon from '../assets/icons/xIcon.png'
-import offEye from '../assets/icons/offEye.png'
-import GODlogo from '../assets/logos/logoGOD.png'
-import imagenRegister from '../assets/images/imagenRegister.png' 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import InputField from "../components/InputField";
-import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import { Link } from "react-router-dom";
-import Textwriter from "../components/alertas/ui/textwriter";
 import AlertMessage from '../components/alertas/AlertMesagge'
+import Textwriter from "../components/alertas/ui/textwriter"
+import SocialLoginButton from "../components/buttons/SocialMediaButton"
 import Cursor from '../components/Cursor'
+import InputField from "../components/InputField"
 import Loader from '../components/loader'
-
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  GoogleAuthProvider,
+  googleProvider,
+  linkWithCredential,
+  signInWithPopup
+} from "../firebaseConfig"
 
 const Register = () => {
 
@@ -32,71 +38,118 @@ const Register = () => {
     
       const manejarEnvio = async (event) => {
         event.preventDefault();
-       
-       
-        if (!email || !nombre || !password || !confirmPassword) {
+        
+        try {
+          setIsLoading(true);
+          setMensaje("");
+    
+          if (!email || !nombre || !password || !confirmPassword) {
             setMensaje("Por favor, ingresa todos los campos.");
             return;
-        }
+          }
     
-        if (password !== confirmPassword) {
+          if (password !== confirmPassword) {
             setMensaje("Las contraseñas no coinciden.");
             return;
-        }
+          }
     
-        const datos = {
-            email: email,
-            nombre: nombre,
-            password: password
-        };
-    
-        
-    
-        try {
-          const response = await fetch('http://localhost/backend/conexion.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(datos),
-          });
-          setIsLoading(true); // Activa el loader antes de la petición
-         
-          const responseText = await response.text();
-          console.log("Respuesta del servidor:", responseText);
-      
-          let result;
+          // First check if user exists in backend
           try {
-              result = JSON.parse(responseText);
-          } catch (error) {
-              throw new Error("Error al convertir respuesta en JSON: " + error.message);
-          }
-      
-          if (result.status === "error" && result.message.includes("Duplicate entry")) {
-              setMensaje("El correo ya está registrado. Usa otro correo.");
-              setIsLoading(false);
+            const checkResponse = await axios.post('http://127.0.0.1:5000/auth/check-email', {
+              email: email
+            });
+            
+            if (checkResponse.data.exists) {
+              setMensaje("El correo ya está registrado");
               return;
+            }
+          } catch (error) {
+            if (error.response && error.response.status !== 404) {
+              setMensaje("Error al verificar el correo");
+              return;
+            }
           }
-      
-          // In the manejarEnvio function, update the success block
-          if (result.status === "success") {
-              console.log("Registrado con éxito:", result);
-              localStorage.setItem("userName", nombre);
-              localStorage.setItem("userEmail", email);  // Add this line
-              setTimeout(() => {
-                  setIsLoading(false);
-                  navigate("/dashboard");
-              }, 2000);
+    
+          // Then create user in Firebase
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const firebaseUser = userCredential.user;
+          const idToken = await firebaseUser.getIdToken();
+    
+          // Finally create user in backend
+          const datos = {
+            correo_usu: email,
+            nombre_usu: nombre,
+            firebase_uid: firebaseUser.uid,
+            token: idToken,
+            contrasena_hash_usu: password // Backend will hash this
+          };
+    
+          const response = await axios.post('http://127.0.0.1:5000/auth/register', datos, {
+            headers: {
+              'Authorization': `Bearer ${idToken}`
+            }
+          });
+    
+          if (response.data.status === "success") {
+            localStorage.setItem("userName", nombre);
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("firebaseUID", firebaseUser.uid);
+            navigate("/dashboard");
+          } else {
+            // If backend registration fails, delete Firebase user
+            await firebaseUser.delete();
+            setMensaje(response.data.message);
           }
-          else {
-              setMensaje(result.message);
-              setIsLoading(false);
-          }
-      } catch (error) {
-          setMensaje("Hubo un error al enviar los datos: " + error.message);
+    
+        } catch (error) {
+          console.error("Error in registration:", error);
+          setMensaje("Error en el registro: " + (error.response?.data?.message || error.message));
+        } finally {
           setIsLoading(false);
-      }
+        }
+      };
+
+      const manejarInicioConGoogle = async () => {
+        try {
+          setIsLoading(true);
+          setMensaje("");
       
-        
-    };
+          // Check if email exists with password authentication
+          const result = await signInWithPopup(auth, googleProvider);
+          const user = result.user;
+          const methods = await fetchSignInMethodsForEmail(auth, user.email);
+      
+          if (methods.includes('password')) {
+            // If email exists with password, link the Google credential
+            const credential = GoogleAuthProvider.credential(
+              result.credential.accessToken
+            );
+            await linkWithCredential(auth.currentUser, credential);
+          }
+      
+          const idToken = await user.getIdToken();
+      
+          const response = await axios.post('http://127.0.0.1:5000/auth/register', {
+            token: idToken,
+            nombre_usu: user.displayName,
+            correo_usu: user.email,
+            firebase_uid: user.uid
+          });
+      
+          if (response.data.status === "success") {
+            localStorage.setItem("userName", user.displayName);
+            localStorage.setItem("userEmail", user.email);
+            localStorage.setItem("userPhoto", user.photoURL || "");
+            localStorage.setItem("firebaseUID", user.uid);
+            navigate("/dashboard");
+          }
+        } catch (error) {
+          console.error("Full error:", error);
+          setMensaje("Error al registrar: " + (error.response?.data?.message || error.message));
+        } finally {
+          setIsLoading(false);
+        }
+      };
     
   
   return (
@@ -110,7 +163,7 @@ const Register = () => {
       <div className="flex items-end justify-between w-full h-45 absolute">
             <div className="flex justify-between items-center ml-5 sm:ml-20 xl:scale-80  2xl:scale-100">
               <Link to={"/"}> <img src={GODlogo} className='h-15 mb-15'/></Link>
-              <h1 className="hidden sm:flex font-mint font-semibold text-white text-[22px] ml-3 mb-15 "> game of dreams </h1>
+              <h1 className="hidden sm:flex  font-semibold text-white text-[22px] ml-3 mb-15 "> game of dreams </h1>
             </div>
           
             { /* 📌 Botones de inicio de sesión y registro */ }
@@ -154,6 +207,7 @@ const Register = () => {
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-50px]"
           />
           <InputField 
             type="text" 
@@ -162,6 +216,7 @@ const Register = () => {
             value={nombre} 
             onChange={(e) => setNombre(e.target.value)}
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]" 
+            iconClassName="right-[-50px]"
           />
           <InputField 
             type="text" 
@@ -170,22 +225,23 @@ const Register = () => {
             value={apellido} 
             onChange={(e) => setApellido(e.target.value)}
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]" 
+            iconClassName="right-[-35px] sm:right-[-50px]"
           />
           <InputField 
             type="password" 
             placeholder="••••••••" 
-            icon={offEye} 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-35px] sm:right-[-50px]"
           />
           <InputField 
             type="password" 
             placeholder="••••••••" 
-            icon={offEye} 
             value={confirmPassword} 
             onChange={(e) => setConfirmPassword(e.target.value)} 
             className="w-full max-w-[90%] sm:max-w-[80%] max-[1536px]:max-w-[85%]"
+            iconClassName="right-[-35px] sm:right-[-50px] "
           />
 
 <button 
@@ -206,7 +262,7 @@ const Register = () => {
           </div>
 
           <div className="flex justify-between h-15 pt-3 mt-7">
-            <SocialLoginButton icon={googleLogo} />
+            <SocialLoginButton icon={googleLogo} onClick={manejarInicioConGoogle} />
             <SocialLoginButton icon={instagramLogo} />
           </div>
         </div>
@@ -220,7 +276,7 @@ const Register = () => {
           animate={{ y: [0, -12, 0], rotate: [-2, 2, -2] }} 
           transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }} 
         />
-          <h1 className="text-[50px] font-mint font-bold xl:text-[40px] 2xl:text-[50px] xl:translate-y-[-80px] 2xl:translate-y-[-40px]">
+          <h1 className="text-[50px]  font-bold xl:text-[40px] 2xl:text-[50px] xl:translate-y-[-80px] 2xl:translate-y-[-40px]">
           <Textwriter 
           words={["Regístrate hoy y da el primer \n paso hacia el futuro."]} 
           loop={false} 
@@ -232,8 +288,8 @@ const Register = () => {
         />
           </h1>
           <div className="relative xl:translate-y-[-80px] 2xl:translate-y-[-40px] "> 
-          <p className="mt-3 text-[20px] font-mint font-bold xl:text-[15px] 2xl:text-[20px]">Si ya tienes una cuenta</p>
-          <Link to="/login" className="text-white text-[20px] font-mint font-bold xl:text-[15px] 2xl:text-[20px]">
+          <p className="mt-3 text-[20px]  font-bold xl:text-[15px] 2xl:text-[20px]">Si ya tienes una cuenta</p>
+          <Link to="/login" className="text-white text-[20px]  font-bold xl:text-[15px] 2xl:text-[20px]">
               Inicia sesión aqui!
           </Link>
           </div>

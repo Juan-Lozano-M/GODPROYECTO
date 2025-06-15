@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
-import SuscribeCard from "../../components/cards/SuscribeCard"; // Add this import
+import SuscribeCard from "../../components/cards/SuscribeCard";
 import CartoonCard from "../../components/cards/CartoonCard";
+import axios from "axios";
+
 export default function NewDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -18,26 +20,27 @@ export default function NewDetail() {
       behavior: 'smooth'
     });
 
-    fetch('/news.json')
-      .then(response => response.json())
-      .then(data => {
-        const newsItem = data.find(item => item.slug === slug);
-        if (newsItem) {
-          newsItem.image = newsItem.image.startsWith('/') 
-            ? newsItem.image 
-            : `/${newsItem.image}`;
+    // Obtener la noticia específica por slug
+    axios.get(`http://localhost:5000/api/news/${slug}`)
+      .then(response => {
+        console.log("Noticia obtenida:", response.data);
+        if (response.data.status === "success") {
+          const newsItem = response.data.news;
           setNews(newsItem);
           
-          // Obtener artículos relacionados
-          const related = data
-            .filter(item => item.category === newsItem.category && item.slug !== newsItem.slug)
+          // Obtener noticias relacionadas de la misma categoría
+          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+        } else {
+          throw new Error(response.data.message || 'Noticia no encontrada');
+        }
+      })
+      .then(response => {
+        if (response && response.data.status === "success") {
+          // Filtrar para excluir la noticia actual
+          const related = response.data.news
+            .filter(item => item.slug !== slug)
             .slice(0, 3);
           setRelatedNews(related);
-        } else {
-          setShowModal(true);
-          setTimeout(() => {
-            navigate('/noticiasv');
-          }, 2000);
         }
         setLoading(false);
       })
@@ -50,6 +53,36 @@ export default function NewDetail() {
         }, 2000);
       });
   }, [slug, navigate]);
+
+  // Función para formatear la fecha
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Función para obtener el nombre del autor
+  const getAuthorName = (autor) => {
+    if (typeof autor === 'object' && autor?.nombre) {
+      return autor.nombre;
+    }
+    return autor || 'Autor desconocido';
+  };
+
+  // Función para formatear el contenido en párrafos
+  const formatContent = (content) => {
+    if (!content) return [];
+    
+    // Dividir por saltos de línea y filtrar párrafos vacíos
+    return content
+      .split('\n')
+      .map(paragraph => paragraph.trim())
+      .filter(paragraph => paragraph.length > 0);
+  };
 
   if (loading) {
     return (
@@ -123,8 +156,8 @@ export default function NewDetail() {
       {/* Hero Banner */}
       <div className="relative w-full h-[600px] overflow-hidden">
         <img 
-          src={news.image} 
-          alt={news.title}
+          src={news.imagen_url || '/default-news-image.jpg'} 
+          alt={news.titulo}
           className="absolute inset-0 w-full h-full object-cover blur-[3px] filter brightness-75 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
@@ -132,18 +165,18 @@ export default function NewDetail() {
         <div className="absolute inset-0 z-20 flex items-end pb-20">
           <div className="container px-4 md:px-6 mx-auto">
             <div className="max-w-4xl">
-              <div className="inline-block px-4 py-2 mb-6 bg-[#87C232] text-white text-sm font-medium rounded">
-                {news.category}
+              <div className="inline-block px-4 py-2 mb-6 bg-[#87C232] text-white text-sm font-medium rounded capitalize">
+                {news.categoria}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                {news.title}
+                {news.titulo}
               </h1>
               <div className="flex items-center space-x-4 text-white/90">
                 <div className="flex items-center space-x-2">
-                  <span className="font-medium">{news.author}</span>
+                  <span className="font-medium">{getAuthorName(news.autor)}</span>
                 </div>
                 <span>•</span>
-                <span>{news.date}</span>
+                <span>{formatDate(news.fecha_creacion)}</span>
               </div>
             </div>
           </div>
@@ -155,41 +188,26 @@ export default function NewDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Articulo */}
           <div className="lg:col-span-8">
-            <CartoonCard title={news.subtitle}>
+            <CartoonCard title={news.descripcion || "Descripción de la noticia"}>
               <div className="prose max-w-none">
                 <div className="text-lg leading-relaxed text-gray-700 space-y-6 border-l-4 border-black pl-4">
-                  {news.content && news.content.split('\n').map((paragraph, index) => (
-                    <p key={index} className="hover:text-black transition-colors">{paragraph}</p>
-                  ))}
-                  {!news.content && (
-                    <p>No content available.</p>
+                  {news.contenido ? (
+                    formatContent(news.contenido).map((paragraph, index) => (
+                      <p key={index} className="hover:text-black transition-colors">
+                        {paragraph}
+                      </p>
+                    ))
+                  ) : (
+                    <p>No hay contenido disponible.</p>
                   )}
                 </div>
-                
-                {news.highlights && (
-                  <div className="my-8 p-6 border-3 border-black">
-                    <h3 className="text-xl font-black text-black uppercase mb-4">Puntos Destacados</h3>
-                    <ul className="list-disc list-inside space-y-2">
-                      {news.highlights.map((highlight, index) => (
-                        <li key={index} className="text-gray-700 hover:text-black transition-colors">{highlight}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {news.conclusion && (
-                  <div className="mt-8 border-t-3 border-black pt-6">
-                    <h3 className="text-2xl font-black text-black uppercase mb-4">Conclusión</h3>
-                    <p className="text-lg text-gray-700 hover:text-black transition-colors">{news.conclusion}</p>
-                  </div>
-                )}
               </div>
             </CartoonCard>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-4">
-            <div className="sticky top-8 space-y-6 mb-5">  {/* Changed from space-y-8 to space-y-6 */}
+            <div className="sticky top-8 space-y-6 mb-5">
               {/* Share Section */}
               <CartoonCard title="Compartir">
                 <div className="flex space-x-4">
@@ -210,17 +228,17 @@ export default function NewDetail() {
                         <div className="flex items-start space-x-4">
                           <div className="w-20 h-20 flex-shrink-0 border-2 border-black overflow-hidden rounded-lg">
                             <img
-                              src={article.image.startsWith('/') ? article.image : `/${article.image}`}
-                              alt={article.title}
+                              src={article.imagen_url || '/default-news-image.jpg'}
+                              alt={article.titulo}
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
                             <h4 className="font-bold group-hover:text-white transition-colors">
-                              {article.title}
+                              {article.titulo}
                             </h4>
                             <p className="text-sm mt-1 group-hover:text-gray-300">
-                              {article.date}
+                              {formatDate(article.fecha_creacion)}
                             </p>
                           </div>
                         </div>
@@ -252,4 +270,3 @@ export default function NewDetail() {
     </main>
   );
 }
-
