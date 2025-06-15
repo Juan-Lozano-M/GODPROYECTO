@@ -15,10 +15,12 @@ import ActionRedirector from "./pages/Auth/ActionRedirector.jsx";
 import RecoverPassword from "./pages/Auth/RecoverPassword.jsx";
 import ResetPassword from "./pages/Auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/Auth/VerifyEmail.jsx";
+import Contacto from "./pages/Contactos.jsx";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewDetails from "./pages/Noticias/NewDetail";
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
+import ProyectosView from "./pages/proyectosview.jsx";
 import Register from "./pages/Register";
 
 
@@ -40,6 +42,16 @@ const router = createBrowserRouter([
   {
     path: "/testimonials",
     element: <Testimonial />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/contacto",
+    element: <Contacto />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/proyectosview",
+    element: <ProyectosView />,
     errorElement: <Navigate to="/" />,
   },
   {

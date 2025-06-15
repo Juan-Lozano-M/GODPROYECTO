@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
 import Chatbot from "../../components/chatbot/ChatBot"; // Importa el componente de chatbot
+import Navbar from "../../components/index/Navbar"; // Importa la barra de navegación
 import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
 import SearchModal from "../../components/noticia/SearchModal"; // Importa el modal de búsqueda
 import axios from "../../config/axiosConfig";
@@ -39,6 +40,7 @@ function Noticiasv2() {
   return (
     <main className="min-h-screen bg-white cursor-guante"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
       <Chatbot />
+      <Navbar /> {/* Barra de navegación superior */}
       
       {/* Modal de búsqueda */}
       <SearchModal 
