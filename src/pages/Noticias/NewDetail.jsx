@@ -14,45 +14,42 @@ export default function NewDetail() {
   const [relatedNews, setRelatedNews] = useState([]);
 
   useEffect(() => {
-    // Scroll al inicio cuando se carga una nueva noticia
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Obtener la noticia específica por slug
-    axios.get(`http://localhost:5000/api/news/${slug}`)
-      .then(response => {
-        console.log("Noticia obtenida:", response.data);
-        if (response.data.status === "success") {
-          const newsItem = response.data.news;
-          setNews(newsItem);
-          
-          // Obtener noticias relacionadas de la misma categoría
-          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
-        } else {
-          throw new Error(response.data.message || 'Noticia no encontrada');
-        }
-      })
-      .then(response => {
-        if (response && response.data.status === "success") {
-          // Filtrar para excluir la noticia actual
-          const related = response.data.news
-            .filter(item => item.slug !== slug)
-            .slice(0, 3);
-          setRelatedNews(related);
-        }
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error loading news:', error);
-        setLoading(false);
-        setShowModal(true);
-        setTimeout(() => {
-          navigate('/noticiasv');
-        }, 2000);
-      });
-  }, [slug, navigate]);
+  axios.get(`http://localhost:5000/api/news/${slug}`)
+    .then(response => {
+      if (response.data.status === "success") {
+        const newsItem = response.data.news;
+        setNews(newsItem);
+
+        // Sumar 1 vista (sólo una vez al abrir la noticia)
+        axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
+          .catch(err => console.warn("No se pudo incrementar vistas:", err));
+
+        // Obtener relacionadas
+        return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+      } else {
+        throw new Error(response.data.message || 'Noticia no encontrada');
+      }
+    })
+    .then(response => {
+      if (response && response.data.status === "success") {
+        const related = response.data.news
+          .filter(item => item.slug !== slug)
+          .slice(0, 3);
+        setRelatedNews(related);
+      }
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error('Error loading news:', error);
+      setLoading(false);
+      setShowModal(true);
+      setTimeout(() => {
+        navigate('/noticiasv');
+      }, 2000);
+    });
+}, [slug, navigate]);
 
   // Función para formatear la fecha
   const formatDate = (dateString) => {

@@ -313,8 +313,26 @@ const GeneralContent = ({ stats, loading }) => {
   );
 };
 
+const getTimeAgo = (fechaISO) => {
+  if (!fechaISO) return "desconocido";
 
-// Contenido de la pestaña NOTICIAS
+  const fecha = new Date(fechaISO);
+  const ahora = new Date();
+  const diffMs = ahora - fecha;
+
+  if (isNaN(diffMs)) return "desconocido"; // Evita el NaN
+
+  const minutos = Math.floor(diffMs / (1000 * 60));
+  const horas = Math.floor(minutos / 60);
+  const dias = Math.floor(horas / 24);
+  const meses = Math.floor(dias / 30);
+
+  if (minutos < 60) return `${minutos} min`;
+  if (horas < 24) return `${horas} hora${horas !== 1 ? 's' : ''}`;
+  if (dias < 30) return `${dias} día${dias !== 1 ? 's' : ''}`;
+  return `${meses} mes${meses !== 1 ? 'es' : ''}`;
+};
+
 const NoticiasContent = ({ stats, loading }) => {
   const [activeNewsTab, setActiveNewsTab] = useState('Anual');
 
@@ -349,24 +367,12 @@ const NoticiasContent = ({ stats, loading }) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Stat Cards */}
-        {[{
-          label: 'Total de Noticias',
-          value: totals.total_news || 0,
-          subtitle: `+${totals.created_this_month || 0} este mes`
-        }, {
-          label: 'Publicadas Hoy',
-          value: totals.published_today || 0,
-          subtitle: `+${(totals.published_today || 0) - (totals.published_yesterday || 0)} con respecto a ayer`
-        }, {
-          label: 'Vistas Totales',
-          value: totals.total_views?.toLocaleString() || 0,
-          subtitle: 'Noticias vistas'
-        }, {
-          label: 'Interacciones',
-          value: totals.total_shares?.toLocaleString() || 0,
-          subtitle: 'Noticias compartidas'
-        }].map((stat, i) => (
+        {[
+          { label: 'Total de Noticias', value: totals.total_news || 0, subtitle: `+${totals.created_this_month || 0} este mes` },
+          { label: 'Publicadas Hoy', value: totals.published_today || 0, subtitle: `+${(totals.published_today || 0) - (totals.published_yesterday || 0)} con respecto a ayer` },
+          { label: 'Vistas Totales', value: totals.total_views?.toLocaleString() || 0, subtitle: 'Noticias vistas' },
+          { label: 'Interacciones', value: totals.total_shares?.toLocaleString() || 0, subtitle: 'Noticias compartidas' }
+        ].map((stat, i) => (
           <div key={i} className="bg-white p-4 rounded-xl shadow-sm border-l-4" style={{ borderLeft: '4px solid #9CE840' }}>
             <div className="flex items-center gap-2 mb-2">
               <div className="p-1.5 rounded-lg bg-[#E9FCD6]">
@@ -393,7 +399,7 @@ const NoticiasContent = ({ stats, loading }) => {
                 <NewsItem
                   key={i}
                   title={item.title}
-                  timeAgo={`${item.hours_ago} horas`}
+                  timeAgo={getTimeAgo(item.fecha_creacion)}
                   category={item.category}
                   views={item.views}
                 />
@@ -406,7 +412,7 @@ const NoticiasContent = ({ stats, loading }) => {
                   <NewsItem
                     key={i}
                     title={item.title}
-                    timeAgo={item.minutes_ago ? `${item.minutes_ago} min` : `${item.hours_ago} horas`}
+                    timeAgo={getTimeAgo(item.fecha_creacion)}
                     category={item.category}
                     views={item.views}
                   />
@@ -425,24 +431,9 @@ const NoticiasContent = ({ stats, loading }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={categories}>
                   <CartesianGrid vertical={false} stroke="#EFEFEF" />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fill: "#888", dy: 10 }}
-                    axisLine={{ stroke: "#D3D3D3", strokeWidth: 1 }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    domain={[0, 30]}
-                    ticks={[0, 6, 12, 18, 24, 30]}
-                    tick={{ fill: "#888", dx: -28 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#fff', borderColor: '#ccc' }}
-                    labelStyle={{ color: 'black' }}
-                    formatter={(value) => [`${value} noticias`, 'Cantidad']}
-                  />
+                  <XAxis dataKey="name" tick={{ fill: "#888", dy: 10 }} axisLine={{ stroke: "#D3D3D3" }} tickLine={false} />
+                  <YAxis domain={[0, 30]} ticks={[0, 6, 12, 18, 24, 30]} tick={{ fill: "#888", dx: -28 }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: '#fff', borderColor: '#ccc' }} labelStyle={{ color: 'black' }} formatter={(value) => [`${value} noticias`, 'Cantidad']} />
                   <Bar dataKey="count" fill="#9CE840" barSize={20} radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -453,6 +444,7 @@ const NoticiasContent = ({ stats, loading }) => {
     </div>
   );
 };
+
 
 
 
