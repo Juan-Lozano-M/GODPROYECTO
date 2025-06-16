@@ -1,13 +1,31 @@
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
 import Chatbot from "../../components/chatbot/ChatBot"; // Importa el componente de chatbot
+import Navbar from "../../components/index/Navbar"; // Importa la barra de navegación
 import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
 import SearchModal from "../../components/noticia/SearchModal"; // Importa el modal de búsqueda
+import axios from "../../config/axiosConfig";
 // Componente funcional Noticiasv2 que renderiza la sección de noticias
 function Noticiasv2() {
   const [isHovered, setIsHovered] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // Estado para el modal de búsqueda
+  const navigate = useNavigate();
+
+  // Función para obtener una noticia aleatoria
+  const handleDiscoverClick = async () => {
+    try {
+      const response = await axios.get("/api/news/get-news");
+      if (response.data.status === "success" && response.data.news.length > 0) {
+        const randomIndex = Math.floor(Math.random() * response.data.news.length);
+        const randomNews = response.data.news[randomIndex];
+        navigate(`/noticiasv/${randomNews.slug}`);
+      }
+    } catch (error) {
+      console.error("Error al obtener noticia aleatoria:", error);
+    }
+  };
 
   // Función para abrir el modal de búsqueda
   const handleSearchClick = () => {
@@ -22,6 +40,7 @@ function Noticiasv2() {
   return (
     <main className="min-h-screen bg-white cursor-guante"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
       <Chatbot />
+      <Navbar /> {/* Barra de navegación superior */}
       
       {/* Modal de búsqueda */}
       <SearchModal 
@@ -79,7 +98,10 @@ function Noticiasv2() {
 
             {/* Botones de filtro de noticias */}
             <div className="absolute md:top-0 md:right-0 md:bottom-36 bottom-[-120px] left-4 right-4 md:left-auto flex flex-row md:flex-col justify-between md:justify-center space-x-2 md:space-x-0 md:space-y-2 md:bg-gray-100 md:p-6 z-10">
-              <button className="bg-[#87C232] text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-[#87C232] flex-1 md:flex-none">
+              <button 
+                onClick={handleDiscoverClick}
+                className="bg-[#87C232] text-white px-6 md:px-12 py-2 md:py-4 text-sm md:text-base font-medium hover:bg-[#87C232] flex-1 md:flex-none"
+              >
                 DESCUBRE
               </button>
               <button 
