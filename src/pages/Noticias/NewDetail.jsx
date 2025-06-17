@@ -16,6 +16,8 @@ export default function NewDetail() {
   // Ref para controlar si ya se incrementó la vista
   const viewIncrementedRef = useRef(false);
 
+  const hasIncrementedView = useRef(false);
+
   useEffect(() => {
     // Resetear el ref cuando cambia el slug
     viewIncrementedRef.current = false;
