@@ -1,11 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { Link } from 'react-router-dom';
-=======
-import { registrarVisita } from './services/registerVisit';
->>>>>>> 20b99d9021f7374fbb9b05b847def2bacd2ae1e2
 import "./App.css";
 import desercionImg from './assets/images/Desercion.png';
 import estresImg from './assets/images/Estres.png';
@@ -21,6 +17,7 @@ import Nosotros from './components/index/Nosotros';
 import Noticias from './components/index/Proyectosin';
 import Final from './components/index/SeccionF';
 import Test from './components/index/Testimonios';
+import { registrarVisita } from './services/registerVisit';
 
 
 
@@ -52,10 +49,11 @@ function AnimatedWord({ word }) {
 }
 
 export default function GameOfDreams() {
-  
-  const [setCurrentTestimonial] = useState(0);
+    // const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
+  // Testimonios comentados por ahora
+  /*
   const testimonials = [
     {
       name: "María González",
@@ -68,23 +66,22 @@ export default function GameOfDreams() {
       text: "Gracias a esta plataforma encontré mi vocación en la tecnología. El proceso fue divertido y muy revelador."
     },
     {
-      name: "Ana Martínez",
-      role: "Diseñadora Gráfica",
+      name: "Ana Martínez",      role: "Diseñadora Gráfica",
       text: "La metodología de Game of Dreams es única. Me permitió explorar diferentes áreas hasta encontrar la perfecta para mí."
     }
   ];
+  */
 
     // Registrar visita al montar la sección de INICIO
   useEffect(() => {
     registrarVisita('home');
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  //   }, 4000);
+  //   return () => clearInterval(interval);
+  // }, [testimonials.length]);
 
   const [index, setIndex] = useState(0);
 

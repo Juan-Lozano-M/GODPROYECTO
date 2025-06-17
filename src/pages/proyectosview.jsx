@@ -1,19 +1,77 @@
-import { Calendar, ExternalLink, GraduationCap, Target, Users, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { registrarVisita } from '../services/registerVisit';
+import { AlertCircle, Calendar, ExternalLink, Loader2, Target, Users, X } from 'lucide-react';
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
+import "overlayscrollbars/overlayscrollbars.css";
+import { useEffect, useRef, useState } from 'react';
 import Footer from '../components/index/Footer';
 import Navbar from "../components/index/Navbar";
+import { projectService } from '../services/projectService';
+import { registrarVisita } from '../services/registerVisit';
 
-const proyectosview = () => {
-
+const ProyectosView = () => {
   const [filter, setFilter] = useState('all');
   const [hoveredProject, setHoveredProject] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const scrollbarRef = useRef(null);
 
   useEffect(() => {
-    registrarVisita('projects'); // <- Así se registra la visita
+    registrarVisita('projects');
+    fetchProjects();
   }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+        const response = await projectService.getAllProjects();
+      if (response.status === 'success') {
+        // Transformar los datos del backend al formato que espera el frontend
+        const transformedProjects = response.projects.map(project => {
+          // Verificar y limpiar la URL de la imagen
+          let imageUrl = project.image;
+          
+          // Si no hay imagen o está vacía, usar imagen por defecto
+          if (!imageUrl || imageUrl.trim() === '') {
+            imageUrl = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop';
+          }
+          
+          // Si la imagen no parece ser una URL válida, usar imagen por defecto
+          if (!imageUrl.startsWith('http')) {
+            imageUrl = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop';
+          }
+          
+          console.log('Project image URL:', imageUrl); // Debug
+          
+          return {
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            category: project.category,
+            status: project.status === 'activo' ? 'En Progreso' : 
+                    project.status === 'completado' ? 'Completado' : 'Planeado',
+            date: project.year?.toString() || '2024',
+            participants: project.participants || 0,
+            image: imageUrl,
+            tags: project.areas || [],
+            methodology1: project.methodology1 || '',
+            methodology2: project.methodology2 || '',
+            author: project.author          };
+        });
+        
+        setProjects(transformedProjects);
+      } else {
+        setError('Error al cargar los proyectos');
+      }
+    } catch (err) {
+      console.error('Error fetching projects:', err);
+      setError('Error de conexión al servidor');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openModal = (project) => {
     setSelectedProject(project);
@@ -24,76 +82,6 @@ const proyectosview = () => {
     setIsModalOpen(false);
     setSelectedProject(null);
   };
-
-  // Datos de ejemplo de proyectos de asesoramiento vocacional
-  const projects = [
-    {
-      id: 1,
-      title: "Programa de Orientación Universitaria",
-      description: "Asesoramiento integral para estudiantes de último año de bachillerato, incluyendo elección de carrera, preparación para exámenes de admisión y orientación sobre becas disponibles.",
-      category: "Orientación Universitaria",
-      status: "Completado",
-      date: "2024",
-      participants: 150,
-      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop",
-      tags: ["Pruebas Vocacionales", "Admisiones", "Becas", "Universidades"]
-    },
-    {
-      id: 2,
-      title: "Talleres de Desarrollo de Habilidades Blandas",
-      description: "Serie de talleres enfocados en el desarrollo de habilidades de comunicación, liderazgo, trabajo en equipo y pensamiento crítico para jóvenes de 16 a 20 años.",
-      category: "Desarrollo Personal",
-      status: "En Progreso",
-      date: "2024",
-      participants: 80,
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop",
-      tags: ["Comunicación", "Liderazgo", "Trabajo en Equipo", "Soft Skills"]
-    },
-    {
-      id: 3,
-      title: "Orientación Técnica y Profesional",
-      description: "Programa especializado para estudiantes interesados en carreras técnicas, oficios y formación profesional, con énfasis en oportunidades del mercado laboral actual.",
-      category: "Formación Técnica",
-      status: "Completado",
-      date: "2023",
-      participants: 95,
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop",
-      tags: ["Carreras Técnicas", "Oficios", "Mercado Laboral", "Certificaciones"]
-    },
-    {
-      id: 4,
-      title: "Mentoría Individual Personalizada",
-      description: "Sesiones de mentoría uno a uno con estudiantes para identificar fortalezas, intereses y objetivos profesionales, creando un plan de desarrollo personalizado.",
-      category: "Mentoría Individual",
-      status: "Completado",
-      date: "2023",
-      participants: 45,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
-      tags: ["Mentoría", "Plan Personal", "Autoconocimiento", "Metas"]
-    },
-    {
-      id: 5,
-      title: "Preparación para el Mundo Laboral",
-      description: "Programa integral que incluye elaboración de CV, preparación para entrevistas, búsqueda de empleo y desarrollo de competencias laborales para jóvenes.",
-      category: "Inserción Laboral",
-      status: "En Progreso",
-      date: "2024",
-      participants: 120,
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop",
-      tags: ["CV", "Entrevistas", "Búsqueda de Empleo", "Competencias"]
-    },
-    {
-      id: 6,
-      title: "Exploración de Carreras STEM",
-      description: "Programa especializado para despertar el interés en carreras de ciencia, tecnología, ingeniería y matemáticas, con actividades prácticas y visitas a empresas del sector.",
-      category: "Orientación Universitaria",
-      status: "Completado",
-      date: "2023",
-      participants: 75,
-      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop",
-      tags: ["STEM", "Ciencia", "Tecnología", "Ingeniería", "Matemáticas"]
-    }
-  ];
 
   const categories = ['all', 'completed', 'in-progress'];
 
@@ -107,15 +95,40 @@ const proyectosview = () => {
     <span className={`px-3 py-1 text-xs font-medium rounded-full ${
       status === 'Completado' 
         ? 'bg-green-50 text-green-700 border border-green-200' 
-        : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+        : status === 'En Progreso'
+        ? 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+        : 'bg-blue-50 text-blue-700 border border-blue-200'
     }`}>
       {status}
     </span>
   );
 
+  // Loading component
+  const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center py-20">
+      <Loader2 className="w-12 h-12 text-[#9CE840] animate-spin mb-4" />
+      <p className="text-gray-600 text-lg">Cargando proyectos...</p>
+    </div>
+  );
+
+  // Error component
+  const ErrorMessage = () => (
+    <div className="flex flex-col items-center justify-center py-20">
+      <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+      <p className="text-red-600 text-lg mb-4">{error}</p>
+      <button 
+        onClick={fetchProjects}
+        className="bg-[#9CE840] text-white px-6 py-2 rounded-lg hover:bg-green-400 transition-colors duration-200"
+      >
+        Reintentar
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white">
-       <Navbar></Navbar>
+      <Navbar />
+      
       {/* Header Section */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -135,7 +148,7 @@ const proyectosview = () => {
       </div>
 
       {/* Filter Section */}
-      <div className="md:sticky top-0 z-40 bg-white ">
+      <div className="md:sticky top-0 z-40 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-wrap gap-3 justify-center">
             {categories.map((category) => (
@@ -157,100 +170,116 @@ const proyectosview = () => {
         </div>
       </div>
 
-      {/* Projects Grid */}
+      {/* Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {filteredProjects.map((project, index) => (
-            <div
-              key={project.id}
-              className="group relative bg-transparent rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 border border-black"
-              onMouseEnter={() => setHoveredProject(project.id)}
-              onMouseLeave={() => setHoveredProject(null)}
-              style={{
-                transform: hoveredProject === project.id ? 'translateY(-8px)' : 'translateY(0)',
-                animationDelay: `${index * 100}ms`
-              }}
-            >
-              {/* Project Image */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300"></div>
-                <div className="absolute top-4 right-4">
-                  <StatusBadge status={project.status} />
-                </div>
-                <div className="absolute bottom-4 left-4 right-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
-                  <button 
-                    onClick={() => openModal(project)}
-                    className="w-full bg-white text-gray-900 py-2 px-4 rounded-lg font-medium hover:bg-[#9CE840] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Ver Proyecto
-                  </button>
-                </div>
-              </div>
-
-              {/* Project Content */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-[#9CE840] bg-green-50 px-3 py-1 rounded-full">
-                    {project.category}
-                  </span>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {project.date}
+        {loading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <ErrorMessage />
+        ) : (
+          <>
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {filteredProjects.map((project, index) => (
+                <div
+                  key={project.id}
+                  className="group relative bg-transparent rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 border border-black"
+                  onMouseEnter={() => setHoveredProject(project.id)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                  style={{
+                    transform: hoveredProject === project.id ? 'translateY(-8px)' : 'translateY(0)',
+                    animationDelay: `${index * 100}ms`
+                  }}
+                >
+                  {/* Project Image */}
+                  <div className="relative overflow-hidden">                    <img
+                      src={project.image || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop'}
+                      alt={project.title}
+                      className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        console.log('Error loading image:', e.target.src);
+                        e.target.src = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop';
+                      }}
+                      onLoad={(e) => {
+                        console.log('Image loaded successfully:', e.target.src);
+                      }}
+                    />
+                    {/* Overlay removido temporalmente para debug */}
+                    {/* <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300"></div> */}
+                    <div className="absolute top-4 right-4">
+                      <StatusBadge status={project.status} />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {project.participants}
+                    <div className="absolute bottom-4 left-4 right-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                      <button 
+                        onClick={() => openModal(project)}
+                        className="w-full bg-white text-gray-900 py-2 px-4 rounded-lg font-medium hover:bg-[#9CE840] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Ver Proyecto
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Project Content */}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-[#9CE840] bg-green-50 px-3 py-1 rounded-full">
+                        {project.category}
+                      </span>
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {project.date}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          {project.participants}
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#9CE840] transition-colors duration-300">
+                      {project.title}
+                    </h3>
+
+                    <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    {/* Tech Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {(project.tags || []).slice(0, 3).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-green-100 hover:text-[#9CE840] transition-colors duration-200"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {(project.tags || []).length > 3 && (
+                        <span className="text-xs font-medium text-gray-500 px-3 py-1">
+                          +{project.tags.length - 3} más
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#9CE840] transition-colors duration-300">
-                  {project.title}
-                </h3>
-
-                <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                  {project.description}
-                </p>
-
-                {/* Tech Tags */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.slice(0, 3).map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-green-100 hover:text-[#9CE840] transition-colors duration-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  {project.tags.length > 3 && (
-                    <span className="text-xs font-medium text-gray-500 px-3 py-1">
-                      +{project.tags.length - 3} más
-                    </span>
-                  )}
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* No projects message */}
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-20">
-            <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              No hay proyectos en esta categoría
-            </h3>
-            <p className="text-gray-500">
-              Selecciona otra categoría para ver más proyectos
-            </p>
-          </div>
+            {/* No projects message */}
+            {filteredProjects.length === 0 && !loading && !error && (
+              <div className="text-center py-20">
+                <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  No hay proyectos en esta categoría
+                </h3>
+                <p className="text-gray-500">
+                  Selecciona otra categoría para ver más proyectos
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -260,7 +289,7 @@ const proyectosview = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="group">
               <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 group-hover:text-[#9CE840] transition-colors duration-300">
-                500+
+                {projects.reduce((total, project) => total + (project.participants || 0), 0)}+
               </div>
               <div className="text-gray-600 font-medium">Jóvenes Orientados</div>
             </div>
@@ -278,15 +307,15 @@ const proyectosview = () => {
             </div>
             <div className="group">
               <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 group-hover:text-[#9CE840] transition-colors duration-300">
-                50+
+                {projects.length}+
               </div>
-              <div className="text-gray-600 font-medium">Instituciones Aliadas</div>
+              <div className="text-gray-600 font-medium">Proyectos Realizados</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal con OverlayScrollbars */}
       {isModalOpen && selectedProject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
           {/* Backdrop */}
@@ -299,8 +328,8 @@ const proyectosview = () => {
             }}
           ></div>
           
-          {/* Modal Content */}
-          <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-500 animate-modalSlideIn">
+          {/* Modal Content con OverlayScrollbars */}
+          <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 max-w-4xl w-full max-h-[90vh] transform transition-all duration-500 animate-modalSlideIn overflow-hidden">
             {/* Close Button */}
             <button
               onClick={closeModal}
@@ -309,132 +338,118 @@ const proyectosview = () => {
               <X className="w-5 h-5 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
             </button>
 
-            {/* Modal Header with Image */}
-            <div className="relative h-80 overflow-hidden rounded-t-3xl">
-              <img
-                src={selectedProject.image}
-                alt={selectedProject.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 right-20">
-                <div className="mb-4 animate-slideUp" style={{ animationDelay: '0.3s' }}>
-                  <StatusBadge status={selectedProject.status} />
+            {/* OverlayScrollbars Container */}
+            <OverlayScrollbarsComponent 
+              ref={scrollbarRef}
+              className="w-full h-full"
+              options={{
+                scrollbars: {
+                  theme: 'os-theme-dark',
+                  visibility: 'auto',
+                  autoHide: 'move',
+                  autoHideDelay: 1000,
+                  clickScrolling: true
+                },
+                overflow: {
+                  x: 'hidden',
+                  y: 'scroll'
+                }
+              }}
+              style={{ maxHeight: '90vh' }}
+            >
+              <div className="w-full">
+                {/* Modal Header with Image */}
+                <div className="relative h-80 overflow-hidden rounded-t-3xl">
+                  <img
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                  <div className="absolute bottom-6 left-6 right-20">
+                    <div className="mb-4 animate-slideUp" style={{ animationDelay: '0.3s' }}>
+                      <StatusBadge status={selectedProject.status} />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 animate-slideUp" style={{ animationDelay: '0.4s' }}>
+                      {selectedProject.title}
+                    </h2>
+                    <p className="text-lg text-white opacity-90 animate-slideUp" style={{ animationDelay: '0.5s' }}>
+                      {selectedProject.category}
+                    </p>
+                  </div>
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-2 animate-slideUp" style={{ animationDelay: '0.4s' }}>
-                  {selectedProject.title}
-                </h2>
-                <p className="text-lg text-white opacity-90 animate-slideUp" style={{ animationDelay: '0.5s' }}>
-                  {selectedProject.category}
-                </p>
-              </div>
-            </div>
 
-            {/* Modal Body */}
-            <div className="p-8">
-              {/* Project Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Calendar className="w-5 h-5 text-[#9CE840]" />
+                {/* Modal Body */}
+                <div className="p-8">
+                  {/* Project Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6 mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Calendar className="w-5 h-5 text-[#9CE840]" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{selectedProject.date}</div>
+                      <div className="text-sm text-gray-600">Año</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Users className="w-5 h-5 text-[#9CE840]" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{selectedProject.participants}</div>
+                      <div className="text-sm text-gray-600">Participantes</div>
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{selectedProject.date}</div>
-                  <div className="text-sm text-gray-600">Año</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Users className="w-5 h-5 text-[#9CE840]" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">{selectedProject.participants}</div>
-                  <div className="text-sm text-gray-600">Participantes</div>
-                </div>
-                <div className="text-center col-span-2 md:col-span-1">
-                  <div className="flex items-center justify-center mb-2">
-                    <GraduationCap className="w-5 h-5 text-[#9CE840]" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">98%</div>
-                  <div className="text-sm text-gray-600">Satisfacción</div>
-                </div>
-              </div>
 
-              {/* Description */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Descripción del Proyecto</h3>
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {selectedProject.description}
-                </p>
-              </div>
+                  {/* Description */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Descripción del Proyecto</h3>
+                    <p className="text-gray-700 leading-relaxed text-lg">
+                      {selectedProject.description}
+                    </p>
+                  </div>
 
-              {/* Metodología */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Metodología</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">Enfoque Personalizado</h4>
-                    <p className="text-gray-600 text-sm">Adaptamos cada sesión a las necesidades específicas de cada participante.</p>
+                  {/* Metodología */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Metodología</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-4 border border-gray-200 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2">Metodología Principal</h4>
+                        <p className="text-gray-600 text-sm">
+                          {selectedProject.methodology1 || "Enfoque personalizado adaptado a las necesidades específicas de cada participante."}
+                        </p>
+                      </div>
+                      <div className="p-4 border border-gray-200 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2">Metodología Complementaria</h4>
+                        <p className="text-gray-600 text-sm">
+                          {selectedProject.methodology2 || "Actividades prácticas y casos reales para mejor comprensión."}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">Actividades Prácticas</h4>
-                    <p className="text-gray-600 text-sm">Implementamos ejercicios dinámicos y casos reales para mejor comprensión.</p>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">Seguimiento Continuo</h4>
-                    <p className="text-gray-600 text-sm">Monitoreamos el progreso y ajustamos el plan según los resultados.</p>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">Recursos Digitales</h4>
-                    <p className="text-gray-600 text-sm">Utilizamos herramientas tecnológicas para enriquecer la experiencia.</p>
-                  </div>
+
+                  {/* Tags */}
+                  {selectedProject.tags && selectedProject.tags.length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">Áreas de Enfoque</h3>
+                      <div className="flex flex-wrap gap-3">
+                        {selectedProject.tags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-green-100 hover:text-[#9CE840] transition-colors duration-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {/* Tags */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Áreas de Enfoque</h3>
-                <div className="flex flex-wrap gap-3">
-                  {selectedProject.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-green-100 hover:text-[#9CE840] transition-colors duration-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Results */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Resultados Obtenidos</h3>
-                <div className="bg-green-50 p-6 rounded-xl border border-green-200">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#9CE840] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700">Mayor claridad vocacional en el 95% de los participantes</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#9CE840] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700">Incremento del 40% en la confianza para tomar decisiones académicas</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#9CE840] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700">Mejora significativa en habilidades de autoconocimiento</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="text-center">
-                <button className="bg-[#9CE840] text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-400 transition-colors duration-200">
-                  Conocer Más Sobre Este Proyecto
-                </button>
-              </div>
-            </div>
+            </OverlayScrollbarsComponent>
           </div>
-          
         </div>
-        
       )}
 
       {/* Footer Component */}
@@ -498,10 +513,17 @@ const proyectosview = () => {
           opacity: 0;
           animation-fill-mode: both;
         }
+
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
         `}
       </style>
     </div>
   );
 };
 
-export default proyectosview;
+export default ProyectosView;

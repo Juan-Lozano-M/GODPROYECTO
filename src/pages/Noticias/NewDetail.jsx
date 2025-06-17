@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
 import CartoonCard from "../../components/cards/CartoonCard";
-import SuscribeCard from "../../components/cards/SuscribeCard";
+
 
 export default function NewDetail() {
   const { slug } = useParams();
@@ -261,16 +261,7 @@ export default function NewDetail() {
               </CartoonCard>
 
               {/* Newsletter */}
-              <div>
-                <SuscribeCard 
-                  title="GOD News"
-                  subtitle="Recibe las últimas noticias directamente en tu correo."
-                  buttonText="Suscribirse"
-                  inputPlaceholder="Tu correo electrónico"
-                  bannerText1="SUSCRÍBETE"
-                  bannerText2="ÚNETE"
-                />
-              </div>
+
             </div>
           </div>
         </div>

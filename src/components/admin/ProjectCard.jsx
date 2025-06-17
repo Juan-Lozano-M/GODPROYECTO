@@ -1,129 +1,102 @@
-import { Link } from "react-router-dom";
 
-function ProjectCard({
-  image,
-  title,
-  manager,
-  startDate,
-  endDate,
-  description,
-  progress = 0,
-  status,
-  isSelected,
-  onSelect,
-  slug,
-  projectId,
-}) {
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "activo":
-        return "bg-[#9CE840] text-black";
-      case "completado":
-        return "bg-[#4285F4] text-white";
-      case "pausado":
-        return "bg-[#FFBE00] text-black";
-      case "cancelado":
-        return "bg-[#EA4335] text-white";
-      default:
-        return "bg-gray-300 text-black";
-    }
+// Mapeo de colores por estado
+const statusColors = {
+  'En Progreso': 'bg-[#9CE840]',
+  'Completado': 'bg-[#4285F4]',
+  'Planeado': 'bg-[#FFBE00]',
+  'Cancelado': 'bg-[#EA4335]',
+};
+
+const ProjectCard = ({ image, title, year, participants, description, category, status, isSelected, onSelect, slug, projectId }) => {
+  
+  const handleViewProject = (e) => {
+    e.stopPropagation(); // Evitar que se active onSelect cuando se hace clic en "Ver proyecto"
+    
+    // Crear la URL usando el slug o ID como fallback
+    const projectUrl = slug ? `/home/project/${slug}` : `/home/project/${projectId}`;
+    
+    // Abrir en una nueva pestaña
+    window.open(projectUrl, '_blank');
   };
-
-  const getProgressColor = (progress) => {
-    if (progress >= 80) return "bg-green-500";
-    if (progress >= 50) return "bg-yellow-500";
-    if (progress >= 20) return "bg-orange-500";
-    return "bg-red-500";
-  };
-
   return (
     <div
-      className={`flex flex-col sm:flex-row gap-4 p-4 sm:p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border-2 ${
-        isSelected ? "border-blue-500 bg-blue-50" : "border-transparent"
-      }`}
+      className={`flex items-center w-full h-[120px] sm:h-[140px] lg:h-[160px] xl:h-[150px] 2xl:h-[170px] bg-white rounded-2xl shadow-md hover:shadow-lg cursor-pointer border-2 transition-all ${isSelected ? 'border-[#87C232] shadow-lg' : 'border-gray-200'}`}
       onClick={onSelect}
     >
       {/* Imagen del proyecto */}
-      <div className="w-full sm:w-48 lg:w-56 xl:w-64 h-40 sm:h-32 lg:h-36 xl:h-40 flex-shrink-0">
-        <img
-          src={image || "/placeholder-project.jpg"}
-          alt={title}
-          className="w-full h-full object-cover rounded-lg"
-          onError={(e) => {
-            e.target.src = "/placeholder-project.jpg";
-          }}
-        />
-      </div>
-
-      {/* Contenido del proyecto */}
-      <div className="flex-grow flex flex-col justify-between">
-        <div>
-          {/* Título y estado */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 font-adlam">
-              {title}
-            </h3>
+      <img 
+        src={image || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"} 
+        alt="Proyecto imagen" 
+        className="h-[120px] w-[120px] sm:w-[140px] sm:h-[140px] lg:w-[160px] lg:h-[160px] xl:w-[150px] xl:h-[150px] 2xl:w-[170px] 2xl:h-[170px] rounded-l-2xl object-cover flex-shrink-0"
+        onError={(e) => {
+          e.target.src = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop";
+        }}
+      />
+        {/* Contenido general */}
+      <div className="flex justify-between items-center w-full h-full px-3 py-2">
+        {/* Información del proyecto */}
+        <div className="flex flex-col justify-center max-w-[65%] space-y-1">
+          {/* Título del proyecto */}
+          <h1 className="text-sm sm:text-base lg:text-lg xl:text-base 2xl:text-lg font-bold text-gray-900 line-clamp-1 leading-tight">
+            {title || 'Proyecto sin título'}
+          </h1>
+          
+          {/* Categoría y información adicional en línea */}
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+            {category && (
+              <span className="font-medium text-[#9CE840] bg-green-50 px-2 py-0.5 rounded-full text-xs">
+                {category}
+              </span>
+            )}
+            <span className="font-semibold">Año:</span>
+            <span>{year || 'N/A'}</span>
+            <span className="font-semibold">Part.:</span>
+            <span>{participants || 0}</span>
+          </div>
+          
+          {/* Descripción */}
+          <p className="line-clamp-2 text-xs sm:text-sm text-gray-700 leading-tight">
+            {description || 'Sin descripción disponible'}
+          </p>
+        </div>
+          {/* Estado y botón "Ver proyecto" */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Botón de estado */}
+          {status && (
             <span
-              className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium w-fit ${getStatusColor(
-                status
-              )}`}
+              className={`px-2 py-1 text-xs font-medium rounded-full text-white ${statusColors[status] || 'bg-gray-500'}`}
             >
               {status}
             </span>
-          </div>
-
-          {/* Información del gerente y fechas */}
-          <div className="text-sm sm:text-base text-gray-600 mb-3 font-quicksand">
-            <p className="mb-1">
-              <span className="font-semibold">Gerente:</span> {manager}
-            </p>
-            <div className="flex flex-col sm:flex-row sm:gap-4">
-              <p>
-                <span className="font-semibold">Inicio:</span> {startDate}
-              </p>
-              {endDate && (
-                <p>
-                  <span className="font-semibold">Fin:</span> {endDate}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Descripción */}
-          <p className="text-sm sm:text-base text-gray-700 mb-4 line-clamp-2 font-quicksand">
-            {description}
-          </p>
-
-          {/* Barra de progreso */}
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-700">Progreso</span>
-              <span className="text-sm font-medium text-gray-700">{progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(
-                  progress
-                )}`}
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Botón de ver proyecto */}
-        <div className="flex justify-end">
-          <Link
-            to={`/home/project/${slug || projectId}`}
-            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base font-medium"
-            onClick={(e) => e.stopPropagation()}
+          )}
+          
+          {/* Botón "Ver proyecto" */}
+          <button
+            className="bg-black text-white px-3 py-1.5 rounded-lg hover:bg-gray-800 transition-colors text-xs font-medium whitespace-nowrap"
+            onClick={handleViewProject}
           >
             Ver proyecto
-          </Link>
+          </button>
         </div>
       </div>
+      
+      {/* CSS personalizado para line-clamp */}
+      <style jsx>{`
+        .line-clamp-1 {
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
     </div>
   );
-}
+};
 
 export default ProjectCard;

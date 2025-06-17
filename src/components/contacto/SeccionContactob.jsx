@@ -1,12 +1,15 @@
 import { ArrowLeft, Mail, Phone, School, Send, User } from "lucide-react";
-import { useState, useEffect } from "react";
-import { registrarVisita } from '../../services/registerVisit';
+import { useEffect, useState } from "react";
 import Pescado from '../../assets/images/Pescado.png';
+import { contactService } from '../../services/contactService';
+import { registrarVisita } from '../../services/registerVisit';
 
 function SeccionContactob() {
   const [step, setStep] = useState(1); // 1: selección rol, 2: formulario, 3: éxito
   const [rol, setRol] = useState(null);
   const [formData, setFormData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     registrarVisita('contact');
@@ -60,17 +63,43 @@ function SeccionContactob() {
       [name]: value
     }));
   };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const fields = formFields[rol];
     const isValid = fields.every(field => 
       field.required ? formData[field.name]?.trim() : true
     );
 
-    if (isValid) {
-      setStep(3);
-    } else {
-      alert('Por favor completa todos los campos requeridos');
+    if (!isValid) {
+      setErrorMessage('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      // Preparar los datos para enviar al backend
+      const contactData = {
+        rol: rol,
+        ...formData
+      };
+
+      // Enviar los datos al backend
+      const response = await contactService.sendContactForm(contactData);
+      
+      if (response.status === 'success') {
+        setStep(3); // Ir al paso de éxito
+      } else {
+        setErrorMessage('Error al enviar el formulario. Inténtalo de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error al enviar formulario:', error);
+      setErrorMessage(
+        error.error || 
+        'Error al enviar el formulario. Verifica tu conexión e inténtalo de nuevo.'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -183,9 +212,14 @@ function SeccionContactob() {
 
             <p className="text-xs mb-6 text-gray-600 tracking-widest text-center">
               COMPLETA TU INFORMACIÓN
-            </p>
+            </p>            <div className="w-full max-w-2xl space-y-4">
+              {/* Mostrar mensaje de error si existe */}
+              {errorMessage && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                  <span className="block sm:inline">{errorMessage}</span>
+                </div>
+              )}
 
-            <div className="w-full max-w-2xl space-y-4">
               {formFields[rol].map((field) => {
                 const IconComponent = field.icon;
                 return (
@@ -212,14 +246,27 @@ function SeccionContactob() {
                 >
                   <ArrowLeft size={20} />
                   <span>Atrás</span>
-                </button>
-                <button
+                </button>                <button
                   type="button"
                   onClick={handleSubmit}
-                  className="flex-1 h-16 bg-[#A4FF00] border border-[#A4FF00] rounded-md text-lg font-bold flex items-center justify-center space-x-2 hover:bg-[#93E600] transition-colors"
+                  disabled={isLoading}
+                  className={`flex-1 h-16 rounded-md text-lg font-bold flex items-center justify-center space-x-2 transition-colors ${
+                    isLoading 
+                      ? 'bg-gray-400 border border-gray-400 cursor-not-allowed' 
+                      : 'bg-[#A4FF00] border border-[#A4FF00] hover:bg-[#93E600]'
+                  }`}
                 >
-                  <Send size={20} />
-                  <span>Enviar</span>
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Enviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      <span>Enviar</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

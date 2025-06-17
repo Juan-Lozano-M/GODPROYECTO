@@ -1,11 +1,19 @@
-import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
 import axios from 'axios'; // Import axios for making HTTP requests
+import { useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import DeleteButton from "../buttons/DeleteButton";
 
-const DropZone = ({ className = "w-85", onFileChange }) => {
+const DropZone = ({ className = "w-85", onFileChange, reset = false }) => {
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+
+  // Efecto para resetear el componente cuando reset cambie a true
+  useEffect(() => {
+    if (reset) {
+      setPreview(null);
+      setFile(null);
+    }
+  }, [reset]);
 
   const onDrop = useCallback(acceptedFiles => {
     const selectedFile = acceptedFiles[0];

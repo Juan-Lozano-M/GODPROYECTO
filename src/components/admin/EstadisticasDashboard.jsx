@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Area, AreaChart, Tooltip, CartesianGrid } from 'recharts';
+import { useEffect, useState } from 'react';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Componente Tab Button reutilizable
 const TabButton = ({ 
@@ -140,12 +140,10 @@ const GeneralContent = ({ stats, loading }) => {
           <StatCard title="Esta semana" value={totals.this_week || 0} subtitle="Registrados la última semana" />
           <StatCard title="Hoy" value={totals.today || 0} subtitle="Registrados hoy" />
         </div>
-      </div>
-
-      {/* Gráficas */}
-      <div className="space-y-4 sm:space-y-6 2xl:space-y-0 2xl:grid 2xl:grid-cols-3 2xl:gap-6">
+      </div>      {/* Gráficas */}
+      <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-6 2xl:space-y-0 2xl:grid 2xl:grid-cols-3 2xl:gap-6">
         {/* Usuarios registrados */}
-        <div className="2xl:col-span-2">
+        <div className="lg:col-span-2 2xl:col-span-2">
           <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
               <h2 className="text-lg sm:text-xl font-bold text-gray-800">Usuarios registrados</h2>
