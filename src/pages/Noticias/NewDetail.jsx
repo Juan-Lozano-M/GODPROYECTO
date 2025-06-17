@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import ShareButton from "../../components/buttons/ShareButton";
-import SuscribeCard from "../../components/cards/SuscribeCard";
-import CartoonCard from "../../components/cards/CartoonCard";
 import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ShareButton from "../../components/buttons/ShareButton";
+import CartoonCard from "../../components/cards/CartoonCard";
+import SuscribeCard from "../../components/cards/SuscribeCard";
 
 export default function NewDetail() {
   const { slug } = useParams();
@@ -12,44 +12,53 @@ export default function NewDetail() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [relatedNews, setRelatedNews] = useState([]);
+  
+  // Ref para controlar si ya se incrementó la vista
+  const viewIncrementedRef = useRef(false);
 
   useEffect(() => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Resetear el ref cuando cambia el slug
+    viewIncrementedRef.current = false;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  axios.get(`http://localhost:5000/api/news/${slug}`)
-    .then(response => {
-      if (response.data.status === "success") {
-        const newsItem = response.data.news;
-        setNews(newsItem);
+    axios.get(`http://localhost:5000/api/news/${slug}`)
+      .then(response => {
+        if (response.data.status === "success") {
+          const newsItem = response.data.news;
+          setNews(newsItem);
 
-        // Sumar 1 vista (sólo una vez al abrir la noticia)
-        axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
-          .catch(err => console.warn("No se pudo incrementar vistas:", err));
+          // Incrementar vista solo si no se ha hecho antes
+          if (!viewIncrementedRef.current) {
+            viewIncrementedRef.current = true;
+            axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
+              .catch(err => console.warn("No se pudo incrementar vistas:", err));
+          }
 
-        // Obtener relacionadas
-        return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
-      } else {
-        throw new Error(response.data.message || 'Noticia no encontrada');
-      }
-    })
-    .then(response => {
-      if (response && response.data.status === "success") {
-        const related = response.data.news
-          .filter(item => item.slug !== slug)
-          .slice(0, 3);
-        setRelatedNews(related);
-      }
-      setLoading(false);
-    })
-    .catch(error => {
-      console.error('Error loading news:', error);
-      setLoading(false);
-      setShowModal(true);
-      setTimeout(() => {
-        navigate('/noticiasv');
-      }, 2000);
-    });
-}, [slug, navigate]);
+          // Obtener relacionadas
+          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+        } else {
+          throw new Error(response.data.message || 'Noticia no encontrada');
+        }
+      })
+      .then(response => {
+        if (response && response.data.status === "success") {
+          const related = response.data.news
+            .filter(item => item.slug !== slug)
+            .slice(0, 3);
+          setRelatedNews(related);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading news:', error);
+        setLoading(false);
+        setShowModal(true);
+        setTimeout(() => {
+          navigate('/noticiasv');
+        }, 2000);
+      });
+  }, [slug, navigate]);
 
   // Función para formatear la fecha
   const formatDate = (dateString) => {

@@ -1,13 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { auth } from '../../firebaseConfig';
 
-function Autoregister() {
+function Autoregister({ isChatbotOpen }) {
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Define la altura del Hero en píxeles.
   // AJUSTA ESTE VALOR según la altura real de tu sección Hero en la página de inicio.
   const HERO_SECTION_HEIGHT = 800; // Por ejemplo, 800px.
+
+  useEffect(() => {
+    // Detectar si es móvil
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +53,15 @@ function Autoregister() {
     };
   }, [lastScrollY]);
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (isMobile || isChatbotOpen || isLoggedIn) return null;
+
   return (
     <div
       className={`fixed top-1/2 right-0 transform -translate-y-1/2 z-50  p-4   flex flex-col space-y-4 transition-transform duration-300 ease-out
@@ -55,7 +80,8 @@ function Autoregister() {
       >
         Registrarse
       </Link>
-    </div>  );
+    </div>
+  );
 }
 
 export default Autoregister;

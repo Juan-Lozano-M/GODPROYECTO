@@ -9,6 +9,7 @@ import LoginMain from "./LoginMain.jsx";
 import Home from "./pages/Admin/Home";
 import NewsCreate from "./pages/Admin/NewsCreate.jsx";
 import Notices from "./pages/Admin/Notices";
+import Projects from "./pages/Admin/Projects.jsx";
 import Statics from "./pages/Admin/Statics";
 import Testimonial from "./pages/Admin/Testimonial";
 import ActionRedirector from "./pages/Auth/ActionRedirector.jsx";
@@ -62,6 +63,11 @@ const router = createBrowserRouter([
   {
     path: "/statics",
     element: <Statics />,
+    errorElement: <Navigate to="/" />,
+  },
+    {
+    path: "/projects",
+    element: <Projects />,
     errorElement: <Navigate to="/" />,
   },
   {

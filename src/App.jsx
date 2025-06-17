@@ -1,11 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import "./App.css";
 import desercionImg from './assets/images/Desercion.png';
 import estresImg from './assets/images/Estres.png';
 import incongruenciaImg from './assets/images/Incongruencia.png';
 import nerdImage from './assets/images/nerd.png';
+import AdminButton from "./components/admin/AdminButton";
+import Chatbot from "./components/chatbot/ChatBot";
 import Auto from './components/index/Autoregister';
 import Dife from './components/index/Diferencias';
 import Footer from './components/index/Footer';
@@ -47,8 +50,7 @@ function AnimatedWord({ word }) {
 export default function GameOfDreams() {
   
   const [setCurrentTestimonial] = useState(0);
-
-  
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const testimonials = [
     {
@@ -88,10 +90,10 @@ export default function GameOfDreams() {
 
 
     <div className="min-h-screen bg-white cursor-guante">
-
-      <Nav></Nav>
-
-      <Auto></Auto>
+      <Chatbot onOpenChange={setIsChatbotOpen} />
+      <Nav />
+      <AdminButton isChatbotOpen={isChatbotOpen} />
+      <Auto isChatbotOpen={isChatbotOpen} />
       
       
       {/* Hero Section */}
@@ -142,11 +144,19 @@ export default function GameOfDreams() {
       </p>
       
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button className="bg-[#9CE840] hover:bg-[#8BD739] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center">
+        <Link to="/register" className="bg-[#9CE840] hover:bg-[#8BD739] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center">
           Registrate
           <ChevronRight className="w-5 h-5 ml-2" />
-        </button>
-        <button className="bg-white text-gray-700 px-8 py-4 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 border border-black">
+        </Link>
+        <button
+          className="bg-white text-gray-700 px-8 py-4 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 border border-black"
+          onClick={() => {
+            const section = document.getElementById('descubre-camino');
+            if (section) {
+              section.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
           Conocer más
         </button>
       </div>
@@ -178,7 +188,7 @@ export default function GameOfDreams() {
       
 
       
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
+      <section id="descubre-camino" className="py-12 sm:py-16 md:py-20 bg-white">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="text-center mb-12 sm:mb-16">
       <h2 className="text-3xl sm:text-4xl md:text-5xl text-gray-900 font-bold leading-tight">

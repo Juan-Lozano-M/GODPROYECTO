@@ -1,4 +1,6 @@
-import { Heart, MessageCircle, Repeat2, User } from 'lucide-react';
+import axios from 'axios';
+import { User } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const NewsCard = ({ news, index }) => {
   // Validación para evitar errores si news es undefined
@@ -6,10 +8,51 @@ const NewsCard = ({ news, index }) => {
     return null;
   }
 
+  // Función para formatear la fecha
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Fecha no disponible';
+    
+    try {
+      const date = new Date(dateString);
+      
+      // Verificar si la fecha es válida
+      if (isNaN(date.getTime())) {
+        return 'Fecha no disponible';
+      }
+      
+      // Formatear la fecha en español
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      
+      return date.toLocaleDateString('es-ES', options);
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      return 'Fecha no disponible';
+    }
+  };
+
+  // Limitar la descripción a 180 caracteres
+  const maxDescLength = 180;
+  const desc = news.description && news.description.length > maxDescLength
+    ? news.description.slice(0, maxDescLength) + '...'
+    : news.description || 'Descripción no disponible';
+
+  // Obtener la imagen de perfil del autor
+  const authorImage = news.author_image || news.autor?.profile_image;
+  const authorName = news.author || news.autor?.nombre || 'Autor desconocido';
+
+  // Obtener la fecha de publicación
+  const publishDate = news.published_at || news.created_at || news.date || news.fecha;
+
   return (
-    <div className="bg-white rounded-xl border border-black overflow-hidden mb-4 mx-2 flex-shrink-0 w-72 md:w-80 md:mx-auto">
+    <div className="bg-white rounded-xl border border-black overflow-hidden mb-4 mx-2 flex-shrink-0 w-72 md:w-80 md:mx-auto" style={{ minHeight: '420px', maxHeight: '420px', display: 'flex', flexDirection: 'column' }}>
       {/* Imagen */}
-      <div className="relative h-50 overflow-hidden">
+      <div className="relative h-50 overflow-hidden" style={{ minHeight: '180px', maxHeight: '180px' }}>
         <img 
           src={news.image || '/placeholder-image.jpg'} 
           alt={news.title || 'Noticia'}
@@ -22,48 +65,63 @@ const NewsCard = ({ news, index }) => {
       </div>
       
       {/* Contenido */}
-      <div className="p-5">
-        {/* Autor y tiempo */}
+      <div className="p-5 flex-1 flex flex-col justify-between">
+        {/* Autor, categoría y tiempo */}
         <div className="flex items-center mb-3">
-          <div className="w-6 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-            <User size={16} className="text-gray-600" />
+          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3 overflow-hidden relative">
+            {authorImage ? (
+              <img 
+                src={authorImage} 
+                alt={authorName}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Si la imagen falla, ocultar y mostrar el icono por defecto
+                  e.target.style.display = 'none';
+                }}
+              />
+            ) : null}
+            <User 
+              size={16} 
+              className={`text-gray-600 ${authorImage ? 'absolute inset-0 m-auto' : ''}`}
+              style={{ display: authorImage ? 'none' : 'block' }}
+            />
           </div>
           <div>
-            <div className="flex items-center">
+            <div className="flex items-center flex-wrap">
               <span className="font-semibold text-gray-900 text-sm mr-2">{news.author || 'Autor desconocido'}</span>
               <span className="text-blue-500 text-xs font-medium mr-2">• {news.category || 'General'}</span>
-              <span className="text-gray-500 text-xs">• {news.time || 'Hace un momento'}</span>
+            </div>
+            {/* Fecha concreta siempre debajo de la categoría, formato dd/mm/yyyy */}
+            <div>
+              <span className="text-gray-500 text-xs block mt-1">
+                {(() => {
+                  // news.fecha_creacion puede venir en formato ISO o como string
+                  const fechaRaw = news.fecha_creacion || news.date;
+                  if (!fechaRaw) return 'Sin fecha';
+                  try {
+                    const fecha = new Date(fechaRaw);
+                    if (isNaN(fecha.getTime())) return 'Sin fecha';
+                    const dia = String(fecha.getDate()).padStart(2, '0');
+                    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+                    const anio = fecha.getFullYear();
+                    return `${dia}/${mes}/${anio}`;
+                  } catch {
+                    return 'Sin fecha';
+                  }
+                })()}
+              </span>
             </div>
           </div>
         </div>
         
         {/* Título */}
-        <h3 className="font-bold text-gray-900 text-base mb-2 leading-tight">
+        <h3 className="font-bold text-gray-900 text-base mb-2 leading-tight text-left w-full">
           {news.title || 'Título no disponible'}
         </h3>
-        
-        {/* Descripción */}
-        <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-          {news.description || 'Descripción no disponible'}
+        {/* Descripción justo debajo del título, alineada a la izquierda y sin importar el largo */}
+        <p className="text-gray-600 text-sm leading-relaxed text-left w-full mb-2">
+          {desc}
         </p>
-        
-        {/* Interacciones */}
-        <div className="flex items-center justify-between text-gray-500">
-          <div className="flex items-center space-x-6">
-            <button className="flex items-center space-x-1 hover:text-blue-500 transition-colors">
-              <MessageCircle size={16} />
-              <span className="text-sm">{news.comments}</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-green-500 transition-colors">
-              <Repeat2 size={16} />
-              <span className="text-sm">{news.shares}</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-red-500 transition-colors">
-              <Heart size={16} />
-              <span className="text-sm">{news.likes}</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -100,85 +158,26 @@ const NewsColumn = ({ news, speed = 30 }) => (
 );
 
 const Proyectosin = () => {
-  const newsData = [
-    {
-      id: 1,
-      author: "Luis Herrera",
-      category: "OceanTech",
-      time: "8h",
-      title: "Robots autónomos limpian océanos",
-      description: "Flota de robots submarinos remueve 100 toneladas de plástico mensualmente, utilizando IA para identificar y recolectar desechos.",
-      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=250&fit=crop",
-      comments: 16,
-      shares: 5,
-      likes: 39
-    },
-    {
-      id: 2,
-      author: "María González",
-      category: "SpaceTech",
-      time: "12h",
-      title: "Nueva estación espacial completada",
-      description: "La estación orbital más avanzada del mundo inicia operaciones científicas con tecnología de última generación.",
-      image: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=250&fit=crop",
-      comments: 24,
-      shares: 8,
-      likes: 67
-    },
-    {
-      id: 3,
-      author: "Carlos Mendoza",
-      category: "AI Research",
-      time: "6h",
-      title: "IA detecta enfermedades tempranas",
-      description: "Algoritmo de inteligencia artificial identifica cáncer con 99% de precisión en radiografías, revolucionando diagnósticos médicos.",
-      image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop",
-      comments: 45,
-      shares: 12,
-      likes: 128
-    },
-    {
-      id: 4,
-      author: "Ana Rodríguez",
-      category: "Green Energy",
-      time: "4h",
-      title: "Planta solar genera energía nocturna",
-      description: "Innovadora tecnología permite almacenar calor solar durante el día para generar electricidad las 24 horas.",
-      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=250&fit=crop",
-      comments: 31,
-      shares: 15,
-      likes: 89
-    },
-    {
-      id: 5,
-      author: "Roberto Silva",
-      category: "Transport",
-      time: "2h",
-      title: "Taxis voladores inician pruebas",
-      description: "Vehículos de transporte aéreo urbano comienzan fase de testing en tres ciudades principales del país.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop",
-      comments: 28,
-      shares: 19,
-      likes: 156
-    },
-    {
-      id: 6,
-      author: "Elena Vásquez",
-      category: "BioTech",
-      time: "1h",
-      title: "Cultivos resistentes a sequía",
-      description: "Científicos desarrollan plantas modificadas genéticamente que sobreviven sin agua durante meses, prometiendo seguridad alimentaria.",
-      image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=250&fit=crop",
-      comments: 19,
-      shares: 7,
-      likes: 73
-    }
-  ];
+  const [newsData, setNewsData] = useState([]);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/news/get-news');
+        if (res.data && res.data.status === 'success') {
+          setNewsData(res.data.news);
+        }
+      } catch (err) {
+        console.error('Error al cargar noticias:', err);
+      }
+    };
+    fetchNews();
+  }, []);
 
   // Dividir noticias en 3 columnas para desktop
-  const column1 = [newsData[0], newsData[3]];
-  const column2 = [newsData[1], newsData[4]];
-  const column3 = [newsData[2], newsData[5]];
+  const column1 = newsData.filter((_, i) => i % 3 === 0);
+  const column2 = newsData.filter((_, i) => i % 3 === 1);
+  const column3 = newsData.filter((_, i) => i % 3 === 2);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -248,6 +247,20 @@ const Proyectosin = () => {
           
           .animate-scroll-horizontal {
             animation: scroll-horizontal 40s linear infinite;
+          }
+
+          .truncate-3-lines {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          .truncate-5-lines {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
           }
         `}
       </style>

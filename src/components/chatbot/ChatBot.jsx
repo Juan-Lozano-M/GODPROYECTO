@@ -12,7 +12,7 @@ const predefinedQuestions = [
   { text: "¿Qué hago si no me gusta nada?", style: "dark" },
 ]
 
-export default function ChatInterface() {
+export default function ChatInterface({ onOpenChange }) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
@@ -191,7 +191,14 @@ export default function ChatInterface() {
     }
   }
 
-  return (    <div className={`fixed bottom-4 right-4 z-50 ${isMobile ? 'bottom-6 right-6' : ''}`}>
+  useEffect(() => {
+    if (typeof onOpenChange === 'function') {
+      onOpenChange(isOpen);
+    }
+  }, [isOpen, onOpenChange])
+
+  return (
+    <div className={`fixed bottom-4 right-4 z-50 ${isMobile ? 'bottom-6 right-6' : ''}`}>
       {/* Chat toggle button - Responsive */}
       <button
         onClick={() => setIsOpen(!isOpen)}

@@ -1,79 +1,48 @@
-import { useRef, useState } from "react";
-
-const testimonials = [
-  {
-    id: 1,
-    name: "Carlos Mendoza",
-    role: "Ingeniero de Software",
-    message:
-      "Trabajar en tecnología me ha enseñado que la perseverancia y la pasión son claves para superar cualquier obstáculo. Es un camino que vale la pena recorrer porque cada logro es un impulso para crecer.",
-    photo: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: 2,
-    name: "Laura Gómez",
-    role: "Diseñadora UX/UI",
-    message:
-      "Ser diseñadora me permite combinar creatividad con funcionalidad para crear experiencias increíbles para los usuarios. En esta profesión, el detalle lo es todo y cada proyecto es una oportunidad para aprender.",
-    photo: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    id: 3,
-    name: "Andrés Ramírez",
-    role: "Desarrollador Frontend",
-    message:
-      "Cada línea de código es una oportunidad para construir algo que pueda impactar la vida de muchas personas. Aprender constantemente es la clave para estar siempre vigente en esta profesión dinámica.",
-    photo: "https://randomuser.me/api/portraits/men/54.jpg",
-  },
-  {
-    id: 4,
-    name: "Sofía Torres",
-    role: "Analista de Datos",
-    message:
-      "Mi trabajo consiste en transformar datos complejos en historias claras que ayuden a tomar decisiones estratégicas. La precisión y la curiosidad son mis mejores herramientas.",
-    photo: "https://randomuser.me/api/portraits/women/65.jpg",
-  },
-  {
-    id: 5,
-    name: "Javier Martínez",
-    role: "Administrador de Redes",
-    message:
-      "Mantener las redes funcionando es un desafío constante, pero la satisfacción de resolver problemas es enorme. La paciencia y la atención al detalle son indispensables para esta labor.",
-    photo: "https://randomuser.me/api/portraits/men/22.jpg",
-  },
-  {
-    id: 6,
-    name: "Valentina Rojas",
-    role: "Especialista en Marketing Digital",
-    message:
-      "Ayudar a las marcas a conectar con sus clientes es una pasión que me impulsa a estar siempre aprendiendo. En marketing, la creatividad y el análisis van de la mano para lograr resultados.",
-    photo: "https://randomuser.me/api/portraits/women/12.jpg",
-  },
-];
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import Toast from '../alertas/Toast';
 
 export default function Testimonios() {
-  const duplicated = [...testimonials, ...testimonials];
+  const [testimonials, setTestimonials] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userToken, setUserToken] = useState(null);
   const trackRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    title: '',
     role: '',
     message: ''
   });
+  const [showToast, setShowToast] = useState(false);
 
-  const pauseAnimation = () => {
-    if (trackRef.current) {
-      trackRef.current.style.animationPlayState = "paused";
-    }
-  };
+  // Verificar autenticación al cargar el componente
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Aquí deberías obtener el token de tu contexto de autenticación o localStorage
+        // Este es un ejemplo - ajústalo según tu implementación de autenticación
+        const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+        
+        if (token) {
+          setUserToken(token);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        setIsAuthenticated(false);
+      }
+    };
 
-  const resumeAnimation = () => {
-    if (trackRef.current) {
-      trackRef.current.style.animationPlayState = "running";
-    }
-  };
+    checkAuth();
+  }, []);
 
   const openModal = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para crear un testimonio');
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -83,30 +52,123 @@ export default function Testimonios() {
       setIsModalOpen(false);
       setIsClosing(false);
       setFormData({
+        title: '',
         role: '',
         message: ''
       });
     }, 300);
   };
 
+  const handleSubmit = async () => {
+    if (!isAuthenticated || !userToken) {
+      alert('Debes iniciar sesión para crear un testimonio');
+      return;
+    }
+
+    if (!formData.title.trim() || !formData.message.trim()) {
+      alert('Por favor completa todos los campos obligatorios');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      // Construir el objeto de testimonio
+      const testimonialData = {
+        titulo_tes: formData.title.trim(),
+        contenido_tes: formData.message.trim(),
+        cargo_tes: formData.role.trim()
+      };
+
+      // Enviar a la API con el token de autenticación
+      await axios.post(
+        'http://localhost:5000/api/testimonials/create', 
+        testimonialData,
+        {
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setShowToast(true); // Mostrar toast de éxito
+      closeModal();
+      
+    } catch (error) {
+      console.error('Error al enviar testimonio:', error);
+      
+      if (error.response?.status === 401) {
+        alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        setIsAuthenticated(false);
+        setUserToken(null);
+      } else if (error.response?.status === 400) {
+        alert('Por favor completa todos los campos obligatorios.');
+      } else {
+        alert('Error al enviar el testimonio. Inténtalo nuevamente.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const loadTestimonials = () => {
+    axios
+      .get("http://localhost:5000/api/testimonials/by-status?status=aprobado")
+      .then((res) => {
+        let data = res.data;
+        if (Array.isArray(data)) {
+          if (data.length < 10) {
+            const repeatCount = Math.ceil(10 / data.length);
+            data = Array.from({ length: repeatCount }, () => data).flat();
+          }
+          setTestimonials(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Error al cargar testimonios:", err);
+      });
+  };
+
+  useEffect(() => {
+    loadTestimonials();
+  }, []);
+
+  const pauseAnimation = () => {
+    if (trackRef.current) trackRef.current.style.animationPlayState = "paused";
+  };
+
+  const resumeAnimation = () => {
+    if (trackRef.current) trackRef.current.style.animationPlayState = "running";
+  };
+
+  const getInitial = (name) => name?.charAt(0).toUpperCase() || "U";
+
+  const getColor = (name) => {
+    const colors = ["#E6F4EA", "#FDEBD0", "#E8DAEF", "#D6EAF8", "#FCF3CF"];
+    const index = name ? name.charCodeAt(0) % colors.length : 0;
+    return colors[index];
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = () => {
-    // Aquí se procesaría la información del formulario
-    console.log('Datos del testimonio:', formData);
-    closeModal();
-  };
-
   return (
-    <div className="relative mt-4 sm:mt-8 mb-4 sm:mb-8 overflow-hidden w-full py-8 sm:py-12 lg:py-16 bg-white flex flex-col items-center">
-      <div className="text-center mb-8 sm:mb-12 lg:mb-20 px-4">
-        <h2 className=" text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-4">
+    <div className="w-full overflow-hidden bg-white py-24 px-4 sm:px-6 lg:px-8">
+      <Toast
+        title="¡Testimonio enviado!"
+        message="Tu testimonio ha sido enviado exitosamente y está pendiente de aprobación."
+        show={showToast}
+        setShow={setShowToast}
+      />
+
+      <div className="text-center mb-12">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-4">
           Historias inspiradoras
         </h2>
         <p className="text-base sm:text-lg lg:text-xl text-black/50 font-semibold mb-4 sm:mb-6 lg:mb-8">
@@ -116,9 +178,153 @@ export default function Testimonios() {
           onClick={openModal}
           className="bg-[#9CE840] hover:bg-[#7FBF33] text-white font-bold py-2 px-6 sm:py-3 sm:px-8 rounded-md text-base sm:text-lg shadow-md transition-transform duration-300 transform hover:scale-105"
         >
-          Agregar testimonio
+          {isAuthenticated ? 'Agregar testimonio' : 'Inicia sesión para agregar testimonio'}
         </button>
       </div>
+
+      <div className="relative w-full overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex animate-scroll gap-4"
+          style={{
+            animation: "scroll 25s linear infinite",
+            width: "max-content",
+          }}
+        >
+          {testimonials.map((t, i) => (
+            <div key={i} className="p-2 sm:p-3">
+              <div
+                onMouseEnter={pauseAnimation}
+                onMouseLeave={resumeAnimation}
+                className="testimonial-card flex-shrink-0 w-[300px] min-h-[220px] bg-white border border-black rounded-lg shadow-md p-5 hover:scale-105 transition-transform"
+              >
+                <div className="flex items-start">
+                  {t.profile_image ? (
+                    <img
+                      src={t.profile_image}
+                      alt={t.nombre_usuario}
+                      className="w-14 h-14 rounded-full object-cover mr-4"
+                    />
+                  ) : (
+                    <div
+                      className="w-14 h-14 rounded-full mr-4 flex items-center justify-center text-lg font-bold text-white"
+                      style={{ backgroundColor: getColor(t.nombre_usuario) }}
+                    >
+                      {getInitial(t.nombre_usuario)}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-semibold text-base">{t.nombre_usuario}</p>
+                    <p className="text-sm text-gray-600">{t.cargo_tes}</p>
+                  </div>
+                </div>
+                {t.titulo_tes && (
+                  <p className="text-black font-semibold text-sm mt-2 mb-1 truncate">{t.titulo_tes}</p>
+                )}
+                <p className="text-sm text-gray-700 mt-2 leading-relaxed">
+                  {t.contenido_tes}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div
+          className={`modal-container fixed inset-0 flex items-center justify-center z-50 p-4 sm:p-6 ${
+            isClosing ? 'modal-backdrop-exit' : 'modal-backdrop-enter'
+          }`}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+          onClick={closeModal}
+        >
+          <div
+            className={`modal-content bg-white rounded-lg p-4 sm:p-6 lg:p-8 w-full max-w-sm sm:max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-y-auto ${
+              isClosing ? 'modal-content-exit' : 'modal-content-enter'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Nuevo Testimonio</h3>
+              <button
+                onClick={closeModal}
+                disabled={isSubmitting}
+                className="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl font-bold hover:animate-x-bounce transition-colors p-1 disabled:opacity-50"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-3 sm:space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                  Profesión o Cargo
+                </label>
+                <input
+                  type="text"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9CE840] focus:border-transparent disabled:opacity-50"
+                  placeholder="Ej: Desarrollador Frontend, Diseñadora UX/UI"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                  Título del testimonio *
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9CE840] focus:border-transparent disabled:opacity-50"
+                  placeholder="Ej: Mi gran cambio, Cómo encontré mi vocación..."
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                  Tu testimonio *
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  rows={4}
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9CE840] focus:border-transparent resize-none disabled:opacity-50"
+                  placeholder="Comparte tu experiencia, aprendizajes o consejos que puedan inspirar a otros profesionales..."
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 sm:gap-4 pt-3 sm:pt-4">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isSubmitting}
+                  className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || !formData.title.trim() || !formData.message.trim()}
+                  className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-[#9CE840] hover:bg-[#7FBF33] text-white rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Enviando...' : 'Enviar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>
         {`
@@ -131,31 +337,43 @@ export default function Testimonios() {
             }
           }
 
-          @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
+          @keyframes modal-fade-in {
+            from { 
+              opacity: 0;
+            }
+            to { 
+              opacity: 1;
+            }
           }
 
-          @keyframes fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
+          @keyframes modal-fade-out {
+            from { 
+              opacity: 1;
+            }
+            to { 
+              opacity: 0;
+            }
           }
 
-          @keyframes slide-up {
+          @keyframes modal-slide-up {
             from { 
               transform: translateY(100%);
+              opacity: 0;
             }
             to { 
               transform: translateY(0);
+              opacity: 1;
             }
           }
 
-          @keyframes slide-down {
+          @keyframes modal-slide-down {
             from { 
               transform: translateY(0);
+              opacity: 1;
             }
             to { 
               transform: translateY(100%);
+              opacity: 0;
             }
           }
 
@@ -165,27 +383,26 @@ export default function Testimonios() {
             100% { transform: scale(1) rotate(0deg); }
           }
 
-          .animate-fade-in {
-            animation: fade-in 0.3s ease-out forwards;
+          .modal-backdrop-enter {
+            animation: modal-fade-in 0.3s ease-out forwards;
           }
 
-          .animate-fade-out {
-            animation: fade-out 0.3s ease-out forwards;
+          .modal-backdrop-exit {
+            animation: modal-fade-out 0.3s ease-out forwards;
           }
 
-          .animate-slide-up {
-            animation: slide-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          .modal-content-enter {
+            animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           }
 
-          .animate-slide-down {
-            animation: slide-down 0.3s ease-in forwards;
+          .modal-content-exit {
+            animation: modal-slide-down 0.3s ease-in forwards;
           }
 
           .animate-x-bounce {
             animation: x-bounce 0.3s ease-out;
           }
 
-          /* Optimización para pantallas pequeñas */
           @media (max-height: 600px) {
             .modal-container {
               padding: 1rem !important;
@@ -213,113 +430,6 @@ export default function Testimonios() {
           }
         `}
       </style>
-
-      <div className="w-full overflow-hidden">
-        <div
-          ref={trackRef}
-          className="flex animate-scroll gap-3 sm:gap-4 lg:gap-6"
-          style={{
-            animation: "scroll 20s linear infinite",
-            width: "max-content",
-          }}
-        >
-          {duplicated.map((t, i) => (
-            <div key={i} className="p-2 sm:p-3">
-              <div
-                onMouseEnter={pauseAnimation}
-                onMouseLeave={resumeAnimation}
-                className="testimonial-card flex-shrink-0 w-[280px] sm:w-[320px] lg:w-[360px] min-h-[220px] sm:min-h-[240px] lg:min-h-[260px] bg-white border border-black rounded-lg shadow-md p-4 sm:p-5 lg:p-6 transition-transform transform hover:scale-105"
-              >
-                <div className="flex items-start">
-                  <img
-                    src={t.photo}
-                    alt={t.name}
-                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full object-cover mr-3 sm:mr-4"
-                  />
-                  <div>
-                    <p className="font-semibold text-base sm:text-lg">{t.name}</p>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-2">{t.role}</p>
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-gray-700 mt-3 sm:mt-4 leading-relaxed">{t.message}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Modal Responsivo */}
-      {isModalOpen && (
-        <div
-          className={`modal-container fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 ${
-            isClosing ? 'animate-fade-out' : 'opacity-0 animate-fade-in'
-          }`}
-          onClick={closeModal}
-        >
-          <div
-            className={`modal-content bg-white rounded-lg p-4 sm:p-6 lg:p-8 w-full max-w-sm sm:max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-y-auto ${
-              isClosing ? 'animate-slide-down' : 'translate-y-full animate-slide-up'
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Nuevo Testimonio</h3>
-              <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl font-bold hover:animate-x-bounce transition-colors p-1"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                  Profesión o Cargo
-                </label>
-                <input
-                  type="text"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9CE840] focus:border-transparent"
-                  placeholder="Ej: Desarrollador Frontend, Diseñadora UX/UI"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                  Tu testimonio
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9CE840] focus:border-transparent resize-none"
-                  placeholder="Comparte tu experiencia, aprendizajes o consejos que puedan inspirar a otros profesionales..."
-                />
-              </div>
-
-              <div className="flex gap-3 sm:gap-4 pt-3 sm:pt-4">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base bg-[#9CE840] hover:bg-[#7FBF33] text-white rounded-md font-medium transition-colors"
-                >
-                  Enviar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

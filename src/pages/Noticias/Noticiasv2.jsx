@@ -38,7 +38,7 @@ function Noticiasv2() {
   };
 
   return (
-    <main className="min-h-screen bg-white cursor-guante"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
+    <main className="min-h-screen bg-white cursor-guante overflow-x-hidden"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
       <Chatbot />
       <Navbar /> {/* Barra de navegación superior */}
       
@@ -63,7 +63,7 @@ function Noticiasv2() {
           <div className="flex-1 relative">
             <div className="relative h-[710px] w-full bg-[#9CE840] ">
               <img src={imagennews} alt="Games Collage"
-                className="absolute inset-0 w-[1000px] h-full object-cover" />
+                className="absolute inset-0 w-full max-w-[1000px] h-full object-cover" />
               
               {/* Capa de degradado sobre la imagen */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30"></div>

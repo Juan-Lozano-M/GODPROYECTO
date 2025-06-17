@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import godLogo from '../../assets/logos/logoGOD.png';
+import { auth } from '../../firebaseConfig';
 
 const menuItems = [
+  { name: "Home", path: "/" },
   { name: "Noticias", path: "/noticiasv" },
   { name: "Contacto", path: "/contacto" },
   { name: "Testimonios", path: "/testimonios", isScroll: true, scrollId: "testimonios" },
@@ -13,10 +16,117 @@ const menuItems = [
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoHovered, setLogoHovered] = useState(false);
+  const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [userPhoto, setUserPhoto] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
+  
   const location = useLocation();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  // Función de debugging
+  const debugLocalStorage = useCallback((context) => {
+    console.log(`=== DEBUG LOCALSTORAGE (${context}) ===`);
+    console.log('userPhoto:', localStorage.getItem('userPhoto'));
+    console.log('profileImage:', localStorage.getItem('profileImage'));
+    console.log('userName:', localStorage.getItem('userName'));
+    console.log('Current userPhoto state:', userPhoto);
+    console.log('=====================================');
+  }, [userPhoto]);
+
+  // Cargar imagen inmediatamente al montar el componente
+  useEffect(() => {
+    debugLocalStorage('COMPONENT MOUNT');
+    const storedImage = localStorage.getItem("userPhoto") || localStorage.getItem("profileImage");
+    console.log('=== COMPONENT MOUNT ===');
+    console.log('Stored image found:', storedImage);
+    if (storedImage) {
+      console.log('Setting userPhoto from localStorage:', storedImage);
+      setUserPhoto(storedImage);
+    } else {
+      console.log('No stored image found in localStorage');
+    }
+    setHasLoadedFromStorage(true);
+  }, [debugLocalStorage]);
+
+  // Manejar autenticación
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log('=== AUTH STATE CHANGED ===');
+      console.log('Current user:', currentUser);
+      
+      if (currentUser) {
+        console.log('User photoURL:', currentUser.photoURL);
+        console.log('LocalStorage userPhoto:', localStorage.getItem("userPhoto"));
+        console.log('LocalStorage profileImage:', localStorage.getItem("profileImage"));
+        
+        setUser(currentUser);
+        setUserName(currentUser.displayName || localStorage.getItem("userName") || "Usuario");
+        
+        // Priorizar imagen personalizada en localStorage sobre Google photoURL
+        const storedImage = localStorage.getItem("userPhoto") || localStorage.getItem("profileImage");
+        let profileImage = "";
+        
+        // Si hay imagen almacenada (personalizada), usarla
+        if (storedImage) {
+          profileImage = storedImage;
+          console.log('Using stored image (priority):', profileImage);
+        } 
+        // Si no hay imagen personalizada, usar Google photoURL
+        else if (currentUser.photoURL) {
+          profileImage = currentUser.photoURL;
+          console.log('Using Google photoURL:', profileImage);
+        }
+        
+        console.log('Final profile image selected:', profileImage);
+        
+        // Solo actualizar si tenemos una imagen y cumple ciertas condiciones
+        if (profileImage) {
+          setUserPhoto(prevPhoto => {
+            console.log('Previous photo:', prevPhoto);
+            console.log('New photo:', profileImage);
+            console.log('Has loaded from storage:', hasLoadedFromStorage);
+            
+            // Si ya cargamos desde storage y tenemos una imagen, mantenerla
+            // Solo actualizar si no tenemos imagen previa o si la nueva es diferente
+            if (!prevPhoto || profileImage !== prevPhoto) {
+              console.log('Updating userPhoto from', prevPhoto, 'to', profileImage);
+              return profileImage;
+            }
+            console.log('Keeping existing photo');
+            return prevPhoto;
+          });
+        } else if (!storedImage && hasLoadedFromStorage) {
+          // Solo limpiar si no hay imagen almacenada y ya verificamos localStorage
+          console.log('No image available, clearing userPhoto');
+          setUserPhoto('');
+        }
+      } else {
+        console.log('No user authenticated');
+        setUser(null);
+        setUserName('');
+        setUserPhoto('');
+      }
+    });
+
+    // Escuchar eventos de actualización de imagen de perfil
+    const handleProfileImageUpdate = (event) => {
+      console.log('Profile image updated event received:', event.detail.imageUrl);
+      debugLocalStorage('PROFILE IMAGE UPDATE EVENT');
+      setUserPhoto(event.detail.imageUrl);
+    };
+
+    window.addEventListener('profileImageUpdated', handleProfileImageUpdate);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('profileImageUpdated', handleProfileImageUpdate);
+    };
+  }, [debugLocalStorage, hasLoadedFromStorage]);
 
   // Prevenir scroll del body cuando el menú móvil está abierto
   useEffect(() => {
@@ -35,6 +145,18 @@ function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -60,6 +182,59 @@ function Navbar() {
       }
     }
   };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      // Limpiar todos los datos de autenticación y sesión relevantes
+      localStorage.removeItem('userPhoto');
+      localStorage.removeItem('profileImage');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      navigate('/');
+      window.location.reload(); // Refresca la página después de cerrar sesión
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
+  const getInitials = (name) => {
+    return name ? name.charAt(0).toUpperCase() : 'U';
+  };
+
+  const handleImageError = () => {
+    console.log('Image failed to load, falling back to initials');
+    setUserPhoto(''); // Esto forzará que se muestre la inicial
+  };
+
+  // Función para refrescar la foto de perfil
+  const refreshUserData = async () => {
+    if (auth.currentUser) {
+      console.log('=== REFRESHING USER DATA ===');
+      await auth.currentUser.reload();
+      const updatedUser = auth.currentUser;
+      console.log('Refreshed user data:', updatedUser);
+      
+      // Priorizar diferentes fuentes de imagen después del refresh
+      const storedImage = localStorage.getItem("userPhoto") || localStorage.getItem("profileImage");
+      let profileImage = updatedUser.photoURL || storedImage || "";
+      
+      console.log('Refreshed profile image:', profileImage);
+      console.log('Stored image:', storedImage);
+      
+      if (profileImage) {
+        setUserPhoto(profileImage);
+      }
+    }
+  };
+
+  // Refrescar datos del usuario al montar el componente
+  useEffect(() => {
+    if (user) {
+      refreshUserData();
+    }
+  }, [user]);
 
   return (
     <>
@@ -106,32 +281,88 @@ function Navbar() {
           <span className="ml-3 font-bold text-[#2E1E68] text-lg">GOD</span>
         </Link>
 
-        {/* Menú de escritorio */}
-        <ul className="hidden md:flex space-x-6 text-[#2E1E68] font-medium mr-10">
-          {menuItems.map((item) => (
-            <li key={item.name} className={`relative cursor-pointer group transition duration-300`}>
-              {item.isScroll ? (
-                <button
-                  onClick={() => handleNavClick(item)}
-                  className={`hover-effect nav-button ${
-                    location.pathname === item.path ? "text-[#9CE840]" : ""
+        {/* Contenedor para menú y foto de perfil - Movido más a la derecha */}
+        <div className="hidden md:flex items-center space-x-8 mr-8">
+          {/* Menú de escritorio */}
+          <ul className="flex space-x-8 text-[#2E1E68] font-medium">
+            {menuItems.map((item) => (
+              <li key={item.name} className={`relative cursor-pointer group transition duration-300`}>
+                {item.isScroll ? (
+                  <button
+                    onClick={() => handleNavClick(item)}
+                    className={`hover-effect nav-button ${
+                      location.pathname === item.path ? "text-[#9CE840]" : ""
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className={`hover-effect nav-link ${
+                      location.pathname === item.path ? "text-[#9CE840]" : ""
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {/* Dropdown del usuario (escritorio) - Movido más a la derecha */}
+          {user && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
+              >
+                {/* Foto de perfil o inicial */}
+                {userPhoto ? (
+                  <img
+                    src={userPhoto}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-lg object-cover  ]"
+                    onError={handleImageError}
+                    onLoad={() => console.log('Image loaded successfully:', userPhoto)}
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-[#9CE840] rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-[#87C232]">
+                    {getInitials(userName)}
+                  </div>
+                )}
+                
+                {/* Flecha */}
+                <svg
+                  className={`w-4 h-4 text-[#2E1E68] transition-transform duration-200 ${
+                    isDropdownOpen ? 'rotate-180' : ''
                   }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {item.name}
-                </button>
-              ) : (
-                <Link
-                  to={item.path}
-                  className={`hover-effect nav-link ${
-                    location.pathname === item.path ? "text-[#9CE840]" : ""
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-900 truncate">{userName}</p>
+                    <p className="text-xs text-gray-500">Ver perfil</p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
               )}
-            </li>
-          ))}
-        </ul>
+            </div>
+          )}
+        </div>
       </nav>
 
       {/* Botón hamburguesa sticky solo en móvil */}
@@ -162,8 +393,10 @@ function Navbar() {
       {menuOpen && (
         <div
           onClick={toggleMenu}
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300"
+          className="fixed inset-0 z-40 transition-opacity duration-300"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
         />
+        
       )}
 
       {/* Menú móvil rediseñado */}
@@ -173,14 +406,43 @@ function Navbar() {
         }`}
       >
         {/* Header del menú móvil */}
-        <div className="flex items-center justify-between p-8 ">
-          
-         
+        <div className="flex items-center justify-start p-8 ">
+          {/* Foto de perfil o inicial en menú móvil */}
+          {user && (
+            userPhoto ? (
+              <img
+                src={userPhoto}
+                alt="Profile"
+                className="w-12 h-12 rounded-lg object-cover mr-4"
+                onError={handleImageError}
+              />
+            ) : (
+              <div className="w-12 h-12 bg-[#9CE840] rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-[#87C232] mr-4">
+                {getInitials(userName)}
+              </div>
+            )
+          )}
+          <span className="font-bold text-[#2E1E68] text-lg">{userName || 'Usuario'}</span>
         </div>
 
         {/* Lista de navegación móvil */}
         <nav className="px-6 py-4">
           <ul className="space-y-2">
+            {/* Botón Ver perfil solo en menú hamburguesa */}
+            {user && (
+              <li>
+                <button
+                  onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}
+                  className="mobile-nav-item"
+                  style={{ animationDelay: `0ms` }}
+                >
+                  <span className="mobile-nav-text">Ver perfil</span>
+                  <svg className="mobile-nav-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </li>
+            )}
             {menuItems.map((item, index) => (
               <li key={item.name}>
                 {item.isScroll ? (
@@ -213,12 +475,51 @@ function Navbar() {
                 )}
               </li>
             ))}
+            {/* Botones de login y registro al final */}
+            {!user && (
+              <>
+                <li>
+                  <Link
+                    to="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="mobile-nav-item bg-white border border-black text-black hover:bg-gray-100"
+                    style={{ animationDelay: `${menuItems.length * 50}ms` }}
+                  >
+                    <span className="mobile-nav-text">Iniciar sesión</span>
+                    <svg className="mobile-nav-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/register"
+                    onClick={() => setMenuOpen(false)}
+                    className="mobile-nav-item bg-[#9CE840] text-[#2E1E68] hover:bg-[#87C232]"
+                    style={{ animationDelay: `${(menuItems.length + 1) * 50}ms` }}
+                  >
+                    <span className="mobile-nav-text">Registrarse</span>
+                    <svg className="mobile-nav-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
 
         {/* Footer del menú móvil */}
-        <div className="absolute bottom-6 left-6 right-6">
-          <div className="text-center text-sm text-gray-500">
+        <div className="absolute bottom-6 left-6 right-6 flex flex-col items-center gap-2">
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 text-red-600 hover:text-red-700 bg-transparent rounded-lg font-semibold transition-colors duration-200 shadow-none border border-transparent"
+            >
+              Cerrar sesión
+            </button>
+          )}
+          <div className="text-center text-sm text-gray-500 mt-1">
             © 2025 Game of Dreams
           </div>
         </div>
