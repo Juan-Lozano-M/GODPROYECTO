@@ -5,7 +5,7 @@ import godLogo from '../../assets/logos/logoGOD.png';
 import { auth } from '../../firebaseConfig';
 
 const menuItems = [
-  { name: "Home", path: "/" },
+  { name: "Inicio", path: "/" },
   { name: "Noticias", path: "/noticiasv" },
   { name: "Contacto", path: "/contacto" },
   { name: "Testimonios", path: "/testimonios", isScroll: true, scrollId: "testimonios" },

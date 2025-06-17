@@ -1,11 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { Link } from 'react-router-dom';
-=======
 import { registrarVisita } from './services/registerVisit';
->>>>>>> 20b99d9021f7374fbb9b05b847def2bacd2ae1e2
 import "./App.css";
 import desercionImg from './assets/images/Desercion.png';
 import estresImg from './assets/images/Estres.png';

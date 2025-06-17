@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import loginImagen from "../assets/images/imagenLogin.png";
 import GODlogo from "../assets/logos/logoGOD.png";
 import googleLogo from "../assets/logos/logoGoogle.png";
-import instagramLogo from "../assets/logos/logoInstagram.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
@@ -317,15 +316,18 @@ const Login = () => {
 
         <div className="flex items-center gap-8 ">
           <div className="flex-1 border-t border-white opacity-50"></div>
-          <span className="text-white font-semibold">o inicia con</span>
+          <span className="text-white font-semibold">o</span>
           <div className="flex-1 border-t border-white opacity-50"></div>
         </div>
 
-        <div className="flex justify-between h-15 pt-3 mt-7">
-    
-          <SocialLoginButton icon={googleLogo} onClick={handleGoogleLogin} />
-          <SocialLoginButton icon={instagramLogo} />
-        </div>
+          <div className="pt-3 mt-7">
+            <SocialLoginButton 
+              icon={googleLogo} 
+              onClick={handleGoogleLogin}
+              altText="Google"
+              text="Continuar con Google"
+            />
+          </div>
       </div>
     </div>
   </div>

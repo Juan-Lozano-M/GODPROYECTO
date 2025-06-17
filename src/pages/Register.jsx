@@ -6,7 +6,6 @@ import xIcon from '../assets/icons/xIcon.png'
 import imagenRegister from '../assets/images/imagenRegister.png'
 import GODlogo from '../assets/logos/logoGOD.png'
 import googleLogo from '../assets/logos/logoGoogle.png'
-import instagramLogo from '../assets/logos/logoInstagram.png'
 import AlertMessage from '../components/alertas/AlertMesagge'
 import Textwriter from "../components/alertas/ui/textwriter"
 import SocialLoginButton from "../components/buttons/SocialMediaButton"
@@ -257,13 +256,17 @@ const Register = () => {
 
           <div className="flex items-center gap-8 mt-3">
             <div className="flex-1 border-t border-white opacity-50"></div>
-              <span className="text-black font-mint font-semibold">o registrate con</span>
+              <span className="text-black font-mint font-semibold">o</span>
             <div className="flex-1 border-t border-white opacity-50"></div>
           </div>
 
-          <div className="flex justify-between h-15 pt-3 mt-7">
-            <SocialLoginButton icon={googleLogo} onClick={manejarInicioConGoogle} />
-            <SocialLoginButton icon={instagramLogo} />
+          <div className="pt-3 mt-7">
+            <SocialLoginButton 
+              icon={googleLogo} 
+              onClick={manejarInicioConGoogle}
+              altText="Google"
+              text="Continuar con Google"
+            />
           </div>
         </div>
       </div>
