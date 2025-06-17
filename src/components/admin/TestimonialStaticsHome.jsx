@@ -28,10 +28,14 @@ export default function TestimonialStaticsHome() {
   }, []);
 
   return (
-    <div className="bg-black/3 p-6 rounded-2xl shadow-md w-full max-w-xl">
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={trendData}>
+    <div className="bg-black/3 p-6 rounded-2xl shadow-md w-full">
+      <div style={{ width: '100%', minHeight: '300px' }}> 
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={trendData}
+            barCategoryGap={24}  // ajusta el espacio entre barras
+            margin={{ top: 10, right: 30, left: 0, bottom: 10 }} // mejor distribución
+          >
             <CartesianGrid vertical={false} stroke="#EFEFEF" />
             <XAxis
               dataKey="name"
@@ -40,11 +44,11 @@ export default function TestimonialStaticsHome() {
               tickLine={false}
             />
             <YAxis
-              domain={[0, 20]} // 👈 Rango fijo de 0 a 30
-              ticks={[0, 5, 10, 15, 20]} // 👈 Puntos específicos en el eje Y
-              tick={{ fill: "#888", dx: -28 }} // Estilo del texto
-              axisLine={false}         // Oculta la línea vertical
-              tickLine={false}         // Oculta las rayitas pequeñas de cada tick
+              domain={[0, 30]}
+              ticks={[0, 6, 12, 18, 24, 30]}
+              tick={{ fill: "#888", dx: -28 }}
+              axisLine={false}
+              tickLine={false}
             />
             <Tooltip />
             <Bar dataKey="aprobados" fill="#9CE840" barSize={20} radius={[6, 6, 0, 0]} />

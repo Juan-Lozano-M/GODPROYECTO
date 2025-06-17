@@ -1,13 +1,19 @@
 import { Calendar, ExternalLink, GraduationCap, Target, Users, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { registrarVisita } from '../services/registerVisit';
 import Footer from '../components/index/Footer';
 import Navbar from "../components/index/Navbar";
 
 const proyectosview = () => {
+
   const [filter, setFilter] = useState('all');
   const [hoveredProject, setHoveredProject] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    registrarVisita('projects'); // <- Así se registra la visita
+  }, []);
 
   const openModal = (project) => {
     setSelectedProject(project);

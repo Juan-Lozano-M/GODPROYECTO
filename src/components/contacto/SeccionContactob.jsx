@@ -1,11 +1,16 @@
 import { ArrowLeft, Mail, Phone, School, Send, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { registrarVisita } from '../../services/registerVisit';
 import Pescado from '../../assets/images/Pescado.png';
 
 function SeccionContactob() {
   const [step, setStep] = useState(1); // 1: selección rol, 2: formulario, 3: éxito
   const [rol, setRol] = useState(null);
   const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    registrarVisita('contact');
+  }, []);
 
   const baseButtonClasses = `
     relative

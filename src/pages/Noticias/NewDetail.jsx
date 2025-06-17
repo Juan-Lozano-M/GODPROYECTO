@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
 import SuscribeCard from "../../components/cards/SuscribeCard";
@@ -13,25 +13,29 @@ export default function NewDetail() {
   const [showModal, setShowModal] = useState(false);
   const [relatedNews, setRelatedNews] = useState([]);
 
+  const hasIncrementedView = useRef(false);
+
   useEffect(() => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  axios.get(`http://localhost:5000/api/news/${slug}`)
-    .then(response => {
-      if (response.data.status === "success") {
-        const newsItem = response.data.news;
-        setNews(newsItem);
+    axios.get(`http://localhost:5000/api/news/${slug}`)
+      .then(response => {
+        if (response.data.status === "success") {
+          const newsItem = response.data.news;
+          setNews(newsItem);
 
-        // Sumar 1 vista (sólo una vez al abrir la noticia)
-        axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
-          .catch(err => console.warn("No se pudo incrementar vistas:", err));
+          // Solo incrementar si no se ha hecho ya
+          if (!hasIncrementedView.current) {
+            hasIncrementedView.current = true;
+            axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
+              .catch(err => console.warn("No se pudo incrementar vistas:", err));
+          }
 
-        // Obtener relacionadas
-        return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
-      } else {
-        throw new Error(response.data.message || 'Noticia no encontrada');
-      }
-    })
+          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+        } else {
+          throw new Error(response.data.message || 'Noticia no encontrada');
+        }
+      })
     .then(response => {
       if (response && response.data.status === "success") {
         const related = response.data.news

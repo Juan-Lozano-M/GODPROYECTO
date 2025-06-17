@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { registrarVisita } from './services/registerVisit';
 import "./App.css";
 import desercionImg from './assets/images/Desercion.png';
 import estresImg from './assets/images/Estres.png';
@@ -67,6 +68,11 @@ export default function GameOfDreams() {
       text: "La metodología de Game of Dreams es única. Me permitió explorar diferentes áreas hasta encontrar la perfecta para mí."
     }
   ];
+
+    // Registrar visita al montar la sección de INICIO
+  useEffect(() => {
+    registrarVisita('home');
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
