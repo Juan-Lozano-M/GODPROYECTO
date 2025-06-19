@@ -49,6 +49,11 @@ export default function ChatInterface({ onOpenChange }) {
     }
   }, [isMobile, isOpen])
 
+  const clearChat = () => {
+    setMessages([])
+    setInput("")
+  }
+
   const handleTouchStart = (e) => {
     if (e.touches.length > 1) {
       e.preventDefault()
@@ -219,11 +224,23 @@ export default function ChatInterface({ onOpenChange }) {
         : 'absolute bottom-16 right-0 w-80 h-[500px] bg-gray-200 rounded-3xl border border-gray-400'
       } transition-all duration-300 transform 
         ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'} flex flex-col`}>
-          {/* Header con MICHAEL y mascota - Responsive */}
-        <div className={`${isMobile ? 'p-6 pt-12' : 'p-4'} relative flex-shrink-0 bg-gray-200 ${isMobile ? 'rounded-none' : 'rounded-t-3xl'} flex items-center justify-center`}>          {isMobile && (
+          {/* Header con MICHAEL y mascota - Responsive */}        <div className={`${isMobile ? 'p-6 pt-12' : 'p-4'} relative flex-shrink-0 bg-gray-200 ${isMobile ? 'rounded-none' : 'rounded-t-3xl'} flex items-center justify-center`}>          {/* Botón de volver al inicio - solo visible cuando hay mensajes y NO en móvil */}
+          {messages.length > 0 && !isMobile && (
+            <button
+              onClick={clearChat}
+              className="absolute top-4 left-4 p-2 text-gray-600 hover:text-gray-800 transition-colors mobile-touch-area rounded-full shadow-md hover:shadow-lg"
+              aria-label="Volver al inicio"
+              title="Volver al inicio de la conversación"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+          )}          
+          {isMobile && (
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-800 transition-colors mobile-close-button mobile-touch-area"
+              className="absolute top-8 right-20 p-2 text-gray-600 hover:text-gray-800 transition-colors mobile-close-button mobile-touch-area"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

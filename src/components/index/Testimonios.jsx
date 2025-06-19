@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Toast from '../alertas/Toast';
 
 export default function Testimonios() {
@@ -16,6 +17,7 @@ export default function Testimonios() {
     message: ''
   });
   const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
 
   // Verificar autenticación al cargar el componente
   useEffect(() => {
@@ -37,10 +39,10 @@ export default function Testimonios() {
 
     checkAuth();
   }, []);
-
   const openModal = () => {
     if (!isAuthenticated) {
-      alert('Debes iniciar sesión para crear un testimonio');
+      // Redirigir al login si no está autenticado
+      navigate('/login');
       return;
     }
     setIsModalOpen(true);
@@ -58,10 +60,10 @@ export default function Testimonios() {
       });
     }, 300);
   };
-
   const handleSubmit = async () => {
     if (!isAuthenticated || !userToken) {
-      alert('Debes iniciar sesión para crear un testimonio');
+      // Redirigir al login si no está autenticado
+      navigate('/login');
       return;
     }
 
@@ -165,10 +167,8 @@ export default function Testimonios() {
         message="Tu testimonio ha sido enviado exitosamente y está pendiente de aprobación."
         show={showToast}
         setShow={setShowToast}
-      />
-
-      <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-4">
+      />      <div className="text-center mb-12">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-adlam text-gray-900 mb-2 sm:mb-4">
           Historias inspiradoras
         </h2>
         <p className="text-base sm:text-lg lg:text-xl text-black/50 font-semibold mb-4 sm:mb-6 lg:mb-8">
@@ -217,9 +217,8 @@ export default function Testimonios() {
                     <p className="font-semibold text-base">{t.nombre_usuario}</p>
                     <p className="text-sm text-gray-600">{t.cargo_tes}</p>
                   </div>
-                </div>
-                {t.titulo_tes && (
-                  <p className="text-black font-semibold text-sm mt-2 mb-1 truncate">{t.titulo_tes}</p>
+                </div>                {t.titulo_tes && (
+                  <p className="text-black font-semibold text-sm mt-2 mb-1">{t.titulo_tes}</p>
                 )}
                 <p className="text-sm text-gray-700 mt-2 leading-relaxed">
                   {t.contenido_tes}
@@ -244,9 +243,8 @@ export default function Testimonios() {
               isClosing ? 'modal-content-exit' : 'modal-content-enter'
             }`}
             onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Nuevo Testimonio</h3>
+          >            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold font-adlam text-gray-900">Nuevo Testimonio</h3>
               <button
                 onClick={closeModal}
                 disabled={isSubmitting}

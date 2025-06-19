@@ -1,5 +1,5 @@
 import { confirmPasswordReset } from 'firebase/auth';
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import imagenRecover from "../../assets/images/imagenRecover2.png";
 import GODlogo from "../../assets/logos/logoGOD.png";
@@ -71,7 +71,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#9CE840] cursor-guante">
+    <div className="flex min-h-screen w-full bg-white cursor-guante">
       <Toast 
         show={showToast}
         setShow={setShowToast}

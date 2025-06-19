@@ -102,7 +102,7 @@ const RecoverPassword = () => {
             alt="Character"
           />
           
-          <div className="bg-[#E8FFBE] rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-white rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             {!success && (
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-center mb-4">¿Olvidaste tu contraseña?</h1>

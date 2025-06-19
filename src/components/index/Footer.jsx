@@ -2,7 +2,7 @@
 function Footer() {
   // Definir las rutas del menú
   const menuItems = [
-    { name: "Noticias", path: "/noticias" },
+    { name: "Noticias", path: "/noticiasv" },
     { name: "Nosotros", path: "/nosotros", isScroll: true, scrollId: "nosotros" },
     { name: "Proyectos", path: "/proyectosview" },
   ];
@@ -57,7 +57,7 @@ function Footer() {
                   href="/"
                   className="block text-gray-300 hover:text-[#A4FF00] transition-all duration-300 hover:translate-x-2 hover:font-semibold"
                 >
-                  Home
+                  Inicio
                 </a>
                 {/* Enlaces dinámicos del menú */}
                 {menuItems.map((item) => (

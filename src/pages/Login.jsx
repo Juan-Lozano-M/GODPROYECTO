@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import loginImagen from "../assets/images/imagenLogin.png";
 import GODlogo from "../assets/logos/logoGOD.png";
 import googleLogo from "../assets/logos/logoGoogle.png";
-import instagramLogo from "../assets/logos/logoInstagram.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
@@ -70,7 +69,7 @@ const Login = () => {
           if (response.data.user.role === "Admin") {
             navigate("/home");
           } else {
-            navigate("/dashboard");
+            navigate("/");
           }
 
         localStorage.setItem("authToken", idToken);
@@ -82,7 +81,7 @@ const Login = () => {
           navigate("/home");
         } else {
           console.log("Redirecting to /dashboard"); // Debug log
-          navigate("/dashboard");
+          navigate("/");
         } 
       }
     } catch (error) {
@@ -134,14 +133,13 @@ const Login = () => {
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {
         correo_usu: user.email,
         token: idToken
-      });
-
-      if (response.data.status === "success") {
+      });      if (response.data.status === "success") {
         localStorage.setItem("userName", user.displayName);
         localStorage.setItem("userEmail", user.email);
         localStorage.setItem("userPhoto", user.photoURL || "");
         localStorage.setItem("firebaseUID", user.uid);
         localStorage.setItem("userRole", response.data.user.role); // Store the role
+        localStorage.setItem("authToken", idToken); // ¡IMPORTANTE! Guardar el token
 
         // Check the user's role from the database response
         console.log("Google user role:", response.data.user.role); // Debug log
@@ -150,7 +148,7 @@ const Login = () => {
           navigate("/home");
         } else {
           console.log("Redirecting to /dashboard"); // Debug log
-          navigate("/dashboard");
+          navigate("/");
         }
       }
     } catch (error) {
@@ -317,15 +315,18 @@ const Login = () => {
 
         <div className="flex items-center gap-8 ">
           <div className="flex-1 border-t border-white opacity-50"></div>
-          <span className="text-white font-semibold">o inicia con</span>
+          <span className="text-white font-semibold">o</span>
           <div className="flex-1 border-t border-white opacity-50"></div>
         </div>
 
-        <div className="flex justify-between h-15 pt-3 mt-7">
-    
-          <SocialLoginButton icon={googleLogo} onClick={handleGoogleLogin} />
-          <SocialLoginButton icon={instagramLogo} />
-        </div>
+          <div className="pt-3 mt-7">
+            <SocialLoginButton 
+              icon={googleLogo} 
+              onClick={handleGoogleLogin}
+              altText="Google"
+              text="Continuar con Google"
+            />
+          </div>
       </div>
     </div>
   </div>

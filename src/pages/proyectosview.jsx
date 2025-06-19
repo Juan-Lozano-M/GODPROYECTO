@@ -2,6 +2,8 @@ import { AlertCircle, Calendar, ExternalLink, Loader2, Target, Users, X } from '
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import "overlayscrollbars/overlayscrollbars.css";
 import { useEffect, useRef, useState } from 'react';
+import AdminButton from '../components/admin/AdminButton';
+import Chatbot from '../components/chatbot/ChatBot';
 import Footer from '../components/index/Footer';
 import Navbar from "../components/index/Navbar";
 import { projectService } from '../services/projectService';
@@ -128,7 +130,9 @@ const ProyectosView = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      
+      <AdminButton />
+      <Chatbot />
+
       {/* Header Section */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -301,7 +305,7 @@ const ProyectosView = () => {
             </div>
             <div className="group">
               <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 group-hover:text-[#9CE840] transition-colors duration-300">
-                8+
+                1+
               </div>
               <div className="text-gray-600 font-medium">Años de Experiencia</div>
             </div>

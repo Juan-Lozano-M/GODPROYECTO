@@ -36,10 +36,9 @@ const Diferencias = () => {
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        
-        {/* Header minimalista */}
+          {/* Header minimalista */}
         <div className="text-center mb-12 md:mb-16">
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+          <h1 className="text-3xl md:text-5xl font-bold font-adlam text-gray-900 mb-4 leading-tight">
             ¿Por qué somos{' '}
             <span className="relative">
               <span className="text-[#9CE840]">diferentes</span>
@@ -98,10 +97,9 @@ const Diferencias = () => {
                   animationDelay: `${index * 100}ms`,
                   animationFillMode: 'forwards'
                 }}
-              >
-                {/* Contenido */}
+              >                {/* Contenido */}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-tight">
+                  <h3 className="text-lg font-semibold font-adlam text-gray-900 mb-2 leading-tight">
                     {item.titulo}
                   </h3>
                   <p className="text-gray-600 text-sm leading-relaxed">

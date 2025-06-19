@@ -66,10 +66,8 @@ const Nosotros = () => {
             }
           }
         `}
-      </style>
-
-      <div className="text-center mt-10 p-6 mb-10">
-        <h1 className="nosotros-title text-3xl md:mb-6 md:text-4xl lg:text-5xl font-bold leading-tight">
+      </style>      <div className="text-center mt-10 p-6 mb-10">
+        <h1 className="nosotros-title text-3xl md:mb-6 md:text-4xl lg:text-5xl font-bold font-adlam leading-tight">
           Conoce de <span className="text-[#9CE840] mt-2 sm:mt-0 block sm:inline">Nosotros</span>
         </h1>
         <p className="nosotros-subtext text-black/50 mt-4 text-lg md:text-xl">

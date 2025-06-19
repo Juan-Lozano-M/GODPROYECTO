@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
 import CartoonCard from "../../components/cards/CartoonCard";
+import Navbar from "../../components/index/Navbar";
 
 
 export default function NewDetail() {
@@ -95,6 +96,7 @@ export default function NewDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white p-8">
+  
         <div className="container mx-auto">
           {/* Esqueleto de hero section */}
           <div className="h-[600px] bg-gray-200 rounded-lg mb-10 relative">
@@ -161,6 +163,7 @@ export default function NewDetail() {
 
   return (
     <main className="min-h-screen bg-white text-gray-800">
+      <Navbar />
       {/* Hero Banner */}
       <div className="relative w-full h-[600px] overflow-hidden">
         <img 

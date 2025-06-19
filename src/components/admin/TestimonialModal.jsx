@@ -1,10 +1,43 @@
-import React, { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 import GameButton from "../buttons/GameButton";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange, onCambiarEstado }) {
+// Estilos CSS para el scrollbar personalizado
+const scrollbarStyles = `
+  .testimonial-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .testimonial-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .testimonial-scroll::-webkit-scrollbar-thumb {
+    background: #9CE840;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+  }
+  
+  .testimonial-scroll::-webkit-scrollbar-thumb:hover {
+    background: #8BD635;
+  }
+`;
+
+// Inyectar los estilos CSS
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.type = "text/css";
+  styleSheet.innerText = scrollbarStyles;
+  if (!document.head.querySelector('style[data-testimonial-scrollbar]')) {
+    styleSheet.setAttribute('data-testimonial-scrollbar', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
+function TestimonialModal({ isOpen, onClose, testimonio, onStatusChange, onCambiarEstado, onEliminar }) {
 
   const inicial = testimonio?.name ? testimonio.name.charAt(0).toUpperCase() : "?";
   const imageUrl = testimonio?.imageUrl;
@@ -89,6 +122,19 @@ const handleRechazar = async () => {
     onClose();
   } catch (error) {
     console.error("Error al rechazar:", error.response?.data || error.message);
+  }
+};
+
+const handleEliminar = async () => {
+  try {
+    if (onEliminar) {
+      const success = await onEliminar(testimonio.id);
+      if (success) {
+        onClose();
+      }
+    }
+  } catch (error) {
+    console.error("Error al eliminar:", error.response?.data || error.message);
   }
 };
 
@@ -208,15 +254,12 @@ const handleRechazar = async () => {
             bottom: 0,
             overflow: 'hidden'
           }}
-        >
-          <motion.div
-            className="md:ml-34 2xl:ml-0 rounded-2xl bg-white px-7 pt-7 sm:px-10 sm:pt-10 shadow-2xl max-h-[90vh] overflow-y-auto z-50"
+        >          <motion.div
+            className="md:ml-34 2xl:ml-0 rounded-2xl bg-white px-7 pt-7 sm:px-10 sm:pt-10 shadow-2xl z-50 flex flex-col"
             style={{ 
               width: "auto",
               maxWidth: "min(90vw, 600px)",
               maxHeight: "90vh",
-              // Ocultar completamente cualquier scrollbar
-              overflow: "hidden",
               contain: "layout"
             }}
             variants={modalVariants}
@@ -245,17 +288,15 @@ const handleRechazar = async () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </motion.button>
-            </div>
-
-            {/* Contenido */}
+            </div>            {/* Contenido */}
             <motion.div
-              className="flex flex-col items-center text-center"
+              className="flex flex-col items-center text-center flex-1 min-h-0"
               variants={contentVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
             >
-              <motion.div variants={itemVariants} className="w-full flex flex-col items-center">
+              <motion.div variants={itemVariants} className="w-full flex flex-col items-center flex-shrink-0">
                 {imageUrl ? (
                   <motion.img
                     src={imageUrl}
@@ -274,54 +315,84 @@ const handleRechazar = async () => {
                 <motion.p variants={itemVariants} className="text-sm sm:text-lg font-adlam text-[#3E3E3E]">
                   {testimonio.position}
                 </motion.p>
-              </motion.div>
+              </motion.div>              {/* Sección scrolleable para el contenido del testimonio */}
+              <motion.div 
+                variants={itemVariants} 
+                className="flex-1 overflow-y-auto min-h-0 w-full px-2 testimonial-scroll"
+                style={{
+                  maxHeight: 'calc(90vh - 300px)', // Reserva espacio para header y botones
+                }}
+              >
+                <div className="h-auto sm:max-w-120 mx-auto">
+                  <div className="flex gap-13 text-start sm:gap-16 mt-10">
+                    <motion.h1 variants={itemVariants} className="text-[13px] sm:text-2xl text-[#505050] font-adlam flex-shrink-0">
+                      Título
+                    </motion.h1>
+                    <motion.p
+                      variants={itemVariants}
+                      className="text-[13px] w-40 sm:w-full text-sm sm:text-lg text-black font-adlam mt-auto"
+                    >
+                      {testimonio.titulo}
+                    </motion.p>
+                  </div>
 
-              <motion.div variants={itemVariants} className="h-auto sm:max-w-120">
-                <div className="flex gap-13 text-start sm:gap-16 mt-10">
-                  <motion.h1 variants={itemVariants} className="text-[13px] sm:text-2xl text-[#505050] font-adlam">
-                    Título
-                  </motion.h1>
-                  <motion.p
-                    variants={itemVariants}
-                    className="text-[13px] w-40 sm:w-full text-sm sm:text-lg text-black font-adlam mt-auto"
-                  >
-                    {testimonio.titulo}
-                  </motion.p>
+                  <div className="flex gap-9 mt-3 text-start">                    <motion.h1 variants={itemVariants} className="text-[13px] sm:text-2xl text-[#505050] font-adlam flex-shrink-0">
+                      Mensaje
+                    </motion.h1>
+                    <motion.p
+                      variants={itemVariants}
+                      className="text-[13px] w-45 sm:w-full sm:text-lg text-black font-adlam mt-auto"
+                    >
+                      {testimonio.comment}
+                    </motion.p>
+                  </div>
                 </div>
-
-                <div className="flex gap-9 mt-3 text-start">
-                  <motion.h1 variants={itemVariants} className="text-[13px] sm:text-2xl text-[#505050] font-adlam">
-                    Mensaje
-                  </motion.h1>
-                  <motion.p
-                    variants={itemVariants}
-                    className="text-[13px] w-45 sm:w-full sm:text-lg text-black font-adlam mt-auto"
-                  >
-                    {testimonio.comment}
-                  </motion.p>
-                </div>
+              </motion.div>              {/* Botones fijos en la parte inferior */}
+              <motion.div variants={itemVariants} className="flex justify-center gap-4 sm:gap-6 mt-7 w-full flex-shrink-0">
+                {testimonio.status === "Anulado" ? (
+                  // Para testimonios anulados: mostrar botón de aprobar (por si se equivocó) y eliminar
+                  <>
+                    <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
+                      <GameButton
+                        text="Aprobar"
+                        buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840] hover:bg-[#8BD635] transition-colors"
+                        icon={<CheckIcon className="text-black" strokeWidth={2.5} />}
+                        onClick={handleAprobar}
+                      />
+                    </motion.div>
+                    <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
+                      <GameButton
+                        text="Eliminar"
+                        buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#DC2626] hover:bg-[#B91C1C] transition-colors"
+                        icon={<TrashIcon className="text-white" strokeWidth={2.5} />}
+                        onClick={handleEliminar}
+                      />
+                    </motion.div>
+                  </>
+                ) : (
+                  // Mostrar botones de aprobar y rechazar para otros estados
+                  <>
+                    <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
+                      <GameButton
+                        text="Aprobar"
+                        buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840] hover:bg-[#8BD635] transition-colors"
+                        icon={<CheckIcon className="text-black" strokeWidth={2.5} />}
+                        onClick={handleAprobar}
+                      />
+                    </motion.div>
+                    <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
+                      <GameButton
+                        text="Rechazar"
+                        buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#EA4335] hover:bg-[#D33B2C] transition-colors"
+                        icon={<XMarkIcon className="text-black" strokeWidth={2.5} />}
+                        onClick={handleRechazar}
+                      />
+                    </motion.div>
+                  </>
+                )}
               </motion.div>
 
-              <motion.div variants={itemVariants} className="flex justify-center gap-8 sm:gap-10 mt-7 w-full">
-                <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
-                  <GameButton
-                    text="Aprobar"
-                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#9CE840] hover:bg-[#8BD635] transition-colors"
-                    icon={<CheckIcon className="text-black" strokeWidth={2.5} />}
-                    onClick={handleAprobar}
-                  />
-                </motion.div>
-                <motion.div variants={buttonVariants} initial="initial" whileHover="hover" whileTap="tap">
-                  <GameButton
-                    text="Rechazar"
-                    buttonClassName="w-27 sm:w-55 sm:h-13 bg-[#EA4335] hover:bg-[#D33B2C] transition-colors"
-                    icon={<XMarkIcon className="text-black" strokeWidth={2.5} />}
-                    onClick={handleRechazar}
-                  />
-                </motion.div>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="mt-5 pb-5">
+              <motion.div variants={itemVariants} className="mt-5 pb-5 flex-shrink-0">
                 <p className="font-adlam text-[#7C7C7C] text-sm sm:text-lg">
                   {testimonio.fecha
                     ? (() => {

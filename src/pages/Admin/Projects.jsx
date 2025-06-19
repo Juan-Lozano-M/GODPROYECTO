@@ -9,6 +9,7 @@ import FiltroModal from "../../components/admin/FiltroModal";
 import ProjectCard from "../../components/admin/ProjectCard";
 import Toast from "../../components/alertas/Toast";
 import CartoonButton from "../../components/buttons/CartoonButton";
+import ConfirmationModal from "../../components/modals/ConfirmationModal";
 import Sidebar from "../../components/Sidebar";
 
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
@@ -274,8 +275,6 @@ function Projects() {    const [proyectos, setProyectos] = useState([]);
                   status={proyecto.status}
                   isSelected={selectedProjectId === proyecto.id}
                   onSelect={() => setSelectedProjectId(proyecto.id)}
-                  slug={proyecto.slug}
-                  projectId={proyecto.id}
                 />
               ))
             ) : (
@@ -306,50 +305,19 @@ function Projects() {    const [proyectos, setProyectos] = useState([]);
           }}
           onClose={() => setIsFiltroModalOpen(false)}
         />
-      )}
-
-      {/* Modal de confirmación de eliminación */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div className="text-center">
-              {/* Icono de advertencia */}
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
-                <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              
-              {/* Título */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Eliminar Proyecto
-              </h3>
-              
-              {/* Mensaje */}
-              <p className="text-gray-600 mb-8">
-                ¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer y se perderán todos los datos relacionados.
-              </p>
-              
-              {/* Botones */}
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={confirmDeleteProject}
-                  disabled={loading}
-                  className="px-6 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors disabled:opacity-50"
-                >
-                  {loading ? 'Eliminando...' : 'Eliminar'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      )}      {/* Modal de confirmación de eliminación */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteProject}
+        title="Eliminar Proyecto"
+        message="¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer y se perderán todos los datos relacionados."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isLoading={loading}
+        loadingText="Eliminando..."
+        variant="danger"
+      />
 
       {/* Toast de confirmación */}
       <Toast 

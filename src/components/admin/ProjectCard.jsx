@@ -7,16 +7,13 @@ const statusColors = {
   'Cancelado': 'bg-[#EA4335]',
 };
 
-const ProjectCard = ({ image, title, year, participants, description, category, status, isSelected, onSelect, slug, projectId }) => {
-  
-  const handleViewProject = (e) => {
+const ProjectCard = ({ image, title, year, participants, description, category, status, isSelected, onSelect }) => {
+    const handleViewProject = (e) => {
     e.stopPropagation(); // Evitar que se active onSelect cuando se hace clic en "Ver proyecto"
     
-    // Crear la URL usando el slug o ID como fallback
-    const projectUrl = slug ? `/home/project/${slug}` : `/home/project/${projectId}`;
-    
-    // Abrir en una nueva pestaña
-    window.open(projectUrl, '_blank');
+    // Redirigir a la página de proyectos públicos donde se pueden ver todos los proyectos
+    // En el futuro se puede implementar una página específica para cada proyecto
+    window.open('/proyectosview', '_blank');
   };
   return (
     <div

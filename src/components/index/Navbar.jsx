@@ -5,7 +5,7 @@ import godLogo from '../../assets/logos/logoGOD.png';
 import { auth } from '../../firebaseConfig';
 
 const menuItems = [
-  { name: "Home", path: "/" },
+  { name: "Inicio", path: "/" },
   { name: "Noticias", path: "/noticiasv" },
   { name: "Contacto", path: "/contacto" },
   { name: "Testimonios", path: "/testimonios", isScroll: true, scrollId: "testimonios" },
@@ -327,7 +327,7 @@ function Navbar() {
                     onLoad={() => console.log('Image loaded successfully:', userPhoto)}
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-[#9CE840] rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-[#87C232]">
+                  <div className="w-10 h-10 bg-[#9CE840] rounded-lg flex items-center justify-center text-white font-bold text-lg ">
                     {getInitials(userName)}
                   </div>
                 )}
@@ -343,15 +343,16 @@ function Navbar() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
-
-              {/* Dropdown menu */}
+              </button>              {/* Dropdown menu */}
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
+                  <button
+                    onClick={() => { setIsDropdownOpen(false); navigate('/dashboard'); }}
+                    className="w-full text-left px-4 py-2 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  >
                     <p className="text-sm font-medium text-gray-900 truncate">{userName}</p>
-                    <p className="text-xs text-gray-500">Ver perfil</p>
-                  </div>
+                    <p className="text-xs text-green-600 hover:text-green-700">Ver perfil</p>
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"

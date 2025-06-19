@@ -60,12 +60,11 @@ function SeccionF() {
           animate={visible ? { scale: 1 } : { scale: 0.5 }}
           transition={transition}
           className="flex flex-col items-center text-center gap-3 sm:gap-2 max-w-[520px] w-full order-1 sm:order-2"
-        >
-          <p className="text-3xl xs:text-4xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[11rem] font-bold text-gray-900 leading-tight mb-1">
+        >          <p className="text-3xl xs:text-4xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] 2xl:text-[11rem] font-bold font-adlam text-gray-900 leading-tight mb-1">
             Únete a
           </p>
-          <p className="bg-[#9CE840] px-5 xs:px-6 py-3 sm:py-4 rounded-md text-3xl xs:text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] font-extrabold text-black tracking-wide mb-2">
-            Game of Dreams
+          <p className="bg-[#9CE840] px-5 xs:px-6 py-3 sm:py-4 rounded-md text-3xl xs:text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] font-extrabold font-adlam text-black tracking-wide mb-2">
+            game of dreams
           </p>
           <p className="mt-0 text-base xs:text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-gray-700 font-medium leading-relaxed px-2">
             Miles de estudiantes ya están <br className="hidden xs:block" /> 

@@ -6,7 +6,9 @@ import AdminProfile from "../../components/admin/AdminProfile";
 import DataStat from "../../components/admin/DataStat";
 import FilterButton from "../../components/admin/FilterButton";
 import FiltroModal from "../../components/admin/FiltroModal";
+import Toast from "../../components/alertas/Toast";
 import CartoonButton from "../../components/buttons/CartoonButton";
+import ConfirmationModal from "../../components/modals/ConfirmationModal";
 import NoticeCard from "../../components/NoticeCard";
 import Sidebar from "../../components/Sidebar";
 
@@ -18,10 +20,12 @@ import iconNotResult from "../../assets/icons/iconNotResult.png";
 function Notices() {  
   const [noticias, setNoticias] = useState([]);
   const [loading, setLoading] = useState(true);
-  const filters = ["Publicada", "Eliminada", "Archivada"];
-  const [activeFilter, setActiveFilter] = useState("Todas");
+  const filters = ["Publicada", "Eliminada", "Archivada"];  const [activeFilter, setActiveFilter] = useState("Todas");
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [selectedNoticeId, setSelectedNoticeId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [noticiaToDelete, setNoticiaToDelete] = useState(null);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -54,7 +58,6 @@ function Notices() {
     Eliminada: 0,
     Archivada: 0,
   });
-
   useEffect(() => {
     setCambios({
       Publicada: totalPublicadas - prevCounts.current.Publicada,
@@ -66,7 +69,7 @@ function Notices() {
       Eliminada: totalEliminadas,
       Archivada: totalArchivadas,
     };
-  }, [noticias]);
+  }, [noticias, totalPublicadas, totalEliminadas, totalArchivadas]);
 
   // Reinicia los indicadores a 0 después de 5 segundos
   useEffect(() => {
@@ -116,6 +119,75 @@ function Notices() {
   const handleDelete = () => handleStatusChange('eliminada');
   const handlePublish = () => handleStatusChange('publicada');
   const handleArchive = () => handleStatusChange('archivada');
+
+  // Función para eliminar noticia permanentemente
+  const handleDeletePermanently = async () => {
+    if (!noticiaToDelete) return;
+    
+    try {
+      setLoading(true);
+        // Obtener token de autenticación (asumiendo que está en localStorage)
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('No se encontró token de autenticación. Por favor, inicia sesión nuevamente.');
+        return;
+      }
+      
+      console.log(`Eliminando noticia ${noticiaToDelete} permanentemente`);
+      
+      const response = await axios.delete(`http://localhost:5000/api/news/delete/${noticiaToDelete}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Response:', response.data);
+      
+      if (response.data.status === 'success') {
+        // Actualizar la lista eliminando la noticia
+        setNoticias(prev => prev.filter(n => n.id_noticia !== noticiaToDelete));
+        
+        // Cerrar modal y limpiar estado
+        setShowDeleteModal(false);
+        setNoticiaToDelete(null);
+        setSelectedNoticeId(null);
+          // Mostrar toast de éxito
+        setShowToast(true);
+        console.log('Noticia eliminada exitosamente');
+      } else {
+        throw new Error(response.data.message || 'Error desconocido');
+      }
+    } catch (error) {
+      console.error('Error al eliminar noticia:', error);
+      
+      let errorMessage = 'Error al eliminar la noticia. Inténtalo de nuevo.';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para iniciar el proceso de eliminación
+  const initiateDelete = () => {
+    if (!selectedNoticeId) return;
+    
+    // Verificar que la noticia esté en estado eliminada
+    const noticia = noticias.find(n => n.id_noticia === selectedNoticeId);
+    if (noticia && noticia.es_publicada === 'eliminada') {
+      setNoticiaToDelete(selectedNoticeId);
+      setShowDeleteModal(true);
+    } else {
+      alert('Solo se pueden eliminar permanentemente noticias en estado "Eliminada"');
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col overflow-hidden px-6 md:p-0 md:pt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15 pt-10">
@@ -197,8 +269,7 @@ function Notices() {
             </div>
           </div>
         </div>
-      </div>
-      {/* Acciones sobre la noticia seleccionada */}
+      </div>      {/* Acciones sobre la noticia seleccionada */}
       {selectedNoticeId && (
         <div className="flex gap-4 mt-4 mb-2">
           <button
@@ -222,6 +293,17 @@ function Notices() {
           >
             Archivar
           </button>
+          {/* Botón de eliminar permanentemente - solo para noticias eliminadas */}
+          {noticias.find(n => n.id_noticia === selectedNoticeId)?.es_publicada === 'eliminada' && (
+            <button
+              className="bg-red-800 text-white px-4 py-2 rounded font-bold hover:bg-red-900 transition border-2 border-red-600"
+              onClick={initiateDelete}
+              disabled={loading}
+              title="Eliminar permanentemente de la base de datos"
+            >
+              Eliminar Permanentemente
+            </button>
+          )}
         </div>
       )}
       {/* Lista de noticias y panel lateral */}
@@ -281,8 +363,33 @@ function Notices() {
             setIsFiltroModalOpen(false);
           }}
           onClose={() => setIsFiltroModalOpen(false)}
-        />
-      )}
+        />      )}
+
+      {/* Modal de confirmación de eliminación permanente */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setNoticiaToDelete(null);
+        }}
+        onConfirm={handleDeletePermanently}
+        title="Eliminar Noticia Permanentemente"
+        message="¿Estás seguro de que quieres eliminar esta noticia permanentemente de la base de datos? Esta acción NO se puede deshacer y se perderán todos los datos relacionados."
+        confirmText="Eliminar Permanentemente"
+        cancelText="Cancelar"
+        isLoading={loading}
+        loadingText="Eliminando..."
+        variant="danger"
+      />
+
+      {/* Toast de confirmación */}
+      <Toast 
+        title="¡Éxito!"
+        message="Noticia eliminada permanentemente"
+        show={showToast}
+        setShow={setShowToast}
+      />
+
       {/* Sidebar */}
       <Sidebar />
     </div>

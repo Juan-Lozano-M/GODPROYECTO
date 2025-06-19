@@ -6,11 +6,9 @@ import xIcon from '../assets/icons/xIcon.png'
 import imagenRegister from '../assets/images/imagenRegister.png'
 import GODlogo from '../assets/logos/logoGOD.png'
 import googleLogo from '../assets/logos/logoGoogle.png'
-import instagramLogo from '../assets/logos/logoInstagram.png'
 import AlertMessage from '../components/alertas/AlertMesagge'
 import Textwriter from "../components/alertas/ui/textwriter"
 import SocialLoginButton from "../components/buttons/SocialMediaButton"
-import Cursor from '../components/Cursor'
 import InputField from "../components/InputField"
 import Loader from '../components/loader'
 import {
@@ -88,13 +86,13 @@ const Register = () => {
             headers: {
               'Authorization': `Bearer ${idToken}`
             }
-          });
-    
-          if (response.data.status === "success") {
+          });          if (response.data.status === "success") {
+            const idToken = await firebaseUser.getIdToken();
             localStorage.setItem("userName", nombre);
             localStorage.setItem("userEmail", email);
             localStorage.setItem("firebaseUID", firebaseUser.uid);
-            navigate("/dashboard");
+            localStorage.setItem("authToken", idToken); // Guardar el token para autenticación
+            navigate("/");
           } else {
             // If backend registration fails, delete Firebase user
             await firebaseUser.delete();
@@ -134,14 +132,14 @@ const Register = () => {
             nombre_usu: user.displayName,
             correo_usu: user.email,
             firebase_uid: user.uid
-          });
-      
-          if (response.data.status === "success") {
+          });          if (response.data.status === "success") {
+            const idToken = await user.getIdToken();
             localStorage.setItem("userName", user.displayName);
             localStorage.setItem("userEmail", user.email);
             localStorage.setItem("userPhoto", user.photoURL || "");
             localStorage.setItem("firebaseUID", user.uid);
-            navigate("/dashboard");
+            localStorage.setItem("authToken", idToken); // Guardar el token para autenticación
+            navigate("/");
           }
         } catch (error) {
           console.error("Full error:", error);
@@ -155,8 +153,8 @@ const Register = () => {
   return (
 
     
-    <div className="min-h-screen flex bg-[#9CE840]">
-      <Cursor/>
+    <div className="min-h-screen flex bg-[#9CE840] cursor-guante">
+
       {isLoading && <Loader />} {/* Renderizar el loader si isLoading es true */}
 
       { /* 📌 Div de Logo y botones de inicio de sesión y registro */ }
@@ -257,13 +255,17 @@ const Register = () => {
 
           <div className="flex items-center gap-8 mt-3">
             <div className="flex-1 border-t border-white opacity-50"></div>
-              <span className="text-black font-mint font-semibold">o registrate con</span>
+              <span className="text-black font-mint font-semibold">o</span>
             <div className="flex-1 border-t border-white opacity-50"></div>
           </div>
 
-          <div className="flex justify-between h-15 pt-3 mt-7">
-            <SocialLoginButton icon={googleLogo} onClick={manejarInicioConGoogle} />
-            <SocialLoginButton icon={instagramLogo} />
+          <div className="pt-3 mt-7">
+            <SocialLoginButton 
+              icon={googleLogo} 
+              onClick={manejarInicioConGoogle}
+              altText="Google"
+              text="Continuar con Google"
+            />
           </div>
         </div>
       </div>

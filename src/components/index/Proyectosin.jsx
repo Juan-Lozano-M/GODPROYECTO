@@ -112,9 +112,7 @@ const NewsCard = ({ news, index }) => {
               </span>
             </div>
           </div>
-        </div>
-        
-        {/* Título */}
+        </div>        {/* Título */}
         <h3 className="font-bold text-gray-900 text-base mb-2 leading-tight text-left w-full">
           {news.title || 'Título no disponible'}
         </h3>
@@ -180,10 +178,9 @@ const Proyectosin = () => {
   const column3 = newsData.filter((_, i) => i % 3 === 2);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
+    <div className="bg-gray-50 min-h-screen">      {/* Header */}
       <div className="bg-white px-4 py-6">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 text-center">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-adlam text-gray-900 text-center">
           Nuestras noticias
         </h1>
         <p className="text-gray-600 md:text-lg text-center mt-2">
