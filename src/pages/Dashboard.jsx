@@ -9,8 +9,8 @@ import Footer from "../components/index/Footer";
 import Navbar from "../components/index/Navbar";
 import InputEditable from '../components/inputs/InputEditable';
 import InstitutionSelector from "../components/inputs/InstitutionSelector";
+import ReauthModal from '../components/modals/ReauthModal';
 import ProfileImageUpload from '../components/profile/ProfileImageUpload';
-import ReauthModal from '../components/ReauthModal';
 import axios from "../config/axiosConfig";
 import { auth } from "../firebaseConfig";
 

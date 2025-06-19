@@ -7,10 +7,10 @@ import DataStat from "../../components/admin/DataStat";
 import FilterButton from "../../components/admin/FilterButton";
 import FiltroModal from "../../components/admin/FiltroModal";
 import ProjectCard from "../../components/admin/ProjectCard";
+import Sidebar from "../../components/admin/Sidebar";
 import Toast from "../../components/alertas/Toast";
 import CartoonButton from "../../components/buttons/CartoonButton";
 import ConfirmationModal from "../../components/modals/ConfirmationModal";
-import Sidebar from "../../components/Sidebar";
 
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialAbajo from "../../assets/icons/flechaTestimonialAbajo.png";

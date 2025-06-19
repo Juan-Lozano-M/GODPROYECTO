@@ -67,44 +67,25 @@ function Navbar() {
         setUser(currentUser);
         setUserName(currentUser.displayName || localStorage.getItem("userName") || "Usuario");
         
-        // Priorizar imagen personalizada en localStorage sobre Google photoURL
-        const storedImage = localStorage.getItem("userPhoto") || localStorage.getItem("profileImage");
+        // Prioridad: foto personalizada > Google photoURL
         let profileImage = "";
-        
-        // Si hay imagen almacenada (personalizada), usarla
-        if (storedImage) {
-          profileImage = storedImage;
-          console.log('Using stored image (priority):', profileImage);
-        } 
-        // Si no hay imagen personalizada, usar Google photoURL
-        else if (currentUser.photoURL) {
+        const customProfile = localStorage.getItem("profileImage");
+        if (customProfile && customProfile !== "") {
+          profileImage = customProfile;
+          console.log('Using custom profileImage:', profileImage);
+        } else if (localStorage.getItem("userPhoto") && localStorage.getItem("userPhoto") !== "") {
+          profileImage = localStorage.getItem("userPhoto");
+          console.log('Using userPhoto (Google):', profileImage);
+        } else if (currentUser.photoURL) {
           profileImage = currentUser.photoURL;
           console.log('Using Google photoURL:', profileImage);
         }
-        
-        console.log('Final profile image selected:', profileImage);
-        
-        // Solo actualizar si tenemos una imagen y cumple ciertas condiciones
-        if (profileImage) {
-          setUserPhoto(prevPhoto => {
-            console.log('Previous photo:', prevPhoto);
-            console.log('New photo:', profileImage);
-            console.log('Has loaded from storage:', hasLoadedFromStorage);
-            
-            // Si ya cargamos desde storage y tenemos una imagen, mantenerla
-            // Solo actualizar si no tenemos imagen previa o si la nueva es diferente
-            if (!prevPhoto || profileImage !== prevPhoto) {
-              console.log('Updating userPhoto from', prevPhoto, 'to', profileImage);
-              return profileImage;
-            }
-            console.log('Keeping existing photo');
-            return prevPhoto;
-          });
-        } else if (!storedImage && hasLoadedFromStorage) {
-          // Solo limpiar si no hay imagen almacenada y ya verificamos localStorage
-          console.log('No image available, clearing userPhoto');
-          setUserPhoto('');
-        }
+        setUserPhoto(prevPhoto => {
+          if (!prevPhoto || profileImage !== prevPhoto) {
+            return profileImage;
+          }
+          return prevPhoto;
+        });
       } else {
         console.log('No user authenticated');
         setUser(null);
@@ -192,6 +173,9 @@ function Navbar() {
       localStorage.removeItem('userName');
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
+      if (user && user.email) {
+        localStorage.removeItem(`profileImageFailed_${user.email}`);
+      }
       navigate('/');
       window.location.reload(); // Refresca la página después de cerrar sesión
     } catch (error) {
@@ -203,9 +187,26 @@ function Navbar() {
     return name ? name.charAt(0).toUpperCase() : 'U';
   };
 
+  // Evita ciclo de parpadeo: solo muestra la imagen si no ha fallado antes
+  const shouldShowPhoto = () => {
+    if (user && user.email) {
+      return !localStorage.getItem(`profileImageFailed_${user.email}`) && userPhoto;
+    }
+    return !!userPhoto;
+  };
+
+  // Limpia la bandera de error si la imagen cambia y es válida
+  useEffect(() => {
+    if (user && user.email && userPhoto) {
+      localStorage.removeItem(`profileImageFailed_${user.email}`);
+    }
+  }, [userPhoto, user]);
+
   const handleImageError = () => {
-    console.log('Image failed to load, falling back to initials');
-    setUserPhoto(''); // Esto forzará que se muestre la inicial
+    if (user && user.email) {
+      localStorage.setItem(`profileImageFailed_${user.email}`, 'true');
+    }
+    setUserPhoto('');
   };
 
   // Función para refrescar la foto de perfil
@@ -216,13 +217,16 @@ function Navbar() {
       const updatedUser = auth.currentUser;
       console.log('Refreshed user data:', updatedUser);
       
-      // Priorizar diferentes fuentes de imagen después del refresh
-      const storedImage = localStorage.getItem("userPhoto") || localStorage.getItem("profileImage");
-      let profileImage = updatedUser.photoURL || storedImage || "";
-      
-      console.log('Refreshed profile image:', profileImage);
-      console.log('Stored image:', storedImage);
-      
+      // Prioridad: foto personalizada > Google photoURL
+      let profileImage = "";
+      const customProfile = localStorage.getItem("profileImage");
+      if (customProfile && customProfile !== "") {
+        profileImage = customProfile;
+      } else if (localStorage.getItem("userPhoto") && localStorage.getItem("userPhoto") !== "") {
+        profileImage = localStorage.getItem("userPhoto");
+      } else if (updatedUser.photoURL) {
+        profileImage = updatedUser.photoURL;
+      }
       if (profileImage) {
         setUserPhoto(profileImage);
       }
@@ -318,13 +322,17 @@ function Navbar() {
                 className="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
               >
                 {/* Foto de perfil o inicial */}
-                {userPhoto ? (
+                {shouldShowPhoto() ? (
                   <img
                     src={userPhoto}
                     alt="Profile"
                     className="w-10 h-10 rounded-lg object-cover  ]"
                     onError={handleImageError}
-                    onLoad={() => console.log('Image loaded successfully:', userPhoto)}
+                    onLoad={() => {
+                      if (user && user.email) {
+                        localStorage.removeItem(`profileImageFailed_${user.email}`);
+                      }
+                    }}
                   />
                 ) : (
                   <div className="w-10 h-10 bg-[#9CE840] rounded-lg flex items-center justify-center text-white font-bold text-lg ">
@@ -410,12 +418,17 @@ function Navbar() {
         <div className="flex items-center justify-start p-8 ">
           {/* Foto de perfil o inicial en menú móvil */}
           {user && (
-            userPhoto ? (
+            shouldShowPhoto() ? (
               <img
                 src={userPhoto}
                 alt="Profile"
                 className="w-12 h-12 rounded-lg object-cover mr-4"
                 onError={handleImageError}
+                onLoad={() => {
+                  if (user && user.email) {
+                    localStorage.removeItem(`profileImageFailed_${user.email}`);
+                  }
+                }}
               />
             ) : (
               <div className="w-12 h-12 bg-[#9CE840] rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-[#87C232] mr-4">

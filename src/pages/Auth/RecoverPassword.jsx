@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import imagenRecover from "../../assets/images/imagenRecover2.png"; // Keep your current image
 import GODlogo from "../../assets/logos/logoGOD.png";
-import InputField from "../../components/InputField";
 import Toast from '../../components/alertas/Toast';
 import GameButton from "../../components/buttons/GameButton";
+import InputField from "../../components/inputs/InputField";
 import Loader from '../../components/loader';
 import { auth } from '../../firebaseConfig';
 

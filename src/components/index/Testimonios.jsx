@@ -113,35 +113,59 @@ export default function Testimonios() {
       setIsSubmitting(false);
     }
   };
-
   const loadTestimonials = () => {
     axios
       .get("http://localhost:5000/api/testimonials/by-status?status=aprobado")
       .then((res) => {
         let data = res.data;
-        if (Array.isArray(data)) {
-          if (data.length < 10) {
-            const repeatCount = Math.ceil(10 / data.length);
+        if (Array.isArray(data) && data.length > 0) {
+          // Si tenemos pocos testimonios, los duplicamos para tener suficientes para el carrusel
+          if (data.length < 6) {
+            const repeatCount = Math.ceil(6 / data.length);
             data = Array.from({ length: repeatCount }, () => data).flat();
           }
           setTestimonials(data);
+        } else {
+          // Si no hay testimonios, usamos unos de ejemplo
+          setTestimonials([
+            {
+              nombre_usuario: "Usuario Ejemplo",
+              cargo_tes: "Estudiante",
+              titulo_tes: "Excelente plataforma",
+              contenido_tes: "Game of Dreams me ayudó a encontrar mi vocación.",
+              profile_image: null
+            }
+          ]);
         }
       })
       .catch((err) => {
         console.error("Error al cargar testimonios:", err);
+        // En caso de error, usamos testimonios de ejemplo
+        setTestimonials([
+          {
+            nombre_usuario: "Usuario Ejemplo",
+            cargo_tes: "Estudiante",
+            titulo_tes: "Excelente plataforma",
+            contenido_tes: "Game of Dreams me ayudó a encontrar mi vocación.",
+            profile_image: null
+          }
+        ]);
       });
   };
 
   useEffect(() => {
     loadTestimonials();
   }, []);
-
   const pauseAnimation = () => {
-    if (trackRef.current) trackRef.current.style.animationPlayState = "paused";
+    if (trackRef.current) {
+      trackRef.current.style.animationPlayState = "paused";
+    }
   };
 
   const resumeAnimation = () => {
-    if (trackRef.current) trackRef.current.style.animationPlayState = "running";
+    if (trackRef.current) {
+      trackRef.current.style.animationPlayState = "running";
+    }
   };
 
   const getInitial = (name) => name?.charAt(0).toUpperCase() || "U";
@@ -180,19 +204,17 @@ export default function Testimonios() {
         >
           {isAuthenticated ? 'Agregar testimonio' : 'Inicia sesión para agregar testimonio'}
         </button>
-      </div>
-
-      <div className="relative w-full overflow-hidden">
-        <div
+      </div>      <div className="relative w-full overflow-hidden">        <div
           ref={trackRef}
           className="flex animate-scroll gap-4"
           style={{
-            animation: "scroll 25s linear infinite",
+            animation: "scroll 40s linear infinite",
             width: "max-content",
           }}
         >
-          {testimonials.map((t, i) => (
-            <div key={i} className="p-2 sm:p-3">
+          {/* Duplicamos los testimonios para el efecto infinito */}
+          {[...testimonials, ...testimonials].map((t, i) => (
+            <div key={`testimonial-${i}`} className="p-2 sm:p-3">
               <div
                 onMouseEnter={pauseAnimation}
                 onMouseLeave={resumeAnimation}
@@ -217,7 +239,8 @@ export default function Testimonios() {
                     <p className="font-semibold text-base">{t.nombre_usuario}</p>
                     <p className="text-sm text-gray-600">{t.cargo_tes}</p>
                   </div>
-                </div>                {t.titulo_tes && (
+                </div>
+                {t.titulo_tes && (
                   <p className="text-black font-semibold text-sm mt-2 mb-1">{t.titulo_tes}</p>
                 )}
                 <p className="text-sm text-gray-700 mt-2 leading-relaxed">
@@ -325,14 +348,17 @@ export default function Testimonios() {
       )}
 
       <style>
-        {`
-          @keyframes scroll {
+        {`          @keyframes scroll {
             0% {
               transform: translateX(0%);
             }
             100% {
               transform: translateX(-50%);
             }
+          }
+
+          .animate-scroll:hover {
+            animation-play-state: paused;
           }
 
           @keyframes modal-fade-in {

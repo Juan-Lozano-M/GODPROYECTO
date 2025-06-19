@@ -1,5 +1,5 @@
-import logoGod from '../assets/logos/logoGOD.png';
-import Checkbox from './Checkbox';
+import logoGod from '../../assets/logos/logoGOD.png';
+import Checkbox from '../checkbox/Checkbox';
 
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';

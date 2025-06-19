@@ -9,7 +9,7 @@ import googleLogo from "../assets/logos/logoGoogle.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import InputField from "../components/InputField";
+import InputField from "../components/inputs/InputField";
 import {
   auth,
   GoogleAuthProvider,
@@ -136,11 +136,17 @@ const Login = () => {
       });      if (response.data.status === "success") {
         localStorage.setItem("userName", user.displayName);
         localStorage.setItem("userEmail", user.email);
-        localStorage.setItem("userPhoto", user.photoURL || "");
         localStorage.setItem("firebaseUID", user.uid);
-        localStorage.setItem("userRole", response.data.user.role); // Store the role
-        localStorage.setItem("authToken", idToken); // ¡IMPORTANTE! Guardar el token
-
+        localStorage.setItem("userRole", response.data.user.role);
+        localStorage.setItem("authToken", idToken);
+        // Guardar la foto personalizada si existe, si no la de Google
+        localStorage.setItem("profileImage", response.data.user.profile_image || user.photoURL || "");
+        localStorage.setItem("userPhoto", response.data.user.profile_image || user.photoURL || "");
+        // Lanzar evento para actualizar Navbar
+        const event = new CustomEvent('profileImageUpdated', {
+          detail: { imageUrl: response.data.user.profile_image || user.photoURL || "" }
+        });
+        window.dispatchEvent(event);
         // Check the user's role from the database response
         console.log("Google user role:", response.data.user.role); // Debug log
         if (response.data.user.role === "Admin") {

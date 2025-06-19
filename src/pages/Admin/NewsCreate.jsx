@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Sidebar from "../../components/Sidebar";
 import DropZone from "../../components/admin/DropZone";
+import Sidebar from "../../components/admin/Sidebar";
 import Toast from '../../components/alertas/Toast'; // Import the Toast component
 import BackButton from "../../components/buttons/BackButton";
 import GameButton from "../../components/buttons/GameButton";
