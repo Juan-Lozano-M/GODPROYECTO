@@ -176,6 +176,7 @@ function Navbar() {
       if (user && user.email) {
         localStorage.removeItem(`profileImageFailed_${user.email}`);
       }
+      window.dispatchEvent(new Event('user-logout'));
       navigate('/');
       window.location.reload(); // Refresca la página después de cerrar sesión
     } catch (error) {

@@ -14,12 +14,65 @@ const predefinedQuestions = [
 
 export default function ChatInterface({ onOpenChange }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState([])
+  
+  // --- NUEVO: Cargar mensajes desde localStorage al inicializar ---
+  const [messages, setMessages] = useState(() => {
+    try {
+      const savedMessages = localStorage.getItem('chatbotMessages');
+      if (savedMessages) {
+        const parsedMessages = JSON.parse(savedMessages);
+        // Restaurar mensajes JSX especiales
+        return parsedMessages.map(msg => {
+          if (msg.isLoginMessage) {
+            return {
+              ...msg,
+              content: (
+                <span>
+                  Para seguir conversando conmigo, por favor&nbsp;
+                  <a href="/login" style={{ color: '#2563eb', textDecoration: 'underline' }}>inicia sesión</a>
+                  &nbsp;o espera 5 horas.
+                </span>
+              )
+            };
+          }
+          return msg;
+        });
+      }
+      return [];
+    } catch (error) {
+      console.error('Error loading saved messages:', error);
+      return [];
+    }
+  })
+  
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [loginMessageSent, setLoginMessageSent] = useState(false);
   const messagesEndRef = useRef(null)
   const scrollbarRef = useRef(null)
+
+  // --- NUEVO: Guardar mensajes en localStorage cada vez que cambien ---
+  useEffect(() => {
+    try {
+      // Convertir mensajes JSX a formato serializable
+      const messagesToSave = messages.map(msg => {
+        if (typeof msg.content === 'object' && msg.content.props) {
+          // Es un mensaje JSX (como el de login), marcarlo especialmente
+          return {
+            ...msg,
+            content: 'LOGIN_MESSAGE', // Placeholder para identificarlo
+            isLoginMessage: true
+          };
+        }
+        return msg;
+      });
+      localStorage.setItem('chatbotMessages', JSON.stringify(messagesToSave));
+    } catch (error) {
+      console.error('Error saving messages:', error);
+    }
+  }, [messages]);
+
   // Detectar si es dispositivo móvil
   useEffect(() => {
     const checkMobile = () => {
@@ -49,9 +102,11 @@ export default function ChatInterface({ onOpenChange }) {
     }
   }, [isMobile, isOpen])
 
+  // --- MODIFICADO: Limpiar chat también borra localStorage ---
   const clearChat = () => {
     setMessages([])
     setInput("")
+    localStorage.removeItem('chatbotMessages'); // Limpiar localStorage
   }
 
   const handleTouchStart = (e) => {
@@ -95,104 +150,162 @@ export default function ChatInterface({ onOpenChange }) {
     setInput(e.target.value)
   }
 
+  // --- NUEVO: Persistencia del contador de mensajes para usuarios no autenticados con expiración de 5 horas ---
+  const MAX_FREE_MESSAGES = 4;
+  const LIMIT_RESET_HOURS = 5;
+  const isAuthenticated = !!localStorage.getItem('authToken');
+  
+  // --- MODIFICADO: Calcular mensajes del usuario desde los mensajes guardados ---
+  const [freeMessagesCount, setFreeMessagesCount] = useState(() => {
+    if (isAuthenticated) return 0;
+    
+    // Contar mensajes del usuario en la conversación actual
+    const userMessagesInChat = messages.filter(msg => msg.role === 'user').length;
+    
+    const stored = localStorage.getItem('chatbotFreeMessages');
+    const storedTime = localStorage.getItem('chatbotFreeMessagesTime');
+    if (stored && storedTime) {
+      const now = Date.now();
+      const elapsed = now - parseInt(storedTime, 10);
+      if (elapsed > LIMIT_RESET_HOURS * 60 * 60 * 1000) {
+        // Han pasado más de 5 horas, reiniciar contador
+        localStorage.removeItem('chatbotFreeMessages');
+        localStorage.removeItem('chatbotFreeMessagesTime');
+        return userMessagesInChat; // Usar los mensajes actuales
+      }
+      return Math.max(parseInt(stored, 10), userMessagesInChat);
+    }
+    return userMessagesInChat;
+  });
+
+  // Actualizar el contador y timestamp en localStorage cuando cambie
+  useEffect(() => {
+    if (!isAuthenticated) {
+      localStorage.setItem('chatbotFreeMessages', freeMessagesCount);
+      localStorage.setItem('chatbotFreeMessagesTime', Date.now().toString());
+    } else {
+      localStorage.removeItem('chatbotFreeMessages');
+      localStorage.removeItem('chatbotFreeMessagesTime');
+    }
+  }, [freeMessagesCount, isAuthenticated]);
+
+  // Contar mensajes del usuario en el chat actual
+  const userFreeMessages = freeMessagesCount;
+  // El mensaje de login debe mostrarse solo después de que el bot responda al último mensaje permitido
+  const hasReachedLimit = !isAuthenticated && userFreeMessages > MAX_FREE_MESSAGES;
+
+  // Mensaje de login para continuar
+  const loginBotMessage = {
+    id: Date.now() + 100,
+    role: 'assistant',
+    content: (
+      <span>
+        Para seguir conversando conmigo, por favor&nbsp;
+        <a href="/login" style={{ color: '#2563eb', textDecoration: 'underline' }}>inicia sesión</a>
+        &nbsp;o espera 5 horas.
+      </span>
+    ),
+    isLoginMessage: true // Marcar como mensaje especial
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    if (!isAuthenticated && userFreeMessages >= MAX_FREE_MESSAGES) return;
     if (input.trim() && !isLoading) {
-      const userMessage = { id: Date.now(), role: "user", content: input }
-      setMessages(prev => [...prev, userMessage])
-      setInput("")
-      setIsLoading(true)
-      
+      const userMessage = { id: Date.now(), role: "user", content: input };
+      setMessages(prev => [...prev, userMessage]);
+      setInput("");
+      if (!isAuthenticated) setFreeMessagesCount(c => c + 1);
+      setIsLoading(true);
       try {
-        // Preparar historial para el contexto
         const conversationHistory = messages.map(msg => ({
           role: msg.role,
-          content: msg.content
-        }))
-        
-        console.log('Enviando mensaje:', input); // Debug log
-        
-        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {  // Sin la URL completa
+          content: msg.isLoginMessage ? 'mensaje de login' : (typeof msg.content === 'string' ? msg.content : 'mensaje especial') // Convertir JSX a string para la API
+        }));
+        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {
           message: input,
           history: conversationHistory
-        })
-        
-        console.log('Respuesta recibida:', response.data); // Debug log
-        
+        });
         if (response.data.status === 'success') {
-          const botMessage = { 
-            id: Date.now() + 1, 
-            role: "assistant", 
+          const botMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
             content: response.data.message
-          }
-          setMessages(prev => [...prev, botMessage])
+          };
+          setMessages(prev => {
+            const newMsgs = [...prev, botMessage];
+            // Si este fue el último mensaje permitido, agregar el de login
+            if (!isAuthenticated && userFreeMessages + 1 === MAX_FREE_MESSAGES) {
+              return [...newMsgs, loginBotMessage];
+            }
+            return newMsgs;
+          });
         } else {
-          throw new Error('Error en la respuesta del servidor')
+          throw new Error('Error en la respuesta del servidor');
         }
       } catch (error) {
-        console.error('Error sending message:', error)
-        console.error('Error details:', error.response?.data); // More detailed error log
-        const errorMessage = { 
-          id: Date.now() + 1, 
-          role: "assistant", 
-          content: "Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo." 
-        }
-        setMessages(prev => [...prev, errorMessage])
+        const errorMessage = {
+          id: Date.now() + 1,
+          role: "assistant",
+          content: "Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo."
+        };
+        setMessages(prev => [...prev, errorMessage]);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
   }
 
   const handleQuestionClick = async (question) => {
-    const userMessage = { id: Date.now(), role: "user", content: question }
-    setMessages(prev => [...prev, userMessage])
-    setIsLoading(true)
-    
+    if (!isAuthenticated && userFreeMessages >= MAX_FREE_MESSAGES) return;
+    const userMessage = { id: Date.now(), role: "user", content: question };
+    setMessages(prev => [...prev, userMessage]);
+    if (!isAuthenticated) setFreeMessagesCount(c => c + 1);
+    setIsLoading(true);
     try {
-      console.log('Obteniendo respuestas predefinidas...'); // Debug log
-      
-      // Primero intentar obtener respuesta predefinida
-      const predefinedResponse = await axios.get('http://127.0.0.1:5000/api/chatbot/predefined')  // Sin la URL completa
-      
-      console.log('Respuestas predefinidas:', predefinedResponse.data); // Debug log
-      
+      const predefinedResponse = await axios.get('http://127.0.0.1:5000/api/chatbot/predefined');
       if (predefinedResponse.data.status === 'success' && predefinedResponse.data.responses[question]) {
-        const botMessage = { 
-          id: Date.now() + 1, 
-          role: "assistant", 
+        const botMessage = {
+          id: Date.now() + 1,
+          role: "assistant",
           content: predefinedResponse.data.responses[question]
-        }
-        setMessages(prev => [...prev, botMessage])
+        };
+        setMessages(prev => {
+          const newMsgs = [...prev, botMessage];
+          if (!isAuthenticated && userFreeMessages + 1 === MAX_FREE_MESSAGES) {
+            return [...newMsgs, loginBotMessage];
+          }
+          return newMsgs;
+        });
       } else {
-        console.log('Usando DeepSeek para la pregunta:', question); // Debug log
-        
-        // Si no hay respuesta predefinida, usar DeepSeek
-        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {  // Sin la URL completa
+        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {
           message: question,
           history: []
-        })
-        
+        });
         if (response.data.status === 'success') {
-          const botMessage = { 
-            id: Date.now() + 1, 
-            role: "assistant", 
+          const botMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
             content: response.data.message
-          }
-          setMessages(prev => [...prev, botMessage])
+          };
+          setMessages(prev => {
+            const newMsgs = [...prev, botMessage];
+            if (!isAuthenticated && userFreeMessages + 1 === MAX_FREE_MESSAGES) {
+              return [...newMsgs, loginBotMessage];
+            }
+            return newMsgs;
+          });
         }
       }
     } catch (error) {
-      console.error('Error with predefined question:', error)
-      console.error('Error details:', error.response?.data); // More detailed error log
-      const errorMessage = { 
-        id: Date.now() + 1, 
-        role: "assistant", 
-        content: "Lo siento, hubo un error. Por favor, intenta de nuevo." 
-      }
-      setMessages(prev => [...prev, errorMessage])
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: "assistant",
+        content: "Lo siento, hubo un error. Por favor, intenta de nuevo."
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -201,6 +314,16 @@ export default function ChatInterface({ onOpenChange }) {
       onOpenChange(isOpen);
     }
   }, [isOpen, onOpenChange])
+
+  // Limpiar mensajes del chatbot al cerrar sesión
+  useEffect(() => {
+    const handleLogout = () => {
+      localStorage.removeItem('chatbotMessages');
+      setMessages([]);
+    };
+    window.addEventListener('user-logout', handleLogout);
+    return () => window.removeEventListener('user-logout', handleLogout);
+  }, []);
 
   return (
     <div className={`fixed bottom-4 right-4 z-50 ${isMobile ? 'bottom-6 right-6' : ''}`}>
@@ -218,13 +341,18 @@ export default function ChatInterface({ onOpenChange }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
         )}
-      </button>{/* Chat window - Responsive con full-screen en móvil */}
+      </button>
+
+      {/* Chat window - Responsive con full-screen en móvil */}
       <div className={`${isMobile 
         ? 'fixed inset-0 w-full h-full bg-gray-200 rounded-none border-none z-50' 
         : 'absolute bottom-16 right-0 w-80 h-[500px] bg-gray-200 rounded-3xl border border-gray-400'
       } transition-all duration-300 transform 
         ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'} flex flex-col`}>
-          {/* Header con MICHAEL y mascota - Responsive */}        <div className={`${isMobile ? 'p-6 pt-12' : 'p-4'} relative flex-shrink-0 bg-gray-200 ${isMobile ? 'rounded-none' : 'rounded-t-3xl'} flex items-center justify-center`}>          {/* Botón de volver al inicio - solo visible cuando hay mensajes y NO en móvil */}
+        
+        {/* Header con MICHAEL y mascota - Responsive */}        
+        <div className={`${isMobile ? 'p-6 pt-12' : 'p-4'} relative flex-shrink-0 bg-gray-200 ${isMobile ? 'rounded-none' : 'rounded-t-3xl'} flex items-center justify-center`}>
+          {/* Botón de volver al inicio - solo visible cuando hay mensajes y NO en móvil */}
           {messages.length > 0 && !isMobile && (
             <button
               onClick={clearChat}
@@ -237,6 +365,7 @@ export default function ChatInterface({ onOpenChange }) {
               </svg>
             </button>
           )}          
+          
           {isMobile && (
             <button
               onClick={() => setIsOpen(false)}
@@ -251,10 +380,13 @@ export default function ChatInterface({ onOpenChange }) {
           <div className={`absolute ${isMobile ? 'top-4 left-6' : 'top-[-50px] right-4'}`}>
             <img src={imagenChatbot} alt="Michael character" className={`${isMobile ? 'w-16 h-16' : 'w-24 h-24'}`} />
           </div>
-        </div>        {/* Chat body - Responsive padding */}
+        </div>        
+        
+        {/* Chat body - Responsive padding */}
         <div className={`${isMobile ? 'px-6 pb-6' : 'px-6 pb-4'} flex-1 flex flex-col overflow-hidden`}>
           {messages.length === 0 ? (
-            <>              {/* Mensaje inicial - Responsive */}
+            <>              
+              {/* Mensaje inicial - Responsive */}
               <div className={`${isMobile ? 'mb-8' : 'mb-6'} text-center`}>
                 <p className={`text-gray-700 ${isMobile ? 'text-base' : 'text-sm'} mb-1`}>
                   ¡Hola! Puedes llamarme <strong>michael</strong>.
@@ -266,7 +398,8 @@ export default function ChatInterface({ onOpenChange }) {
               <div className={`${isMobile ? 'grid-cols-1 gap-4 mb-8 px-4' : 'grid-cols-2 gap-3 mb-6 px-2'} grid`}>
                 {predefinedQuestions.map((q, i) => (
                   <button
-                    key={i}                    className={`${isMobile ? 'text-base py-4 px-4' : 'text-xs py-3 px-3'} rounded-lg font-medium text-center transition-colors ${
+                    key={i}                    
+                    className={`${isMobile ? 'text-base py-4 px-4' : 'text-xs py-3 px-3'} rounded-lg font-medium text-center transition-colors ${
                       q.style === "green" 
                         ? "bg-green-500 text-white hover:bg-green-600" 
                         : "bg-gray-800 text-white hover:bg-gray-700"
@@ -278,11 +411,15 @@ export default function ChatInterface({ onOpenChange }) {
                   </button>
                 ))}
               </div>
-                {/* Punto divisor - Responsive */}
+              
+              {/* Punto divisor - Responsive */}
               <div className={`flex justify-center ${isMobile ? 'mb-8' : 'mb-6'}`}>
                 <div className={`${isMobile ? 'w-3 h-3' : 'w-2 h-2'} bg-gray-500 rounded-full`}></div>
-              </div></>          ) : (
-            /* Mensajes del chat con OverlayScrollbars moderno */            <OverlayScrollbarsComponent 
+              </div>
+            </>          
+          ) : (
+            /* Mensajes del chat con OverlayScrollbars moderno */            
+            <OverlayScrollbarsComponent 
               ref={scrollbarRef}
               className={`flex-1 ${isMobile ? 'mb-6' : 'mb-4'}`}
               options={{
@@ -301,12 +438,13 @@ export default function ChatInterface({ onOpenChange }) {
               style={{ height: '100%' }}>
               <div className={`space-y-3 ${isMobile ? 'pr-4' : 'pr-2'}`}>
                 {messages.map((m) => (
-                  <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}>                    <div className={`max-w-[70%] p-3 rounded-lg ${isMobile ? 'text-base' : 'text-sm'} whitespace-pre-wrap shadow-lg transition-all duration-200 hover:shadow-xl ${
+                  <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}>
+                    <div className={`max-w-[70%] p-3 rounded-lg ${isMobile ? 'text-base' : 'text-sm'} whitespace-pre-wrap shadow-lg transition-all duration-200 hover:shadow-xl ${
                       m.role === "user" 
                         ? "bg-gradient-to-r from-green-400 to-green-500 text-white" 
                         : "bg-gradient-to-r from-gray-600 to-gray-700 text-white"
                     }`}>
-                      {m.content}
+                      {typeof m.content === 'object' ? m.content : m.content}
                     </div>
                   </div>
                 ))}
@@ -325,7 +463,9 @@ export default function ChatInterface({ onOpenChange }) {
                 <div ref={messagesEndRef} />
               </div>
             </OverlayScrollbarsComponent>
-          )}          {/* Input área - Responsive */}
+          )}          
+          
+          {/* Input área - Responsive */}
           <div className={`flex items-center justify-center mt-auto ${isMobile ? 'px-6 mobile-input-container' : 'px-4'}`}>
             {/* Input con botón de envío - Responsive */}
             <div className="w-full relative">
@@ -339,9 +479,9 @@ export default function ChatInterface({ onOpenChange }) {
                     handleSubmit(e)
                   }
                 }}
-                placeholder="Escribe tu mensaje"
+                placeholder={(!isAuthenticated && userFreeMessages >= MAX_FREE_MESSAGES) ? "Inicia sesión para continuar" : "Escribe tu mensaje"}
                 className={`w-full ${isMobile ? 'p-4 pr-14 text-base' : 'p-3 pr-12 text-sm'} border-2 border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 bg-white`}
-                disabled={isLoading}
+                disabled={isLoading || (!isAuthenticated && userFreeMessages >= MAX_FREE_MESSAGES)}
               />
               <button
                 onClick={handleSubmit}
@@ -353,7 +493,8 @@ export default function ChatInterface({ onOpenChange }) {
                 </svg>
               </button>
             </div>
-          </div></div>
+          </div>
+        </div>
       </div>
     </div>
   )
