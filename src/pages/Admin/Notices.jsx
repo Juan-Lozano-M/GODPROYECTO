@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../config/axiosConfig";
 
 import AdminProfile from "../../components/admin/AdminProfile";
 import DataStat from "../../components/admin/DataStat";
@@ -29,8 +29,8 @@ function Notices() {
 
   useEffect(() => {
     setLoading(true);
-    axios
-      .get("http://localhost:5000/api/news/get-all-admin")
+    axiosInstance
+      .get("/api/news/get-all-admin")
       .then((response) => {
         if (response.data.status === "success") {
           setNoticias(response.data.news);
@@ -100,7 +100,7 @@ function Notices() {
     setLoading(true);
     try {
       console.log("Estado enviado:", nuevoEstado);
-      await axios.patch(`http://localhost:5000/api/news/update-news/${selectedNoticeId}`, {
+      await axiosInstance.patch(`/api/news/update-news/${selectedNoticeId}`, {
         es_publicada: nuevoEstado,
       });
       setNoticias((prev) =>
@@ -123,36 +123,26 @@ function Notices() {
   // Función para eliminar noticia permanentemente
   const handleDeletePermanently = async () => {
     if (!noticiaToDelete) return;
-    
     try {
       setLoading(true);
-        // Obtener token de autenticación (asumiendo que está en localStorage)
       const token = localStorage.getItem('authToken');
       if (!token) {
         alert('No se encontró token de autenticación. Por favor, inicia sesión nuevamente.');
         return;
       }
-      
       console.log(`Eliminando noticia ${noticiaToDelete} permanentemente`);
-      
-      const response = await axios.delete(`http://localhost:5000/api/news/delete/${noticiaToDelete}`, {
+      const response = await axiosInstance.delete(`/api/news/delete/${noticiaToDelete}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
       console.log('Response:', response.data);
-      
       if (response.data.status === 'success') {
-        // Actualizar la lista eliminando la noticia
         setNoticias(prev => prev.filter(n => n.id_noticia !== noticiaToDelete));
-        
-        // Cerrar modal y limpiar estado
         setShowDeleteModal(false);
         setNoticiaToDelete(null);
         setSelectedNoticeId(null);
-          // Mostrar toast de éxito
         setShowToast(true);
         console.log('Noticia eliminada exitosamente');
       } else {
@@ -160,15 +150,12 @@ function Notices() {
       }
     } catch (error) {
       console.error('Error al eliminar noticia:', error);
-      
       let errorMessage = 'Error al eliminar la noticia. Inténtalo de nuevo.';
-      
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
       alert(errorMessage);
     } finally {
       setLoading(false);

@@ -1,8 +1,8 @@
 // Importaciones
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../config/axiosConfig";
 
 // Componentes
 import AdminProfile from "../../components/admin/AdminProfile";
@@ -35,7 +35,7 @@ const Home = () => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
-    axios.get("http://localhost:5000/api/user/profile/admin", {
+    axiosInstance.get("/api/user/profile/admin", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
@@ -71,7 +71,7 @@ const Home = () => {
   const fetchTestimonios = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/testimonials");
+      const res = await axiosInstance.get("/api/testimonials");
       const data = res.data || [];
       const adaptados = data.filter(t => t).map(t => ({
         id: t.id_tes || Math.random().toString(36),

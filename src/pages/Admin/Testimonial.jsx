@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import AdminProfile from "../../components/admin/AdminProfile";
@@ -9,6 +8,7 @@ import FiltroModal from "../../components/admin/FiltroModal";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import Toast from "../../components/alertas/Toast";
 import ConfirmationModal from "../../components/modals/ConfirmationModal";
+import axiosInstance from "../../config/axiosConfig";
 
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
@@ -61,7 +61,7 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       console.log('Fetching testimonios...');
       
       // Primero intentar con el endpoint que incluye información del usuario
-      const response = await axios.get("http://localhost:5000/api/testimonials/with-user");
+      const response = await axiosInstance.get("/api/testimonials/with-user");
       const data = response.data;
       
       console.log('Raw data from API:', data);
@@ -116,7 +116,7 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       // Si falla el endpoint principal, intentar con el endpoint de fallback
       try {
         console.log('Intentando con endpoint de fallback...');
-        const fallbackResponse = await axios.get("http://localhost:5000/api/testimonials");
+        const fallbackResponse = await axiosInstance.get("/api/testimonials");
         const fallbackData = fallbackResponse.data;
         
         console.log('Fallback data:', fallbackData);
@@ -176,8 +176,8 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       
       console.log(`Estado anterior: ${estadoAnterior}, Nuevo estado: ${nuevoEstado}`);
       
-      const response = await axios.put(
-        `http://localhost:5000/api/testimonials/${testimonioId}/status`,
+      const response = await axiosInstance.put(
+        `/api/testimonials/${testimonioId}/status`,
         { estado: nuevoEstado }
       );
       
@@ -242,7 +242,7 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       setIsLoading(true);
       console.log(`Eliminando testimonio ${testimonioToDelete} permanentemente`);
       
-      const response = await axios.delete(`http://localhost:5000/api/testimonials/${testimonioToDelete}`);
+      const response = await axiosInstance.delete(`/api/testimonials/${testimonioToDelete}`);
         if (response.status === 200 || response.status === 204) {
         console.log('Testimonio eliminado exitosamente');
         

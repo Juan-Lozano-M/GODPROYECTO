@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -8,6 +7,7 @@ import InputField from "../../components/InputField";
 import Toast from '../../components/alertas/Toast';
 import GameButton from "../../components/buttons/GameButton";
 import Loader from '../../components/loader';
+import axiosInstance from '../../config/axiosConfig';
 import { auth } from '../../firebaseConfig';
 
 // Remove this import
@@ -39,7 +39,7 @@ const RecoverPassword = () => {
     try {
       setIsLoading(true);
       
-      const checkResponse = await axios.post('http://127.0.0.1:5000/auth/request-reset', {
+      const checkResponse = await axiosInstance.post('/auth/request-reset', {
         email: email
       });
   

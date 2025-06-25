@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { applyActionCode, checkActionCode } from 'firebase/auth';
 import { ArrowRight, Check, Loader2, X } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import axiosInstance from '../../config/axiosConfig';
 import { auth } from '../../firebaseConfig';
 
 const VerifyEmail = () => {
@@ -79,7 +79,7 @@ const VerifyEmail = () => {
         }
 
         try {
-          const response = await axios.post('http://localhost:5000/auth/update-email', {
+          const response = await axiosInstance.post('/auth/update-email', {
             firebase_uid: currentUser.uid,
             new_email: newEmail
           });

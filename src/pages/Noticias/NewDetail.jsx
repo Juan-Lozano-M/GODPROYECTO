@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
 import CartoonCard from "../../components/cards/CartoonCard";
 import Navbar from "../../components/index/Navbar";
+import axiosInstance from "../../config/axiosConfig";
 
 
 export default function NewDetail() {
@@ -25,7 +25,7 @@ export default function NewDetail() {
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    axios.get(`http://localhost:5000/api/news/${slug}`)
+    axiosInstance.get(`/api/news/${slug}`)
       .then(response => {
         if (response.data.status === "success") {
           const newsItem = response.data.news;
@@ -34,12 +34,12 @@ export default function NewDetail() {
           // Incrementar vista solo si no se ha hecho antes
           if (!viewIncrementedRef.current) {
             viewIncrementedRef.current = true;
-            axios.post(`http://localhost:5000/api/news/${newsItem.id_noticia}/view`)
+            axiosInstance.post(`/api/news/${newsItem.id_noticia}/view`)
               .catch(err => console.warn("No se pudo incrementar vistas:", err));
           }
 
           // Obtener relacionadas
-          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+          return axiosInstance.get(`/api/news/search?category=${newsItem.categoria}&per_page=4`);
         } else {
           throw new Error(response.data.message || 'Noticia no encontrada');
         }

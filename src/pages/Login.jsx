@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { sendPasswordResetEmail } from "firebase/auth";
 import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { useState } from "react";
@@ -9,7 +8,8 @@ import googleLogo from "../assets/logos/logoGoogle.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import InputField from "../components/InputField";
+import InputField from "../components/inputs/InputField";
+import axiosInstance from '../config/axiosConfig';
 import {
   auth,
   GoogleAuthProvider,
@@ -48,7 +48,7 @@ const Login = () => {
       const firebaseUser = userCredential.user;
       const idToken = await firebaseUser.getIdToken();
 
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+      const response = await axiosInstance.post('/auth/login', {
         correo_usu: email.trim().toLowerCase(),
         token: idToken  
       });
@@ -130,7 +130,7 @@ const Login = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
 
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+      const response = await axiosInstance.post('/auth/login', {
         correo_usu: user.email,
         token: idToken
       });      if (response.data.status === "success") {
