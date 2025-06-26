@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { User } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import axios from '../../config/axiosConfig';
 
 const NewsCard = ({ news, index }) => {
   // Validación para evitar errores si news es undefined
@@ -161,7 +161,7 @@ const Proyectosin = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/news/get-news');
+        const res = await axios.get('/api/news/get-news');
         if (res.data && res.data.status === 'success') {
           setNewsData(res.data.news);
         }
