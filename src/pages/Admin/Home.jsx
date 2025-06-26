@@ -60,12 +60,11 @@ const Home = () => {
       default: return "En espera";
     }
   };
-
   const construirUrlImagen = (testimonio) => {
     const valorImagen = testimonio.profile_image;
     if (!valorImagen?.trim()) return "";
     if (valorImagen.startsWith("http")) return valorImagen;
-    return `http://localhost:5000/uploads/${valorImagen}`;
+    return `https://godbackend-production.up.railway.app/uploads/${valorImagen}`;
   };
 
   const fetchTestimonios = async () => {
