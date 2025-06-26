@@ -6,13 +6,13 @@ import axiosInstance from "../../config/axiosConfig";
 
 // Componentes
 import AdminProfile from "../../components/admin/AdminProfile";
+import Sidebar from "../../components/admin/Sidebar";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import TestimonialStaticHome from "../../components/admin/TestimonialStaticsHome";
 import useTestimonialStats from "../../components/admin/useTestimonialStats";
 import CartoonButton from "../../components/buttons/CartoonButton";
-import Sidebar from "../../components/Sidebar";
-import StatCard from "../../components/StatCard";
-import TestimonialCard from "../../components/TestimonialCard";
+import StatCard from "../../components/cards/StatCard";
+import TestimonialCard from "../../components/cards/TestimonialCard";
 
 // Imágenes
 import imagenBienvenida from "../../assets/images/imagenBienvenida.png";

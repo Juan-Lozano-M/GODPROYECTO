@@ -1,7 +1,6 @@
-import React from "react";
-import Sidebar from "../../components/Sidebar";
 import AdminProfile from "../../components/admin/AdminProfile";
 import EstadisticasDashboard from "../../components/admin/EstadisticasDashboard";
+import Sidebar from "../../components/admin/Sidebar";
 
 export default function Statics() {
   return (

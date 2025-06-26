@@ -283,7 +283,11 @@ const Register = () => {
             iconClassName="right-[-50px]"
           />
           {fieldErrors.email && (
+<<<<<<< HEAD
             <span className="absolute right-[-40px] top-1 z-10">
+=======
+            <span className="absolute right-[-40px] top-2 z-10">
+>>>>>>> adminFinal
               <CustomTooltip message={fieldErrors.email} />
             </span>
           )}
@@ -299,7 +303,11 @@ const Register = () => {
             iconClassName="right-[-50px]"
           />
           {fieldErrors.nombre && (
+<<<<<<< HEAD
             <span className="absolute right-[-40px] top-1 z-10">
+=======
+            <span className="absolute right-[-40px] top-2 z-10">
+>>>>>>> adminFinal
               <CustomTooltip message={fieldErrors.nombre} />
             </span>
           )}
@@ -315,7 +323,11 @@ const Register = () => {
             iconClassName="right-[-35px] sm:right-[-50px]"
           />
           {fieldErrors.apellido && (
+<<<<<<< HEAD
             <span className="absolute right-[-40px] top-1 z-10">
+=======
+            <span className="absolute right-[-40px] top-2 z-10">
+>>>>>>> adminFinal
               <CustomTooltip message={fieldErrors.apellido} />
             </span>
           )}
@@ -330,7 +342,11 @@ const Register = () => {
             iconClassName="right-[-35px] sm:right-[-50px]"
           />
           {fieldErrors.password && (
+<<<<<<< HEAD
             <span className="absolute right-[-40px] top-1 z-10">
+=======
+            <span className="absolute right-[-40px] top-2 z-10">
+>>>>>>> adminFinal
               <CustomTooltip message={fieldErrors.password} />
             </span>
           )}
@@ -345,7 +361,11 @@ const Register = () => {
             iconClassName="right-[-35px] sm:right-[-50px] "
           />
           {fieldErrors.confirmPassword && (
+<<<<<<< HEAD
             <span className="absolute right-[-40px] top-1 z-10">
+=======
+            <span className="absolute right-[-40px] top-2 z-10">
+>>>>>>> adminFinal
               <CustomTooltip message={fieldErrors.confirmPassword} />
             </span>
           )}

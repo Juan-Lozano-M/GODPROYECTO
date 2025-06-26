@@ -1,7 +1,8 @@
+import AdminButton from "../components/admin/AdminButton";
+import Chatbot from "../components/chatbot/ChatBot";
+import Con2 from "../components/contacto/SeccionContactob";
 import Footer from '../components/index/Footer';
 import Navbar from "../components/index/Navbar";
-
-import Con2 from "../components/contacto/SeccionContactob";
 
 
 
@@ -12,6 +13,8 @@ function Contactos() {
 
     
       <Navbar />
+      <Chatbot />
+      <AdminButton />
       <Con2 />
      
      

@@ -1,4 +1,3 @@
-
 function Footer() {
   // Definir las rutas del menú
   const menuItems = [
@@ -100,7 +99,9 @@ function Footer() {
                 ].map((social) => (
                   <a
                     key={social.name}
-                    href="#"
+                    href={social.name === 'Facebook' ? 'https://www.facebook.com/profile.php?id=61577296479228' : social.name === 'Instagram' ? 'https://www.instagram.com/gameofdreams__2/' : '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-12 h-12 bg-white/10 hover:bg-[#A4FF00]/20 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                   >
                     <svg className="w-6 h-6 text-gray-400 group-hover:text-[#A4FF00] transition-colors" fill="currentColor" viewBox="0 0 24 24">

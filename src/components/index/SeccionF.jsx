@@ -95,16 +95,23 @@ function SeccionF() {
             transition={transition}
             className="flex gap-4 sm:gap-6 items-center justify-center"
           >
-            <img
-              src={Face}
-              alt="Facebook"
-              className="w-[48px] xs:w-[52px] sm:w-[70px] md:w-[80px] lg:w-[90px] xl:w-[100px] 2xl:w-[110px] h-auto cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
-            />
-            <img
-              src={Insta}
-              alt="Instagram"
-              className="w-[48px] xs:w-[52px] sm:w-[70px] md:w-[80px] lg:w-[90px] xl:w-[100px] 2xl:w-[110px] h-auto cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
-            />
+            <Link to= "https://www.facebook.com/profile.php?id=61577296479228" target='_blank'>
+              <img
+                src={Face}
+                alt="Facebook"
+                className="w-[48px] xs:w-[52px] sm:w-[70px] md:w-[80px] lg:w-[90px] xl:w-[100px] 2xl:w-[110px] h-auto cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
+              />
+            </Link>
+
+
+            <Link to= "https://www.instagram.com/gameofdreams__2/" target='_blank'>
+              <img
+                src={Insta}
+                alt="Instagram"
+                className="w-[48px] xs:w-[52px] sm:w-[70px] md:w-[80px] lg:w-[90px] xl:w-[100px] 2xl:w-[110px] h-auto cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110 active:scale-95"
+              />
+            </Link>
+
           </motion.div>
         </motion.article>
       </section>

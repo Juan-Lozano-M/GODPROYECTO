@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Sidebar from "../../components/Sidebar";
 import AdminProfile from "../../components/admin/AdminProfile";
 import DataStat from "../../components/admin/DataStat";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
 import FiltroModal from "../../components/admin/FiltroModal";
+import Sidebar from "../../components/admin/Sidebar";
 import TestimonialModal from "../../components/admin/TestimonialModal";
 import Toast from "../../components/alertas/Toast";
 import ConfirmationModal from "../../components/modals/ConfirmationModal";

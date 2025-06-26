@@ -1,7 +1,7 @@
 import { useState } from "react";
-import offEye from "../assets/icons/offEye.png";
-import onEye from "../assets/icons/onEye.png";
-import xIcon from "../assets/icons/xIcon.png";
+import offEye from "../../assets/icons/offEye.png";
+import onEye from "../../assets/icons/onEye.png";
+import xIcon from "../../assets/icons/xIcon.png";
 
 const InputField = ({ 
   type, 
