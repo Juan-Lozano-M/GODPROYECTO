@@ -9,10 +9,6 @@ import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
 import InputField from "../components/inputs/InputField";
-<<<<<<< HEAD
-import axiosInstance from '../config/axiosConfig';
-=======
->>>>>>> adminFinal
 import {
   auth,
   GoogleAuthProvider,
