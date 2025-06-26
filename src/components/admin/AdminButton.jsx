@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from '../../config/axiosConfig';
 
 export default function AdminButton({ isChatbotOpen }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -19,7 +19,7 @@ export default function AdminButton({ isChatbotOpen }) {
         }
 
         // Hacer la petición al endpoint correcto que tienes en tu backend
-        const response = await axios.get('http://127.0.0.1:5000/api/user/profile', {
+        const response = await axios.get('/api/user/profile', {
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
