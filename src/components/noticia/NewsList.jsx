@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "../../config/axiosConfig";
 import NewsCard from "./NewsCard";
 
 const NewsList = () => {
@@ -10,7 +10,7 @@ const NewsList = () => {
 
   // Efecto para cargar las noticias desde el backend
   useEffect(() => {
-    axios.get("http://localhost:5000/api/news/get-news")
+    axios.get("/api/news/get-news")
       .then((response) => {
         console.log("Datos recibidos del backend:", response.data);
         if (response.data.status === "success") {

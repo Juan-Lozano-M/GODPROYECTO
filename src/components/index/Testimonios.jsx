@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "../../config/axiosConfig";
 import Toast from '../alertas/Toast';
 
 export default function Testimonios() {
@@ -84,7 +84,7 @@ export default function Testimonios() {
 
       // Enviar a la API con el token de autenticación
       await axios.post(
-        'http://localhost:5000/api/testimonials/create', 
+        '/api/testimonials/create', 
         testimonialData,
         {
           headers: {
@@ -115,7 +115,7 @@ export default function Testimonios() {
   };
   const loadTestimonials = () => {
     axios
-      .get("http://localhost:5000/api/testimonials/by-status?status=aprobado")
+      .get("/api/testimonials/by-status?status=aprobado")
       .then((res) => {
         let data = res.data;
         if (Array.isArray(data) && data.length > 0) {
