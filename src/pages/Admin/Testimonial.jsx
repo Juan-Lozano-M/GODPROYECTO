@@ -38,7 +38,6 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
 
   // Flag para saber si es la primera carga
   const isFirstLoad = useRef(true);
-
   // Función para validar y procesar la URL de la imagen
   const processImageUrl = (imageUrl) => {
     if (!imageUrl || imageUrl.trim() === '') {
@@ -51,8 +50,7 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
     }
     
     // Si es una URL relativa, construir la URL completa
-    // Ajusta esto según tu configuración de servidor
-    return imageUrl;
+    return `https://godbackend-production.up.railway.app/uploads/${imageUrl}`;
   };
   // Función para obtener testimonios con información del usuario
   const fetchTestimonios = useCallback(async () => {
