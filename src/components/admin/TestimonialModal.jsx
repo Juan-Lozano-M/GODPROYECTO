@@ -1,7 +1,7 @@
 import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
+import axios from "../../config/axiosConfig";
 import GameButton from "../buttons/GameButton";
 
 // Estilos CSS para el scrollbar personalizado
@@ -89,7 +89,7 @@ const handleAprobar = async () => {
       }
     } else {
       // Fallback al método anterior (corrigiendo la URL y parámetro)
-      await axios.put(`http://localhost:5000/api/testimonials/${testimonio.id}/status`, {
+      await axios.put(`/api/testimonials/${testimonio.id}/status`, {
         estado: "aprobado"  // Cambiado de 'status' a 'estado'
       });
       if (onStatusChange) await onStatusChange();
@@ -112,7 +112,7 @@ const handleRechazar = async () => {
       }
     } else {
       // Fallback al método anterior (corrigiendo la URL y parámetro)
-      await axios.put(`http://localhost:5000/api/testimonials/${testimonio.id}/status`, {
+      await axios.put(`/api/testimonials/${testimonio.id}/status`, {
         estado: "anulado"  // Cambiado de 'status' a 'estado'
       });
       if (onStatusChange) await onStatusChange();

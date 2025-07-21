@@ -115,7 +115,9 @@ export default function Testimonios() {
   };
   const loadTestimonials = () => {
     axios
-      .get("/api/testimonials/by-status?status=aprobado")
+      .get("/api/testimonials/by-status?status=aprobado", {
+        withCredentials: false  // No necesitamos credenciales para testimonios públicos
+      })
       .then((res) => {
         let data = res.data;
         if (Array.isArray(data) && data.length > 0) {

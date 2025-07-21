@@ -1,5 +1,5 @@
-import axios from "axios";
 import linkIcon from "../../assets/icons/link.png";
+import axios from "../../config/axiosConfig";
 
 function ShareButton({ newsId }) {
   const handleShare = async () => {
@@ -20,7 +20,9 @@ function ShareButton({ newsId }) {
 
       // Segundo, notificar al backend que se compartió
       if (newsId) {
-        await axios.patch(`http://localhost:5000/api/news/${newsId}/share`);
+        await axios.patch(`/api/news/${newsId}/share`, {}, {
+          withCredentials: false  // No necesitamos credenciales para incrementar contador
+        });
       }
     } catch (error) {
       console.error("Error al compartir o actualizar contador:", error);

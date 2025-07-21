@@ -1,14 +1,21 @@
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis, YAxis
+} from 'recharts';
+import axios from '../../config/axiosConfig';
 
 export default function TestimonialStaticsHome() {
   const [trendData, setTrendData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/stats/testimonials')
+    axios.get('/api/stats/testimonials', {
+      withCredentials: false  // No necesitamos credenciales para estadísticas públicas
+    })
       .then((res) => {
         if (res.data.success && res.data.data.trend) {
           // Renombrar claves para que Recharts las entienda: "aprobados" en vez de "count"

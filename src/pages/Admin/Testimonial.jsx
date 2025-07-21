@@ -59,7 +59,9 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       console.log('Fetching testimonios...');
       
       // Primero intentar con el endpoint que incluye información del usuario
-      const response = await axiosInstance.get("/api/testimonials/with-user");
+      const response = await axiosInstance.get("/api/testimonials/with-user", {
+        withCredentials: false  // No necesitamos credenciales para obtener testimonios
+      });
       const data = response.data;
       
       console.log('Raw data from API:', data);
@@ -114,7 +116,9 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
       // Si falla el endpoint principal, intentar con el endpoint de fallback
       try {
         console.log('Intentando con endpoint de fallback...');
-        const fallbackResponse = await axiosInstance.get("/api/testimonials");
+        const fallbackResponse = await axiosInstance.get("/api/testimonials", {
+          withCredentials: false  // No necesitamos credenciales para obtener testimonios
+        });
         const fallbackData = fallbackResponse.data;
         
         console.log('Fallback data:', fallbackData);

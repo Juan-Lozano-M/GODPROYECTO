@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { Filter, Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import axios from '../../config/axiosConfig';
 import NewsCard from './NewsCard';
 
 const SearchModal = ({ isOpen, onClose }) => {
@@ -59,7 +59,9 @@ const SearchModal = ({ isOpen, onClose }) => {
       params.append('page', page.toString());
       params.append('per_page', '6');
 
-      const response = await axios.get(`http://localhost:5000/api/news/search?${params}`);
+      const response = await axios.get(`/api/news/search?${params}`, {
+        withCredentials: false  // No necesitamos credenciales para búsquedas públicas
+      });
       
       if (response.data.status === 'success') {
         setSearchResults(response.data.news);

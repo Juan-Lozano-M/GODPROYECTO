@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import axios from '../../config/axiosConfig';
 
 const useTestimonialStats = () => {
   const [stats, setStats] = useState({
@@ -17,8 +17,8 @@ const useTestimonialStats = () => {
 
       // Obtener testimonios y noticias en paralelo
       const [testimoniosResponse, noticiasResponse] = await Promise.all([
-        axios.get("http://localhost:5000/api/testimonials"),
-        axios.get("http://localhost:5000/api/news/get-news") // ← NUEVA LLAMADA PARA NOTICIAS
+        axios.get("/api/testimonials", { withCredentials: false }),
+        axios.get("/api/news/get-news", { withCredentials: false }) // ← NUEVA LLAMADA PARA NOTICIAS
       ]);
 
       // Procesar estadísticas de testimonios

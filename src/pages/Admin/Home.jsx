@@ -70,7 +70,9 @@ const Home = () => {
   const fetchTestimonios = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/api/testimonials");
+      const res = await axiosInstance.get("/api/testimonials", {
+        withCredentials: false  // No necesitamos credenciales para obtener testimonios
+      });
       const data = res.data || [];
       const adaptados = data.filter(t => t).map(t => ({
         id: t.id_tes || Math.random().toString(36),

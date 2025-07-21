@@ -1,8 +1,8 @@
-import axios from "axios"; // Usar tu configuración existente en lugar de axios directo
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import "overlayscrollbars/overlayscrollbars.css";
 import { useEffect, useRef, useState } from "react";
 import imagenChatbot from "../../assets/images/imagenChatbot.png";
+import axiosConfig from "../../config/axiosConfig";
 
 
 const predefinedQuestions = [
@@ -222,10 +222,10 @@ export default function ChatInterface({ onOpenChange }) {
           role: msg.role,
           content: msg.isLoginMessage ? 'mensaje de login' : (typeof msg.content === 'string' ? msg.content : 'mensaje especial') // Convertir JSX a string para la API
         }));
-        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {
+        const response = await axiosConfig.post('/api/chatbot/message', {
           message: input,
           history: conversationHistory
-        });
+        }, { withCredentials: false });
         if (response.data.status === 'success') {
           const botMessage = {
             id: Date.now() + 1,
@@ -263,7 +263,7 @@ export default function ChatInterface({ onOpenChange }) {
     if (!isAuthenticated) setFreeMessagesCount(c => c + 1);
     setIsLoading(true);
     try {
-      const predefinedResponse = await axios.get('http://127.0.0.1:5000/api/chatbot/predefined');
+      const predefinedResponse = await axiosConfig.get('/api/chatbot/predefined', { withCredentials: false });
       if (predefinedResponse.data.status === 'success' && predefinedResponse.data.responses[question]) {
         const botMessage = {
           id: Date.now() + 1,
@@ -278,10 +278,10 @@ export default function ChatInterface({ onOpenChange }) {
           return newMsgs;
         });
       } else {
-        const response = await axios.post('http://127.0.0.1:5000/api/chatbot/message', {
+        const response = await axiosConfig.post('/api/chatbot/message', {
           message: question,
           history: []
-        });
+        }, { withCredentials: false });
         if (response.data.status === 'success') {
           const botMessage = {
             id: Date.now() + 1,

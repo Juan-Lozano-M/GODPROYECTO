@@ -1,7 +1,7 @@
 
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import axios from '../../config/axiosConfig';
 
 // Componente Tab Button reutilizable
 const TabButton = ({ 
@@ -749,7 +749,8 @@ const EstadisticasDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/stats/dashboard", {
+        const response = await axios.get("/api/stats/dashboard", {
+          // Mantener credenciales true para el dashboard de admin
           withCredentials: true
         });
         if (response.data.success) {

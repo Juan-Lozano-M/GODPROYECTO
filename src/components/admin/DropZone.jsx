@@ -1,6 +1,6 @@
-import axios from 'axios'; // Import axios for making HTTP requests
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import axiosConfig from '../../config/axiosConfig'; // Import axiosConfig for making HTTP requests
 import DeleteButton from "../buttons/DeleteButton";
 
 const DropZone = ({ className = "w-85", onFileChange, onUploadStart, onUploadEnd, reset = false }) => {
@@ -31,7 +31,7 @@ const DropZone = ({ className = "w-85", onFileChange, onUploadStart, onUploadEnd
     formData.append('folder', 'news_images'); // Specify the folder in Cloudinary
 
     // Send the file to the backend
-    axios.post('http://127.0.0.1:5000/api/news/upload-image', formData, {
+    axiosConfig.post('/api/news/upload-image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
