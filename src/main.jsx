@@ -9,16 +9,20 @@ import LoginMain from "./LoginMain.jsx";
 import Home from "./pages/Admin/Home";
 import NewsCreate from "./pages/Admin/NewsCreate.jsx";
 import Notices from "./pages/Admin/Notices";
+import Projects from "./pages/Admin/Projects.jsx";
+import Projectscreate from "./pages/Admin/ProjectsCreate.jsx";
 import Statics from "./pages/Admin/Statics";
 import Testimonial from "./pages/Admin/Testimonial";
 import ActionRedirector from "./pages/Auth/ActionRedirector.jsx";
 import RecoverPassword from "./pages/Auth/RecoverPassword.jsx";
 import ResetPassword from "./pages/Auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/Auth/VerifyEmail.jsx";
+import Contacto from "./pages/Contactos.jsx";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewDetails from "./pages/Noticias/NewDetail";
 import Noticiasv2 from "./pages/Noticias/Noticiasv2";
+import ProyectosView from "./pages/proyectosview.jsx";
 import Register from "./pages/Register";
 
 
@@ -43,6 +47,16 @@ const router = createBrowserRouter([
     errorElement: <Navigate to="/" />,
   },
   {
+    path: "/contacto",
+    element: <Contacto />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/proyectosview",
+    element: <ProyectosView />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
     path: "/notices",
     element: <Notices />,
     errorElement: <Navigate to="/" />,
@@ -50,6 +64,16 @@ const router = createBrowserRouter([
   {
     path: "/statics",
     element: <Statics />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/projects",
+    element: <Projects />,
+    errorElement: <Navigate to="/" />,
+  },
+  {
+    path: "/projects/create",
+    element: <Projectscreate />,
     errorElement: <Navigate to="/" />,
   },
   {

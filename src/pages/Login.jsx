@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { sendPasswordResetEmail } from "firebase/auth";
 import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { useState } from "react";
@@ -6,11 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import loginImagen from "../assets/images/imagenLogin.png";
 import GODlogo from "../assets/logos/logoGOD.png";
 import googleLogo from "../assets/logos/logoGoogle.png";
-import instagramLogo from "../assets/logos/logoInstagram.png";
 import CustomTooltip from "../components/alertas/CustomTooltip";
 import Textwriter from "../components/alertas/ui/textwriter";
 import SocialLoginButton from "../components/buttons/SocialMediaButton";
-import InputField from "../components/InputField";
+import InputField from "../components/inputs/InputField";
+import axiosInstance from "../config/axiosConfig"; // Asegúrate de que este archivo esté configurado correctamente
 import {
   auth,
   GoogleAuthProvider,
@@ -49,7 +48,7 @@ const Login = () => {
       const firebaseUser = userCredential.user;
       const idToken = await firebaseUser.getIdToken();
 
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+      const response = await axiosInstance.post('/auth/login', {
         correo_usu: email.trim().toLowerCase(),
         token: idToken  
       });
@@ -60,6 +59,19 @@ const Login = () => {
         localStorage.setItem("firebaseUID", firebaseUser.uid);
         localStorage.setItem("userRole", response.data.user.role); // Store the role
 
+        localStorage.setItem("profileImage", response.data.user.profile_image || "");
+        localStorage.setItem("userPhoto", response.data.user.profile_image || "");
+
+        const event = new CustomEvent('profileImageUpdated', {
+          detail: { imageUrl: response.data.user.profile_image }
+        });
+        window.dispatchEvent(event);
+          if (response.data.user.role === "Admin") {
+            navigate("/home");
+          } else {
+            navigate("/");
+          }
+
         localStorage.setItem("authToken", idToken);
 
         // Check the user's role from the database response
@@ -69,7 +81,7 @@ const Login = () => {
           navigate("/home");
         } else {
           console.log("Redirecting to /dashboard"); // Debug log
-          navigate("/dashboard");
+          navigate("/");
         } 
       }
     } catch (error) {
@@ -118,18 +130,23 @@ const Login = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
 
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {
+      const response = await axiosInstance.post('/auth/login', {
         correo_usu: user.email,
         token: idToken
-      });
-
-      if (response.data.status === "success") {
+      });      if (response.data.status === "success") {
         localStorage.setItem("userName", user.displayName);
         localStorage.setItem("userEmail", user.email);
-        localStorage.setItem("userPhoto", user.photoURL || "");
         localStorage.setItem("firebaseUID", user.uid);
-        localStorage.setItem("userRole", response.data.user.role); // Store the role
-
+        localStorage.setItem("userRole", response.data.user.role);
+        localStorage.setItem("authToken", idToken);
+        // Guardar la foto personalizada si existe, si no la de Google
+        localStorage.setItem("profileImage", response.data.user.profile_image || user.photoURL || "");
+        localStorage.setItem("userPhoto", response.data.user.profile_image || user.photoURL || "");
+        // Lanzar evento para actualizar Navbar
+        const event = new CustomEvent('profileImageUpdated', {
+          detail: { imageUrl: response.data.user.profile_image || user.photoURL || "" }
+        });
+        window.dispatchEvent(event);
         // Check the user's role from the database response
         console.log("Google user role:", response.data.user.role); // Debug log
         if (response.data.user.role === "Admin") {
@@ -137,7 +154,7 @@ const Login = () => {
           navigate("/home");
         } else {
           console.log("Redirecting to /dashboard"); // Debug log
-          navigate("/dashboard");
+          navigate("/");
         }
       }
     } catch (error) {
@@ -304,15 +321,18 @@ const Login = () => {
 
         <div className="flex items-center gap-8 ">
           <div className="flex-1 border-t border-white opacity-50"></div>
-          <span className="text-white font-semibold">o inicia con</span>
+          <span className="text-white font-semibold">o</span>
           <div className="flex-1 border-t border-white opacity-50"></div>
         </div>
 
-        <div className="flex justify-between h-15 pt-3 mt-7">
-    
-          <SocialLoginButton icon={googleLogo} onClick={handleGoogleLogin} />
-          <SocialLoginButton icon={instagramLogo} />
-        </div>
+          <div className="pt-3 mt-7">
+            <SocialLoginButton 
+              icon={googleLogo} 
+              onClick={handleGoogleLogin}
+              altText="Google"
+              text="Continuar con Google"
+            />
+          </div>
       </div>
     </div>
   </div>

@@ -1,24 +1,31 @@
 import linkIcon from "../../assets/icons/link.png";
+import axios from "../../config/axiosConfig";
 
-function ShareButton() {
+function ShareButton({ newsId }) {
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
+    const shareUrl = window.location.href;
+
+    // Primero, intenta compartir
+    try {
+      if (navigator.share) {
         await navigator.share({
           title: document.title,
           text: "Mira esta noticia interesante:",
-          url: window.location.href,
+          url: shareUrl,
         });
-      } catch (error) {
-        console.error("Error al compartir:", error);
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
         alert("Enlace copiado al portapapeles ✅");
-      } catch (error) {
-        console.error("Error al copiar:", error);
       }
+
+      // Segundo, notificar al backend que se compartió
+      if (newsId) {
+        await axios.patch(`/api/news/${newsId}/share`, {}, {
+          withCredentials: false  // No necesitamos credenciales para incrementar contador
+        });
+      }
+    } catch (error) {
+      console.error("Error al compartir o actualizar contador:", error);
     }
   };
 
@@ -33,4 +40,3 @@ function ShareButton() {
 }
 
 export default ShareButton;
-  

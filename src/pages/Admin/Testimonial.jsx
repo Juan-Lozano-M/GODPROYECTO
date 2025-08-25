@@ -1,24 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import Sidebar from "../../components/Sidebar";
+import { useCallback, useEffect, useRef, useState } from "react";
+import AdminProfile from "../../components/admin/AdminProfile";
 import DataStat from "../../components/admin/DataStat";
 import FeedbackCard from "../../components/admin/FeedBackCart";
 import FilterButton from "../../components/admin/FilterButton";
-import TestimonialModal from "../../components/admin/TestimonialModal";
 import FiltroModal from "../../components/admin/FiltroModal";
-import AdminProfile from "../../components/admin/AdminProfile";
+import Sidebar from "../../components/admin/Sidebar";
+import TestimonialModal from "../../components/admin/TestimonialModal";
+import Toast from "../../components/alertas/Toast";
+import ConfirmationModal from "../../components/modals/ConfirmationModal";
+import axiosInstance from "../../config/axiosConfig";
 
-import iconNotResult from "../../assets/icons/iconNotResult.png";
 import filtroTestimonial from "../../assets/icons/filtroTestimonial.png";
 import flechaTestimonialArriba from "../../assets/icons/flechaTestimonialArriba.png";
+import iconNotResult from "../../assets/icons/iconNotResult.png";
 
 
-function Testimonials() {
-  const [activeFilter, setActiveFilter] = useState("Todos");
+function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedTestimonio, setSelectedTestimonio] = useState(null);
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
-  const [testimonios, setTestimonios] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [testimonios, setTestimonios] = useState([]);  const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [testimonioToDelete, setTestimonioToDelete] = useState(null);
+  const [showToast, setShowToast] = useState(false);
 
   // Estados para tracking de cambios durante la sesión
   const [contadoresIniciales, setContadoresIniciales] = useState({
@@ -35,7 +38,6 @@ function Testimonials() {
 
   // Flag para saber si es la primera carga
   const isFirstLoad = useRef(true);
-
   // Función para validar y procesar la URL de la imagen
   const processImageUrl = (imageUrl) => {
     if (!imageUrl || imageUrl.trim() === '') {
@@ -48,18 +50,18 @@ function Testimonials() {
     }
     
     // Si es una URL relativa, construir la URL completa
-    // Ajusta esto según tu configuración de servidor
-    return imageUrl;
+    return `https://godbackend-production.up.railway.app/uploads/${imageUrl}`;
   };
-
   // Función para obtener testimonios con información del usuario
-  const fetchTestimonios = async () => {
+  const fetchTestimonios = useCallback(async () => {
     setIsLoading(true);
     try {
       console.log('Fetching testimonios...');
       
       // Primero intentar con el endpoint que incluye información del usuario
-      const response = await axios.get("http://localhost:5000/api/testimonials/with-user");
+      const response = await axiosInstance.get("/api/testimonials/with-user", {
+        withCredentials: false  // No necesitamos credenciales para obtener testimonios
+      });
       const data = response.data;
       
       console.log('Raw data from API:', data);
@@ -114,7 +116,9 @@ function Testimonials() {
       // Si falla el endpoint principal, intentar con el endpoint de fallback
       try {
         console.log('Intentando con endpoint de fallback...');
-        const fallbackResponse = await axios.get("http://localhost:5000/api/testimonials");
+        const fallbackResponse = await axiosInstance.get("/api/testimonials", {
+          withCredentials: false  // No necesitamos credenciales para obtener testimonios
+        });
         const fallbackData = fallbackResponse.data;
         
         console.log('Fallback data:', fallbackData);
@@ -156,15 +160,13 @@ function Testimonials() {
         }
         
       } catch (fallbackError) {
-        console.error("Error en fallback:", fallbackError);
-        // Podrías mostrar un mensaje de error al usuario aquí
+        console.error("Error en fallback:", fallbackError);        // Podrías mostrar un mensaje de error al usuario aquí
         alert("Error al cargar los testimonios. Por favor, intenta de nuevo.");
       }
     } finally {
       setIsLoading(false);
     }
-  };
-
+  }, []);
   // Función para cambiar el estado del testimonio
   const cambiarEstadoTestimonio = async (testimonioId, nuevoEstado) => {
     try {
@@ -176,8 +178,8 @@ function Testimonials() {
       
       console.log(`Estado anterior: ${estadoAnterior}, Nuevo estado: ${nuevoEstado}`);
       
-      const response = await axios.put(
-        `http://localhost:5000/api/testimonials/${testimonioId}/status`,
+      const response = await axiosInstance.put(
+        `/api/testimonials/${testimonioId}/status`,
         { estado: nuevoEstado }
       );
       
@@ -218,6 +220,54 @@ function Testimonials() {
       return false;
     }
   };
+  // 🗑️ FUNCIÓN PARA ELIMINAR TESTIMONIO PERMANENTEMENTE
+  const eliminarTestimonio = async (testimonioId) => {
+    try {
+      console.log(`Iniciando eliminación del testimonio ${testimonioId}`);
+      
+      // Mostrar modal de confirmación en lugar de window.confirm
+      setTestimonioToDelete(testimonioId);
+      setShowDeleteModal(true);
+      
+      return true; // Retorna true para indicar que el proceso se inició
+    } catch (error) {
+      console.error('Error al iniciar eliminación:', error);
+      return false;
+    }
+  };
+
+  // Función para confirmar la eliminación desde el modal
+  const confirmDeleteTestimonio = async () => {
+    if (!testimonioToDelete) return;
+    
+    try {
+      setIsLoading(true);
+      console.log(`Eliminando testimonio ${testimonioToDelete} permanentemente`);
+      
+      const response = await axiosInstance.delete(`/api/testimonials/${testimonioToDelete}`);
+        if (response.status === 200 || response.status === 204) {
+        console.log('Testimonio eliminado exitosamente');
+        
+        // Actualizar la lista de testimonios
+        await fetchTestimonios();
+        
+        // Cerrar modal y limpiar estado
+        setShowDeleteModal(false);
+        setTestimonioToDelete(null);
+        
+        // Mostrar toast de éxito
+        setShowToast(true);
+        
+        return true;
+      }
+    } catch (error) {
+      console.error('Error al eliminar testimonio:', error);
+      alert("❌ Error al eliminar el testimonio. Inténtalo de nuevo.");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Función mejorada para manejar cambios de estado
   const handleStatusChange = async (testimonioId, nuevoEstado) => {
@@ -236,12 +286,10 @@ function Testimonials() {
     } finally {
       setIsLoading(false);
     }
-  };
-  
-  // Cargar datos al montar el componente
+  };    // Cargar datos al montar el componente
   useEffect(() => {
     fetchTestimonios();
-  }, []);
+  }, [fetchTestimonios]);
 
   // Cálculo de estadísticas actuales
   const countByStatus = (status) =>
@@ -287,6 +335,7 @@ function Testimonials() {
 
   return (
     <div className="h-full m-7 sm:mt-10 md:ml-48 lg:ml-55 md:mr-10 lg:mr-15">
+      
       {/* Header con título y AdminProfile en esquinas opuestas */}
       <div className="flex items-center justify-between mt-6 2xl:mt-0">
         <h1 className="text-3xl md:text-4xl xl:text-5xl font-adlam">TESTIMONIOS</h1>
@@ -392,19 +441,16 @@ function Testimonials() {
             );
           })}
         </div>
-      )}
-
-      {selectedTestimonio && (
+      )}      {selectedTestimonio && (
         <TestimonialModal
           isOpen={!!selectedTestimonio}
           onClose={handleCloseModal}
           testimonio={selectedTestimonio}
           onStatusChange={(nuevoEstado) => handleStatusChange(selectedTestimonio.id, nuevoEstado)}
           onCambiarEstado={cambiarEstadoTestimonio}
+          onEliminar={eliminarTestimonio}
         />
-      )}
-
-      {isFiltroModalOpen && (
+      )}      {isFiltroModalOpen && (
         <FiltroModal
           filters={filters}
           activeFilter={activeFilter}
@@ -415,6 +461,31 @@ function Testimonials() {
           onClose={() => setIsFiltroModalOpen(false)}
         />
       )}
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setTestimonioToDelete(null);
+        }}
+        onConfirm={confirmDeleteTestimonio}
+        title="Eliminar Testimonio"
+        message="¿Estás seguro de que quieres eliminar este testimonio permanentemente? Esta acción NO se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isLoading={isLoading}
+        loadingText="Eliminando..."        variant="danger"
+      />
+
+      {/* Toast de confirmación */}
+      <Toast 
+        title="¡Éxito!"
+        message="Testimonio eliminado exitosamente"
+        show={showToast}
+        setShow={setShowToast}
+      />
+
       <Sidebar />
     </div>
   );

@@ -1,15 +1,16 @@
+import { ListItemNode, ListNode } from '@lexical/list';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode } from '@lexical/rich-text';
-import { ListNode, ListItemNode } from '@lexical/list';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import Toolbars from './Toolbars';
 import { $getRoot } from 'lexical';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Toolbars from './Toolbars';
 
 function Placeholder() {
   return (
@@ -23,7 +24,23 @@ function onError(error) {
   console.error(error);
 } 
 
-function Editor({ onChange, textColor, setTextColor }) {
+// Plugin para resetear el editor
+function ClearEditorPlugin({ reset }) {
+  const [editor] = useLexicalComposerContext();
+  
+  useEffect(() => {
+    if (reset) {
+      editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+      });
+    }
+  }, [reset, editor]);
+  
+  return null;
+}
+
+function Editor({ onChange, textColor, setTextColor, reset }) {
   const initialConfig = {
     namespace: 'MyEditor',
     theme: {
@@ -52,7 +69,6 @@ function Editor({ onChange, textColor, setTextColor }) {
       });
     },
   };
-
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <Toolbars onChange={onChange} setTextColor={setTextColor} />
@@ -65,19 +81,21 @@ function Editor({ onChange, textColor, setTextColor }) {
         <ListPlugin />
         <HistoryPlugin />
         <AutoFocusPlugin />
+        <ClearEditorPlugin reset={reset} />
       </div>
     </LexicalComposer>
   );
 }
 
-const ContentEditor = ({ onChange }) => {
+const ContentEditor = ({ onChange, reset }) => {
   const [textColor, setTextColor] = useState('#000000');
   
   return (
     <Editor 
       onChange={onChange} 
       textColor={textColor} 
-      setTextColor={setTextColor} // Pass setTextColor here
+      setTextColor={setTextColor}
+      reset={reset}
     />
   );
 };

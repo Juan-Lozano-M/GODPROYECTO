@@ -1,5 +1,5 @@
 
-const CartoonButton = () => {
+const CartoonButton = ({ text = "Crear noticia" }) => {
   return (
     <div className="w-full">      <button 
         className="
@@ -26,7 +26,7 @@ const CartoonButton = () => {
             button-top
           "
         >
-          Crear noticia
+          {text}
         </span>
       </button>
       

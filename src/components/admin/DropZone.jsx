@@ -1,16 +1,29 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import axios from 'axios'; // Import axios for making HTTP requests
+import axiosConfig from '../../config/axiosConfig'; // Import axiosConfig for making HTTP requests
 import DeleteButton from "../buttons/DeleteButton";
 
-const DropZone = ({ className = "w-85", onFileChange }) => {
+const DropZone = ({ className = "w-85", onFileChange, onUploadStart, onUploadEnd, reset = false }) => {
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
-
-  const onDrop = useCallback(acceptedFiles => {
+  const [isUploading, setIsUploading] = useState(false);
+  // Efecto para resetear el componente cuando reset cambie a true
+  useEffect(() => {
+    if (reset) {
+      setPreview(null);
+      setFile(null);
+      setIsUploading(false);
+    }
+  }, [reset]);  const onDrop = useCallback(acceptedFiles => {
     const selectedFile = acceptedFiles[0];
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
+    setIsUploading(true);
+    
+    // Llamar al callback de inicio de subida
+    if (onUploadStart) {
+      onUploadStart();
+    }
 
     // Create a FormData object to send the file
     const formData = new FormData();
@@ -18,56 +31,75 @@ const DropZone = ({ className = "w-85", onFileChange }) => {
     formData.append('folder', 'news_images'); // Specify the folder in Cloudinary
 
     // Send the file to the backend
-    axios.post('http://127.0.0.1:5000/api/news/upload-image', formData, {
+    axiosConfig.post('/api/news/upload-image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
     .then(response => {
       console.log('File uploaded successfully:', response.data);
+      setIsUploading(false);
+      
+      // Llamar al callback de fin de subida
+      if (onUploadEnd) {
+        onUploadEnd();
+      }
+      
       if (onFileChange) {
         onFileChange(response.data.url); // Pass the uploaded file URL back to the parent component
       }
     })
     .catch(error => {
       console.error('Error uploading file:', error);
+      setIsUploading(false);
+      
+      // Llamar al callback de fin de subida incluso en caso de error
+      if (onUploadEnd) {
+        onUploadEnd();
+      }
     });
-  }, [onFileChange]);
-
+  }, [onFileChange, onUploadStart, onUploadEnd]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png']
     },
-    maxFiles: 1
+    maxFiles: 1,
+    disabled: isUploading
   });
 
   return (
-    <div className={className}>
-      <div 
+    <div className={className}>      <div 
         {...getRootProps()} 
-        className={`w-full h-[160px] p-6 border-2 border-dashed rounded-lg cursor-pointer transition-colors flex justify-between items-end
+        className={`w-full h-[160px] p-6 border-2 border-dashed rounded-lg transition-colors flex justify-between items-end
+          ${isUploading ? 'cursor-wait border-[#8FDA32] bg-[#8FDA32]/10' : 'cursor-pointer'}
           ${isDragActive ? 'border-[#8FDA32] bg-[#8FDA32]/10' : 'border-gray-300 hover:border-[#8FDA32]'}`}
       >
-        <input {...getInputProps()} />
-        {preview ? (
+        <input {...getInputProps()} />        {preview ? (
           <div className="flex items-center justify-center h-full w-full relative">
             <img 
               src={preview} 
               alt="Preview" 
-              className="max-h-full max-w-full object-contain rounded-lg"
-            />
-            <DeleteButton 
-              onClick={(e) => {
-                e.stopPropagation();
-                setPreview(null);
-                setFile(null);
-                if (onFileChange) {
-                  onFileChange(null);
-                }
-              }} 
-              className="absolute top-0 right-0 transform -translate-y-1/4 translate-x-1/4 scale-80"
-            />
+              className={`max-h-full max-w-full object-contain rounded-lg ${isUploading ? 'blur-md' : ''}`}
+            />            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#8FDA32]"></div>
+              </div>
+            )}
+            {!isUploading && (
+              <DeleteButton 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreview(null);
+                  setFile(null);
+                  setIsUploading(false);
+                  if (onFileChange) {
+                    onFileChange(null);
+                  }
+                }} 
+                className="absolute top-0 right-0 transform -translate-y-1/4 translate-x-1/4 scale-80"
+              />
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 h-full flex-grow">

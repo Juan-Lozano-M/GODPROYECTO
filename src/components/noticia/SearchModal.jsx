@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, Search, Filter } from 'lucide-react';
-import axios from 'axios';
+import { Filter, Search, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import axios from '../../config/axiosConfig';
 import NewsCard from './NewsCard';
 
 const SearchModal = ({ isOpen, onClose }) => {
@@ -11,17 +11,16 @@ const SearchModal = ({ isOpen, onClose }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({});
   const [hasSearched, setHasSearched] = useState(false);
-
   // Categorías disponibles (puedes ajustar según tus necesidades)
   const categories = [
-    'Educación',
     'Tecnología',
     'Ciencia',
     'Deportes',
-    'Cultura',
+    'Política',
     'Salud',
-    'Entretenimiento',
-    'Negocios'
+    'Economía',
+    'Educación',
+    'Cultura'
   ];
 
   // Limpiar estado cuando se abre/cierra el modal
@@ -60,7 +59,9 @@ const SearchModal = ({ isOpen, onClose }) => {
       params.append('page', page.toString());
       params.append('per_page', '6');
 
-      const response = await axios.get(`http://localhost:5000/api/news/search?${params}`);
+      const response = await axios.get(`/api/news/search?${params}`, {
+        withCredentials: false  // No necesitamos credenciales para búsquedas públicas
+      });
       
       if (response.data.status === 'success') {
         setSearchResults(response.data.news);
@@ -101,9 +102,8 @@ const SearchModal = ({ isOpen, onClose }) => {
   };
 
   if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header del modal */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">

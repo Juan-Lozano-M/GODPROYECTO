@@ -2,13 +2,15 @@ import { EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, se
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ImagenDashboard from "../assets/images/imagenDashboard.png";
+import AdminButton from "../components/admin/AdminButton";
 import Toast from '../components/alertas/Toast';
 import Checkboxmore from "../components/checkbox/Checkboxmore";
+import Footer from "../components/index/Footer";
 import Navbar from "../components/index/Navbar";
 import InputEditable from '../components/inputs/InputEditable';
 import InstitutionSelector from "../components/inputs/InstitutionSelector";
+import ReauthModal from '../components/modals/ReauthModal';
 import ProfileImageUpload from '../components/profile/ProfileImageUpload';
-import ReauthModal from '../components/ReauthModal';
 import axios from "../config/axiosConfig";
 import { auth } from "../firebaseConfig";
 
@@ -550,6 +552,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#F1F1F1]">
       <Navbar />
+      <AdminButton />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-black rounded-lg shadow-lg p-6 mb-6 relative overflow-hidden">
           <div className="flex justify-between items-start">
@@ -805,6 +808,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
       </div>
     {/* Add Toast component with fixed positioning */}
     {showToast && (
@@ -830,6 +834,7 @@ const Dashboard = () => {
       currentPassword={currentPassword}
       setCurrentPassword={setCurrentPassword}
     />
+      <Footer />
     </div>
   );
 };

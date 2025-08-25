@@ -18,7 +18,7 @@ const NoticeCard = ({ image, title, author, date, summary, status, isSelected, o
   };
 
   return (    <div
-      className={`flex items-center w-full h-20 sm:h-30 lg:h-40 xl:h-36 2xl:h-40 bg-black/7 rounded-r-lg rounded-l-2xl cursor-pointer border-2 transition-all ${isSelected ? 'border-[#87C232] shadow-lg' : 'border-transparent'}`}
+      className={`flex items-center w-full h-20 sm:h-30 lg:h-40 xl:h-36 2xl:h-40 bg-black/7 rounded-r-lg rounded-l-2><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<xl cursor-pointer border-2 transition-all ${isSelected ? 'border-[#87C232] shadow-lg' : 'border-transparent'}`}
       onClick={onSelect}    >
       {/* Imagen de la noticia */}
       <img src={image} alt="Noticia imagen" className="h-20 w-20 sm:w-30 sm:h-30 lg:w-50 lg:h-full xl:w-44 xl:h-full 2xl:w-50 2xl:h-full rounded-l-2xl" />

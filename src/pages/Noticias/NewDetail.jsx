@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ShareButton from "../../components/buttons/ShareButton";
-import SuscribeCard from "../../components/cards/SuscribeCard";
 import CartoonCard from "../../components/cards/CartoonCard";
-import axios from "axios";
+import Navbar from "../../components/index/Navbar";
+import axiosInstance from "../../config/axiosConfig";
+
 
 export default function NewDetail() {
   const { slug } = useParams();
@@ -12,31 +13,39 @@ export default function NewDetail() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [relatedNews, setRelatedNews] = useState([]);
+  
+  // Ref para controlar si ya se incrementó la vista
+  const viewIncrementedRef = useRef(false);
+
+  const hasIncrementedView = useRef(false);
 
   useEffect(() => {
-    // Scroll al inicio cuando se carga una nueva noticia
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    // Resetear el ref cuando cambia el slug
+    viewIncrementedRef.current = false;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Obtener la noticia específica por slug
-    axios.get(`http://localhost:5000/api/news/${slug}`)
+    axiosInstance.get(`/api/news/${slug}`)
       .then(response => {
-        console.log("Noticia obtenida:", response.data);
         if (response.data.status === "success") {
           const newsItem = response.data.news;
           setNews(newsItem);
-          
-          // Obtener noticias relacionadas de la misma categoría
-          return axios.get(`http://localhost:5000/api/news/search?category=${newsItem.categoria}&per_page=4`);
+
+          // Incrementar vista solo si no se ha hecho antes
+          if (!viewIncrementedRef.current) {
+            viewIncrementedRef.current = true;
+            axiosInstance.post(`/api/news/${newsItem.id_noticia}/view`)
+              .catch(err => console.warn("No se pudo incrementar vistas:", err));
+          }
+
+          // Obtener relacionadas
+          return axiosInstance.get(`/api/news/search?category=${newsItem.categoria}&per_page=4`);
         } else {
           throw new Error(response.data.message || 'Noticia no encontrada');
         }
       })
       .then(response => {
         if (response && response.data.status === "success") {
-          // Filtrar para excluir la noticia actual
           const related = response.data.news
             .filter(item => item.slug !== slug)
             .slice(0, 3);
@@ -87,6 +96,7 @@ export default function NewDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white p-8">
+  
         <div className="container mx-auto">
           {/* Esqueleto de hero section */}
           <div className="h-[600px] bg-gray-200 rounded-lg mb-10 relative">
@@ -153,6 +163,7 @@ export default function NewDetail() {
 
   return (
     <main className="min-h-screen bg-white text-gray-800">
+      <Navbar />
       {/* Hero Banner */}
       <div className="relative w-full h-[600px] overflow-hidden">
         <img 
@@ -211,7 +222,7 @@ export default function NewDetail() {
               {/* Share Section */}
               <CartoonCard title="Compartir">
                 <div className="flex space-x-4">
-                  <ShareButton/>
+                  <ShareButton newsId={news.id_noticia} />
                 </div>
               </CartoonCard>
 
@@ -253,16 +264,7 @@ export default function NewDetail() {
               </CartoonCard>
 
               {/* Newsletter */}
-              <div>
-                <SuscribeCard 
-                  title="GOD News"
-                  subtitle="Recibe las últimas noticias directamente en tu correo."
-                  buttonText="Suscribirse"
-                  inputPlaceholder="Tu correo electrónico"
-                  bannerText1="SUSCRÍBETE"
-                  bannerText2="ÚNETE"
-                />
-              </div>
+
             </div>
           </div>
         </div>

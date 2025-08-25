@@ -1,16 +1,25 @@
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import imagennews from "../../assets/images/news.png"; // Importa la imagen de fondo para la sección de noticias
+import imagennews from "../../assets/images/pruebados.png"; // Importa la imagen de fondo para la sección de noticias
+import AdminButton from "../../components/admin/AdminButton";
 import Chatbot from "../../components/chatbot/ChatBot"; // Importa el componente de chatbot
+import Footer from "../../components/index/Footer"; // Importa el componente de pie de página
+import Navbar from "../../components/index/Navbar"; // Importa la barra de navegación
 import NewsList from "../../components/noticia/NewsList"; // Importa el componente de lista de noticias
 import SearchModal from "../../components/noticia/SearchModal"; // Importa el modal de búsqueda
 import axios from "../../config/axiosConfig";
+import { registrarVisita } from "../../services/registerVisit";
+
 // Componente funcional Noticiasv2 que renderiza la sección de noticias
 function Noticiasv2() {
   const [isHovered, setIsHovered] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // Estado para el modal de búsqueda
   const navigate = useNavigate();
+
+  useEffect(() => {
+    registrarVisita("news"); // Registramos la visita al cargar la sección
+  }, []);
 
   // Función para obtener una noticia aleatoria
   const handleDiscoverClick = async () => {
@@ -37,8 +46,10 @@ function Noticiasv2() {
   };
 
   return (
-    <main className="min-h-screen bg-white cursor-guante"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
+    <main className="min-h-screen bg-white cursor-guante overflow-x-hidden"> {/* Contenedor principal con fondo blanco y altura mínima de pantalla completa */}
       <Chatbot />
+      <Navbar /> {/* Barra de navegación superior */}
+      <AdminButton /> {/* Botón de administración visible en todas las páginas */}
       
       {/* Modal de búsqueda */}
       <SearchModal 
@@ -55,13 +66,10 @@ function Noticiasv2() {
             <div className="text-white font-bold mt-35 text-4xl " style={{ writingMode: "vertical-rl" }}>
               NOTICIAS RECIENTES
             </div>
-          </div>
-
-          {/* Contenedor de la imagen principal */}
-          <div className="flex-1 relative">
-            <div className="relative h-[710px] w-full bg-[#9CE840] ">
+          </div>          {/* Contenedor de la imagen principal */}          <div className="flex-1 relative">
+            <div className="relative h-[710px] w-full bg-[#9CE840]">
               <img src={imagennews} alt="Games Collage"
-                className="absolute inset-0 w-[1000px] h-full object-cover" />
+                className="absolute inset-0 w-full h-full object-cover object-top" />
               
               {/* Capa de degradado sobre la imagen */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30"></div>
@@ -120,6 +128,7 @@ function Noticiasv2() {
           <NewsList />
         </div>
       </div>
+      <Footer /> {/* Pie de página de la aplicación */}
     </main>
   );
 }

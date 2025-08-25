@@ -1,11 +1,11 @@
 import { confirmPasswordReset } from 'firebase/auth';
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import imagenRecover from "../../assets/images/imagenRecover2.png";
 import GODlogo from "../../assets/logos/logoGOD.png";
-import InputField from "../../components/InputField";
 import Toast from '../../components/alertas/Toast';
 import GameButton from "../../components/buttons/GameButton";
+import InputField from "../../components/inputs/InputField";
 import Loader from '../../components/loader';
 import { auth } from '../../firebaseConfig';
 
@@ -108,7 +108,7 @@ const ResetPassword = () => {
             alt="Character"
           />
           
-          <div className="bg-[#d0ff92] rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-white rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-center mb-4">Ingresa tu nueva contraseña</h1>
               <p className="text-gray-600 text-center">

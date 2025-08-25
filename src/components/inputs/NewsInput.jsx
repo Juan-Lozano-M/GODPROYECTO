@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]", onChange }) => {
-  const [value, setValue] = useState('');
+const NewsInput = ({ placeholder = "Ingresa texto", className = "w-[200px]", onChange, value: propValue }) => {
+  const [internalValue, setInternalValue] = useState('');
+  
+  // Usar el valor de la prop si se proporciona, sino usar el valor interno
+  const value = propValue !== undefined ? propValue : internalValue;
 
   const handleChange = (e) => {
     const newValue = e.target.value;
-    setValue(newValue);
+    
+    // Si no hay prop value, actualizar el estado interno
+    if (propValue === undefined) {
+      setInternalValue(newValue);
+    }
+    
     if (onChange) {
       onChange(newValue);
     }

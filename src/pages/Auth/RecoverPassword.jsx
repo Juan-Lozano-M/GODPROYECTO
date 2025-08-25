@@ -1,13 +1,13 @@
-import axios from 'axios';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import imagenRecover from "../../assets/images/imagenRecover2.png"; // Keep your current image
 import GODlogo from "../../assets/logos/logoGOD.png";
-import InputField from "../../components/InputField";
 import Toast from '../../components/alertas/Toast';
 import GameButton from "../../components/buttons/GameButton";
+import InputField from "../../components/inputs/InputField";
 import Loader from '../../components/loader';
+import axiosInstance from '../../config/axiosConfig';
 import { auth } from '../../firebaseConfig';
 
 // Remove this import
@@ -39,7 +39,7 @@ const RecoverPassword = () => {
     try {
       setIsLoading(true);
       
-      const checkResponse = await axios.post('http://127.0.0.1:5000/auth/request-reset', {
+      const checkResponse = await axiosInstance.post('/auth/request-reset', {
         email: email
       });
   
@@ -102,7 +102,7 @@ const RecoverPassword = () => {
             alt="Character"
           />
           
-          <div className="bg-[#E8FFBE] rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-white rounded-sm p-8 w-full max-w-2xl relative z-10 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             {!success && (
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-center mb-4">¿Olvidaste tu contraseña?</h1>
