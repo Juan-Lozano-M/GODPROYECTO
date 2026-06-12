@@ -50,7 +50,7 @@ function Testimonials() {  const [activeFilter, setActiveFilter] = useState("Tod
     }
     
     // Si es una URL relativa, construir la URL completa
-    return `https://godbackend-production.up.railway.app/uploads/${imageUrl}`;
+    return `https://godbackend.onrender.com/uploads/${imageUrl}`;
   };
   // Función para obtener testimonios con información del usuario
   const fetchTestimonios = useCallback(async () => {

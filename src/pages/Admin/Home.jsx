@@ -64,7 +64,7 @@ const Home = () => {
     const valorImagen = testimonio.profile_image;
     if (!valorImagen?.trim()) return "";
     if (valorImagen.startsWith("http")) return valorImagen;
-    return `https://godbackend-production.up.railway.app/uploads/${valorImagen}`;
+    return `https://godbackend.onrender.com/uploads/${valorImagen}`;
   };
 
   const fetchTestimonios = async () => {
